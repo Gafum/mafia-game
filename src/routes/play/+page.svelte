@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import createArray from '$lib/functions/createData';
 	import { browser } from '$app/environment';
+	import { cardRules } from '$lib/stores';
 
 	let peopleList = [{ name: 'Мирний', description: 'Та я мириний мен', myImg: 'Man2', id: 1 }];
 
@@ -20,7 +21,6 @@
 	}
 
 	onMount(() => {
-		console.log('I am here');
 		let data = {
 			mans: 4,
 			mafias: 2,
@@ -29,7 +29,7 @@
 		};
 		if (!browser) return;
 		try {
-			data = JSON.parse(localStorage.getItem('cards'));
+			data = $cardRules;
 			if (!data) return;
 		} catch (e) {
 			console.log(e);
@@ -37,8 +37,6 @@
 		peopleList = createArray(data).map((elem, i) => {
 			return { ...elem, id: i };
 		});
-
-		console.log(peopleList, showingElement);
 
 		showingElement = peopleList.at(-1).id;
 	});

@@ -2,6 +2,7 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { cardRules } from '$lib/stores';
 
 	let mans = 4,
 		mafias = 1,
@@ -29,14 +30,13 @@
 
 	function saveData(data) {
 		if (!isMount) return;
-		localStorage.setItem('cards', JSON.stringify(data));
-		console.log('data saved');
+		cardRules.set(data);
 	}
 
 	onMount(() => {
 		if (!browser) return;
 		try {
-			let data = JSON.parse(localStorage.getItem('cards'));
+			let data = $cardRules;
 			if (!data) return;
 			mans = data.mans;
 			mafias = data.mafias;
