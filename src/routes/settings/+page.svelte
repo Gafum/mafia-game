@@ -1,6 +1,7 @@
 <script>
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	let mans = 4,
 		mafias = 1,
@@ -29,11 +30,11 @@
 	function saveData(data) {
 		if (!isMount) return;
 		localStorage.setItem('cards', JSON.stringify(data));
+		console.log('data saved');
 	}
-	console.log('without mount');
 
 	onMount(() => {
-		console.log('I am here');
+		if (!browser) return;
 		try {
 			let data = JSON.parse(localStorage.getItem('cards'));
 			if (!data) return;

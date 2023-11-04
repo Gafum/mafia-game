@@ -4,6 +4,7 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import createArray from '$lib/functions/createData';
+	import { browser } from '$app/environment';
 
 	let peopleList = [{ name: 'Мирний', description: 'Та я мириний мен', myImg: 'Man2', id: 1 }];
 
@@ -26,6 +27,7 @@
 			withDoctor: true,
 			withCop: true
 		};
+		if (!browser) return;
 		try {
 			data = JSON.parse(localStorage.getItem('cards'));
 			if (!data) return;
