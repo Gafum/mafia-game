@@ -19,6 +19,7 @@
 	}
 
 	onMount(() => {
+		console.log('I am here');
 		let data = {
 			mans: 4,
 			mafias: 2,
@@ -34,6 +35,8 @@
 		peopleList = createArray(data).map((elem, i) => {
 			return { ...elem, id: i };
 		});
+
+		console.log(peopleList, showingElement);
 
 		showingElement = peopleList.at(-1).id;
 	});

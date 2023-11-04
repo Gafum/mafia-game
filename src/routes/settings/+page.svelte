@@ -30,8 +30,10 @@
 		if (!isMount) return;
 		localStorage.setItem('cards', JSON.stringify(data));
 	}
+	console.log('without mount');
 
 	onMount(() => {
+		console.log('I am here');
 		try {
 			let data = JSON.parse(localStorage.getItem('cards'));
 			if (!data) return;
