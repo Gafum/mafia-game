@@ -9,11 +9,16 @@
 
 	let peopleList = [{ name: 'Мирний', description: 'Та я мириний мен', myImg: 'Man2', id: 1 }];
 
+	let visiblePeople = [{ name: 'Мирний', description: 'Та я мириний мен', myImg: 'Man2', id: 1 }];
+
 	let showingElement = 0;
+	let maxVisibleCards = 3;
 
 	function changeData(person) {
 		try {
-			showingElement = peopleList[peopleList.indexOf(person) - 1].id;
+			showingElement = peopleList[peopleList.indexOf(person) + 1].id;
+			maxVisibleCards++;
+			visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
 		} catch (e) {
 			console.log(e);
 			showingElement = 0;
@@ -38,7 +43,8 @@
 			return { ...elem, id: i };
 		});
 
-		showingElement = peopleList.at(-1).id;
+		visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
+		console.log(visiblePeople);
 	});
 </script>
 
@@ -48,7 +54,7 @@
 		<div class="home-btn">
 			<HomeBtn />
 		</div>
-		{#each peopleList as person (person.id)}
+		{#each visiblePeople as person (person.id)}
 			<Card {...person} changeData={() => changeData(person)} {showingElement} />
 		{/each}
 	</div>
