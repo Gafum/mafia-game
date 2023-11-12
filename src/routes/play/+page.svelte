@@ -39,9 +39,11 @@
 		} catch (e) {
 			console.log(e);
 		}
-		peopleList = createArray(data).map((elem, i) => {
-			return { ...elem, id: i };
-		});
+		peopleList = createArray(data).map(
+			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2' }, i) => {
+				return { name, description, myImg, id: i };
+			}
+		);
 
 		visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
 		console.log(visiblePeople);

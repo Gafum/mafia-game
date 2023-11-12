@@ -2,6 +2,7 @@
 	<h1>Mafia</h1>
 	<a href="/play" class="play-btn">Грати</a>
 	<a href="/settings">Налаштування</a>
+	<a href="/roles" class="roles-btn">Персонажі</a>
 </div>
 
 <style>
@@ -36,7 +37,13 @@
 
 	.main-conteiner > a.play-btn {
 		font-size: 70px;
+		padding: 13px 35px;
 		background-color: #2c9182;
+	}
+
+	.main-conteiner > a.roles-btn {
+		font-size: 25px;
+		background-color: #306740;
 	}
 
 	@media (hover: hover) {
@@ -51,6 +58,10 @@
 
 		a.play-btn:hover {
 			box-shadow: 0 0 12px #2c9182;
+		}
+
+		a.roles-btn:hover {
+			box-shadow: 0 0 8px #306740;
 		}
 	}
 
