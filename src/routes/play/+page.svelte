@@ -46,7 +46,6 @@
 		);
 
 		visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
-		console.log(visiblePeople);
 	});
 </script>
 

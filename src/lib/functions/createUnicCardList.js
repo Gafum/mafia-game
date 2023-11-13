@@ -12,7 +12,7 @@ export default function createUnicCardList() {
          uniqueTags[card.tag] = true;
          filteredList.push(card);
       } else {
-         if (Randomizer.randomInteger(0, 10) > 5) {
+         if (Randomizer.randomInteger(0, 10) > 6) {
             filteredList[filteredList.length - 1] = card;
          }
       }
