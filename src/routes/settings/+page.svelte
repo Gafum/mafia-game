@@ -2,7 +2,7 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { cardRules } from '$lib/stores';
+	import { cardRules, setCookie } from '$lib/stores';
 
 	let mans = 4,
 		mafias = 1,
@@ -31,6 +31,7 @@
 	function saveData(data) {
 		if (!isMount) return;
 		cardRules.set(data);
+		setCookie('gameSettings', data, 30);
 	}
 
 	onMount(() => {
