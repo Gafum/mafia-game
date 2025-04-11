@@ -15,7 +15,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="card" class:show={flipped} on:click={flip}>
 	<div class="back">
-		<div class="my-img" style="background-image: url('/assets/cards/{myImg}.png');" />
+		<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} />
 		<div class="my-text">
 			<h2>{name}</h2>
 			<p>{description}</p>
@@ -46,6 +46,7 @@
 
 	.front,
 	.back {
+		transform-style: preserve-3d;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -84,14 +85,10 @@
 
 	.my-img {
 		min-width: 100px;
-		min-height: 100px;
 		width: 45vmax;
-		height: 45vmax;
 		max-width: 100%;
 		max-height: 100%;
-		background-position: center;
-		background-size: contain;
-		background-repeat: no-repeat;
+		border-radius: 10px;
 	}
 
 	.my-text {
@@ -120,7 +117,6 @@
 	@media (max-width: 480px) {
 		.my-img {
 			width: 30vmax;
-			height: 30vmax;
 		}
 
 		.front {

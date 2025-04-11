@@ -70,6 +70,7 @@
 
 	.front,
 	.back {
+		transform-style: preserve-3d;
 		display: flex;
 		align-items: center;
 		justify-content: center;
