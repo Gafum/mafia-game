@@ -37,7 +37,7 @@ export const cardList =
       },
       {
          name: 'Мирний',
-         description: 'Діма, зроби мафію за 2 дні!',
+         description: 'Гра-мафія за 3 дня!',
          myImg: 'Man5',
          tag: "mans"
       },

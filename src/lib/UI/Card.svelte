@@ -4,6 +4,7 @@
 		myImg = 'Man2',
 		id = 0,
 		showingElement = 0,
+		elementIndex = 0,
 		changeData = () => {
 			console.log('hi');
 		};
@@ -29,10 +30,18 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="card" class:show={flipped} class:hide={isShown} on:click={flip}>
+<div
+	class="card"
+	style={'--side: ' + (elementIndex % 2 ? '160%' : '-100%')}
+	class:show={flipped}
+	class:hide={isShown}
+	on:click={flip}
+>
 	<div class="back" />
 	<div class="front">
-		<div class="my-img" style="background-image: url('/assets/cards/{myImg}.png');" />
+		<div class="imgWrapper">
+			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} />
+		</div>
 		<div class="my-text">
 			<h2>{name}</h2>
 			<p>{description}</p>
@@ -42,6 +51,7 @@
 
 <style>
 	.card {
+		--side: -100%;
 		top: 0;
 		right: 0;
 		position: absolute;
@@ -50,7 +60,7 @@
 		border-radius: 15px;
 		transform: rotateY(180deg) translate(-50%, -50%);
 		transition-duration: 0.4s;
-		transition-property: transform visibility opacity;
+		transition-property: transform, visibility, opacity;
 		transform-style: preserve-3d;
 		user-select: none;
 		cursor: pointer;
@@ -62,7 +72,7 @@
 	}
 
 	.card.hide {
-		transform: rotateY(0) translate(-100%, -50%);
+		transform: rotateY(0) translate(var(--side), -50%);
 		visibility: hidden;
 		opacity: 0;
 		pointer-events: none;
@@ -97,24 +107,33 @@
 
 	.front {
 		background-color: white;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		justify-items: center;
+		overflow: hidden;
+	}
+
+	/* IMG WITH contain size WORKING!!!! */
+
+	.imgWrapper {
+		max-width: 100%;
+		height: 100%;
+		overflow: hidden;
 		display: flex;
 		justify-content: center;
-		gap: 20px;
 		align-items: center;
 		align-content: center;
-		flex-direction: column;
 	}
 
 	.my-img {
-		min-width: 100px;
-		min-height: 100px;
-		width: 45vmax;
-		height: 45vmax;
 		max-width: 100%;
 		max-height: 100%;
-		background-position: center;
-		background-size: contain;
-		background-repeat: no-repeat;
+		height: calc(40vw - 60px);
+		aspect-ratio: 1/1;
+		border-radius: 10px;
+		margin: auto;
+		object-fit: contain;
 	}
 
 	.my-text {
@@ -136,27 +155,37 @@
 		text-align: center;
 	}
 
-	@media (max-width: 340px) {
-		.my-img {
-			width: 30vmax;
-			height: 30vmax;
-		}
-	}
-
-	@media (min-width: 720px) {
+	@media (max-width: 850px) {
 		.front {
 			display: flex;
 			justify-content: center;
-			gap: 60px;
-			flex-direction: row;
+			align-items: center;
+			flex-direction: column;
+			gap: 10px;
+			overflow: hidden;
+		}
+
+		.imgWrapper {
+			height: auto;
+		}
+
+		.my-img {
+			height: auto;
+		}
+
+		.my-text {
+			justify-content: flex-start;
+			gap: 5px;
+		}
+	}
+
+	@media (max-width: 500px) {
+		.my-text h2 {
+			font-size: 35px;
 		}
 		.my-text > p {
-			font-size: 50px;
-			text-align: left;
-		}
-		.my-text > h2 {
-			font-size: 80px;
-			text-align: left;
+			font-size: 20px;
+			text-align: center;
 		}
 	}
 </style>

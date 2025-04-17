@@ -56,15 +56,21 @@
 			<HomeBtn />
 		</div>
 		{#each visiblePeople as person (person.id)}
-			<Card {...person} changeData={() => changeData(person)} {showingElement} />
+			<Card
+				{...person}
+				changeData={() => changeData(person)}
+				{showingElement}
+				elementIndex={peopleList.indexOf(person)}
+			/>
 		{/each}
 	</div>
 </div>
 
 <style>
 	.center {
-		height: 100%;
-		width: 100%;
+		height: 100lvh;
+		width: 100vw;
+		overflow: hidden;
 		display: flex;
 		justify-content: center;
 		align-items: center;

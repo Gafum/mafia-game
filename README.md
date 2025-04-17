@@ -1,38 +1,53 @@
-# create-svelte
+# Mafia Game
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## **Link** - [Mafia Game](mafia-game-murex.vercel.app/)
 
-## Creating a project
+This is a lightweight web-based **Mafia game**, built with **Svelte v4**, created for the sole purpose of having fun with friends. It allows you to recreate the classic party game, remember the rules, and laugh at some custom characters.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Purpose
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+The project was made to enjoy the Mafia game in a digital format with friends. It provides a simple interface where each participant draws a card with their role, and the next player continues until the game setup is complete.
 
-# create a new project in my-app
-npm create svelte@latest my-app
+## Language
+
+Currently, the game is available only in **Ukrainian**.
+
+## Features
+
+- Automatic game generation with random role assignment.
+- Each participant sees their role card before passing to the next.
+- Rules and detailed descriptions of all characters, including special ones like the **Lawyer**.
+- Each character comes with an image to add a humorous touch.
+- Supports up to **21 players**.
+- Easy customization by editing a single data file.
+
+## Customization
+
+You can modify the roles, descriptions, and images to fit your group by editing:
+
+```
+src/lib/data.js
 ```
 
-## Developing
+No other configuration is needed.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Getting Started
 
-```bash
-npm run dev
+To run this project locally, follow these steps:
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+1. Clone this repository to your local machine.
+2. Navigate to the project directory.
+3. Install dependencies using `yarn install`.
+4. Start the development server using `yarn dev`.
 
-## Building
+Then open `http://localhost:5173` in your browser.
 
-To create a production version of your app:
+> Requirements: Node.js and Yarn installed on your system.
 
-```bash
-npm run build
-```
+## License
 
-You can preview the production build with `npm run preview`.
+This is a hobby project. Feel free to fork, modify, and adapt it for your own use.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+---
+
+Have fun and enjoy the game with your friends!
