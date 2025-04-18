@@ -2,7 +2,8 @@
 	export let name = 'Мирний',
 		description = 'Ну шо ш?',
 		myImg = 'Man2',
-		bigDescription = 'Я Люблю спати вночі';
+		bigDescription = 'Я Люблю спати вночі...',
+		tag = '';
 
 	let flipped = false;
 
@@ -13,7 +14,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="card" class:show={flipped} on:click={flip}>
+<div class={'card ' + tag} class:show={flipped} on:click={flip}>
 	<div class="back">
 		<div class="imgWrapper">
 			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} />

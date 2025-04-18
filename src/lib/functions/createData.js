@@ -1,7 +1,16 @@
 import { cardList } from "$lib/data";
 import Randomizer from "$lib/Servises/Randomizer.servise";
 
-export default function createArray({ mans, mafias, withDoctor, withCop, withKamikaze, withManiac, withSecurity, withLawyer }) {
+export default function createArray({
+   mans = 3,
+   mafias = 1,
+   withDoctor = true,
+   withCop = true,
+   withKamikaze = false,
+   withManiac = false,
+   withSecurity = false,
+   withLawyer = false,
+}) {
 
    let result = [];
 

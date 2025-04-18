@@ -16,6 +16,9 @@
 
 	function changeData(person) {
 		try {
+			if (peopleList.indexOf(person) + 1 == peopleList.length) {
+				return;
+			}
 			showingElement = peopleList[peopleList.indexOf(person) + 1].id;
 			maxVisibleCards++;
 			visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
@@ -40,8 +43,8 @@
 			console.log(e);
 		}
 		peopleList = createArray(data).map(
-			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2' }, i) => {
-				return { name, description, myImg, id: i };
+			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2' }, index) => {
+				return { name, description, myImg, id: index };
 			}
 		);
 
@@ -68,7 +71,8 @@
 
 <style>
 	.center {
-		height: 100lvh;
+		height: 100%;
+		height: 100dvh;
 		width: 100vw;
 		overflow: hidden;
 		display: flex;
