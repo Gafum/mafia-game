@@ -1,6 +1,6 @@
 # Mafia Game
 
-## **Link** - [Mafia Game](mafia-game-murex.vercel.app/)
+## **Link** - [Mafia Game](https://mafia-game-murex.vercel.app/)
 
 This is a lightweight web-based **Mafia game**, built with **Svelte v4**, created for the sole purpose of having fun with friends. It allows you to recreate the classic party game, remember the rules, and laugh at some custom characters.
 
@@ -21,16 +21,6 @@ Currently, the game is available only in **Ukrainian**.
 - Supports up to **21 players**.
 - Easy customization by editing a single data file.
 
-## Customization
-
-You can modify the roles, descriptions, and images to fit your group by editing:
-
-```
-src/lib/data.js
-```
-
-No other configuration is needed.
-
 ## Getting Started
 
 To run this project locally, follow these steps:
@@ -43,6 +33,16 @@ To run this project locally, follow these steps:
 Then open `http://localhost:5173` in your browser.
 
 > Requirements: Node.js and Yarn installed on your system.
+
+## Customization
+
+You can modify the roles, descriptions, and images to fit your group by editing:
+
+```
+src/lib/data.js
+```
+
+No other configuration is needed.
 
 ## License
 
