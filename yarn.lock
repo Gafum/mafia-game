@@ -300,6 +300,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@lucide/svelte@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lucide/svelte/-/svelte-1.3.0.tgz#c03cbc1da8c4f38556119b1089a8af6a3f233411"
+  integrity sha512-ZRjfWKklbD9Sjhnb6d7v8A3zSGwVHNTM8kOiObSUIiF4B2rU4zskWV7ysp5tY0wOPl7ttj2bXGQvAd6qOCVhIA==
+
 "@mapbox/node-pre-gyp@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-2.0.0.tgz#16d1d9049c0218820da81a12ae084e7fe67790d1"
@@ -863,6 +868,11 @@ lru-cache@^10.2.0:
   version "10.4.3"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.4.3.tgz#410fc8a17b70e598013df257c2446b7f3383f119"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
+
+lucide-svelte@^0.344.0:
+  version "0.344.0"
+  resolved "https://registry.yarnpkg.com/lucide-svelte/-/lucide-svelte-0.344.0.tgz#cb0d43b1dab80edb39a0ded057a71b90ec680689"
+  integrity sha512-OB/iazftjl2w+vpH7WJqbhHONoMqUT6aaeYvu1BQSgvc7+CKXByu4xvbI7RMOJykaiF/u3LAhyd2ucYBj+rEZQ==
 
 magic-string@^0.30.10, magic-string@^0.30.4, magic-string@^0.30.5:
   version "0.30.18"

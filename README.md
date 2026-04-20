@@ -14,12 +14,18 @@ Currently, the game is available only in **Ukrainian**.
 
 ## Features
 
+- **Enhanced Settings Page**:
+  - Visual info block showing total number of players
+  - Manual input field for total players (synced with sliders)
+  - Random role generation with one-click setup
+  - Editable role distribution with save/cancel functionality
 - Automatic game generation with random role assignment.
 - Each participant sees their role card before passing to the next.
 - Rules and detailed descriptions of all characters, including special ones like the **Lawyer**.
 - Each character comes with an image to add a humorous touch.
-- Supports up to **21 players**.
+- Supports up to **50 players** (expanded from 21).
 - Easy customization by editing a single data file.
+- Mafia-themed UI with consistent styling and Lucide icons.
 
 ## Getting Started
 
