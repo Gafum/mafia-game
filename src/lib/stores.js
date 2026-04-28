@@ -10,42 +10,66 @@ const cardRulesConst = {
    withManiac: false,
    withSecurity: false,
    withLawyer: false
-}
+};
 
 export const cardRules = writable(cardRulesConst);
 
-export function getData() {
-   function getCookie(name) {
-      if (!document.cookie) return undefined;
-      let cookie = {};
-      document.cookie.split(';').forEach(function (el) {
-         let split = el.split('=');
-         cookie[split[0].trim()] = split.slice(1).join("=");
-      })
-      return JSON.parse(cookie[name]);
-   }
+function isValidBySchema(data, schema) {
+   if (typeof data !== 'object' || data === null) return false;
 
-   if (browser == true) {
-      let data = getCookie("gameSettings");
-      if (data && data.mans) {
-         cardRules.set(data);
-      } else {
-         console.log("error while reading data");
-         setCookie('gameSettings', cardRulesConst, 30);
-         cardRules.set(cardRulesConst);
+   for (const key in schema) {
+      if (!(key in data)) return false;
+
+      if (typeof data[key] !== typeof schema[key]) {
+         return false;
       }
    }
 
+   return true;
 }
 
-getData()
+function getCookie(name) {
+   if (!browser || !document.cookie) return undefined;
 
-export function setCookie(name, value, days) {
-   let expires = "";
-   if (days) {
-      const date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      expires = "; expires=" + date.toUTCString();
+   const cookies = {};
+
+   document.cookie.split(';').forEach(el => {
+      const [key, ...rest] = el.split('=');
+      cookies[key.trim()] = rest.join('=');
+   });
+
+   if (!cookies[name]) return undefined;
+
+   try {
+      return JSON.parse(decodeURIComponent(cookies[name]));
+   } catch {
+      return undefined;
    }
-   document.cookie = name + "=" + JSON.stringify(value) + expires + "; path=/";
+}
+
+export function getData() {
+   if (!browser) return;
+
+   const data = getCookie('gameSettings');
+
+   if (isValidBySchema(data, cardRulesConst)) {
+      cardRules.set(data);
+   } else {
+      console.warn('Invalid gameSettings → reset');
+      setCookie('gameSettings', cardRulesConst, 30);
+      cardRules.set(cardRulesConst);
+   }
+}
+
+getData();
+
+export function setCookie(name, value, days = 30) {
+   if (!browser) return;
+
+   const date = new Date();
+   date.setTime(date.getTime() + days * 86400000);
+
+   document.cookie =
+      `${name}=${encodeURIComponent(JSON.stringify(value))};` +
+      `expires=${date.toUTCString()}; path=/`;
 }
