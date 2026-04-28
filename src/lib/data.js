@@ -92,7 +92,7 @@ export const cardList =
          tag: "doctor"
       },
       {
-         name: 'Коміссар',
+         name: 'Шериф',
          description: 'Чорний плащ! Чооорний плащ',
          myImg: 'Commissar',
          tag: "cop"

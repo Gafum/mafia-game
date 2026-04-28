@@ -15,7 +15,6 @@
 		Bomb
 	} from 'lucide-svelte';
 
-	// Основні змінні
 	let mans = 4;
 	let mafias = 1;
 	let withDoctor = true,
@@ -25,12 +24,14 @@
 		withSecurity = false,
 		withLawyer = false;
 
+	let targetTotal = 10;
+
 	let isMount = false;
 
 	// Розрахунок загальної кількості
 	$: totalPlayers =
-		mans +
-		mafias +
+		Number(mans) +
+		Number(mafias) +
 		(withDoctor ? 1 : 0) +
 		(withCop ? 1 : 0) +
 		(withKamikaze ? 1 : 0) +
@@ -38,11 +39,11 @@
 		(withSecurity ? 1 : 0) +
 		(withLawyer ? 1 : 0);
 
-	// Автоматичне збереження
+	// Auto Save
 	$: if (isMount) {
 		let data = {
-			mans,
-			mafias,
+			mans: Number(mans),
+			mafias: Number(mafias),
 			withDoctor,
 			withCop,
 			withKamikaze,
@@ -54,27 +55,97 @@
 		setCookie('gameSettings', data, 30);
 	}
 
-	// Функція рандому (впливає на ВСЕ)
+	function handleMansInput(e) {
+		let val = e.target.value;
+		let num = parseInt(val.replace(/[^0-9]/g, ''));
+		if (val.length == 0) {
+			return;
+		}
+		if (num <= 24 && !isNaN(val) && val.replace(/[^0-9]/g, '').length > 0) {
+			mans = num;
+			return;
+		}
+		e.target.value = mans;
+	}
+
+	function handleMansBlur() {
+		if (mans === '' || mans < 1 || typeof mans != 'number') {
+			mans = 1;
+		} else {
+			if (mans > 24) {
+				mans = 24;
+			}
+		}
+	}
+
+	function handleMafiaInput(e) {
+		let val = e.target.value;
+		let num = parseInt(val.replace(/[^0-9]/g, ''));
+		if (val.length == 0) {
+			return;
+		}
+		if (num <= 20 && !isNaN(val) && val.replace(/[^0-9]/g, '').length > 0) {
+			mafias = num;
+			return;
+		}
+		e.target.value = mafias;
+	}
+
+	function handleMafiaBlur() {
+		if (mafias === '' || mafias < 0 || typeof mafias != 'number') {
+			mafias = 0;
+		} else {
+			if (mans > 20) {
+				mans = 20;
+			}
+		}
+	}
+
+	// ФУНКЦІЯ РОЗУМНОГО РАНДОМУ
 	function handleRandom() {
-		// Рандомимо чекбокси
-		withDoctor = Math.random() > 0.3;
-		withCop = Math.random() > 0.3;
-		withKamikaze = Math.random() > 0.7;
-		withManiac = Math.random() > 0.6;
-		withSecurity = Math.random() > 0.7;
-		withLawyer = Math.random() > 0.8;
+		let remaining = targetTotal;
 
-		// Рандомимо мафію (1-8) та мирних (4-15) для адекватного балансу
-		mafias = Math.floor(Math.random() * 6) + 1;
-		mans = Math.floor(Math.random() * 12) + 4;
-	}
+		// 1. Скидаємо все
+		withDoctor = false;
+		withCop = false;
+		withKamikaze = false;
+		withManiac = false;
+		withSecurity = false;
+		withLawyer = false;
 
-	// Валідація інпутів (щоб не ввели більше ліміту)
-	function validateMans(val) {
-		mans = Math.max(1, Math.min(24, val));
-	}
-	function validateMafias(val) {
-		mafias = Math.max(1, Math.min(20, val));
+		// 2. Визначаємо кількість мафії (приблизно 25-30% від гравців)
+		let suggestedMafia = Math.max(1, Math.floor(remaining / 3.5));
+		mafias = suggestedMafia;
+		remaining -= mafias;
+
+		// 3. Додаємо ролі, якщо вистачає людей
+		if (remaining > 1 && Math.random() > 0.2) {
+			withCop = true;
+			remaining--;
+		}
+		if (remaining > 1 && Math.random() > 0.2) {
+			withDoctor = true;
+			remaining--;
+		}
+		if (remaining > 1 && Math.random() > 0.5) {
+			withManiac = true;
+			remaining--;
+		}
+		if (remaining > 1 && Math.random() > 0.7) {
+			withLawyer = true;
+			remaining--;
+		}
+		if (remaining > 1 && Math.random() > 0.7) {
+			withSecurity = true;
+			remaining--;
+		}
+		if (remaining > 1 && Math.random() > 0.8) {
+			withKamikaze = true;
+			remaining--;
+		}
+
+		// 4. Всі інші — мирні (але не менше 1)
+		mans = Math.max(1, remaining);
 	}
 
 	onMount(() => {
@@ -83,7 +154,8 @@
 			let data = $cardRules;
 			if (data) {
 				mans = data.mans || 4;
-				mafias = data.mafias || 1;
+				mafias =
+					data.mafias.toString().replace(/[^0-9]/g, '').length > 0 && data.mafias >= 0 ? data.mafias : 1;
 				withDoctor = data.withDoctor;
 				withCop = data.withCop;
 				withKamikaze = data.withKamikaze;
@@ -100,26 +172,36 @@
 
 <div class="mafia-setup-screen">
 	<div class="setup-card">
-		<header style="display:flex; flex-direction: column; gap:10px;">
-			<h1><Annoyed color="#ff4444" size={32} /> НАЛАШТУВАННЯ ГРИ</h1>
+		<header>
+			<h1><Annoyed color="#ff4444" size={32} /> НАЛАШТУВАННЯ</h1>
 			<div class="total-badge">
 				<Users size={18} color="#ffffff" />
-				<span>Гравців: {totalPlayers} / 50</span>
+				<span>{totalPlayers} / 50</span>
 			</div>
 		</header>
 
 		<main class="content">
+			<!-- НОВИЙ БЛОК ГЕНЕРАТОРА ЗВЕРХУ -->
+			<div class="generator-box">
+				<div class="gen-input-group">
+					<label for="targetTotal">Кількість гравців:</label>
+					<input type="number" id="targetTotal" bind:value={targetTotal} min="3" max="50" />
+				</div>
+				<button class="random-btn-top" on:click={handleRandom}>
+					<Zap size={18} fill="currentColor" /> РАНДОМ
+				</button>
+			</div>
+
 			<!-- Секція основних ролей -->
 			<section class="base-roles">
 				<div class="role-control">
 					<div class="label-row">
 						<label for="mans">Мирні жителі</label>
 						<input
-							type="number"
-							bind:value={mans}
-							on:input={(e) => validateMans(e.target.value)}
-							min="1"
-							max="24"
+							type="string"
+							value={mans}
+							on:input={handleMansInput}
+							on:blur={handleMansBlur}
 							id="mans"
 						/>
 					</div>
@@ -131,14 +213,13 @@
 						<label for="mafia">Мафія</label>
 						<input
 							id="mafia"
-							type="number"
-							bind:value={mafias}
-							on:input={(e) => validateMafias(e.target.value)}
-							min="1"
-							max="20"
+							type="string"
+							value={mafias}
+							on:input={handleMafiaInput}
+							on:blur={handleMafiaBlur}
 						/>
 					</div>
-					<input type="range" bind:value={mafias} min="1" max="20" class="red-slider" />
+					<input type="range" bind:value={mafias} min="0" max="20" class="red-slider" />
 				</div>
 			</section>
 
@@ -148,7 +229,7 @@
 					<input type="checkbox" bind:checked={withCop} />
 					<div class="role-box-content">
 						<Shield size={20} color="#ffffff" />
-						<span>Комісар</span>
+						<span>Шериф</span>
 					</div>
 				</label>
 
@@ -192,12 +273,6 @@
 					</div>
 				</label>
 			</div>
-
-			<!-- Кнопка рандому -->
-			<button class="random-btn" on:click={handleRandom}>
-				<Zap color="#ff4444" size={20} fill="currentColor" />
-				ЗГЕНЕРУВАТИ ВИПАДКОВО
-			</button>
 		</main>
 
 		<footer class="footer">
@@ -238,14 +313,14 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 30px;
+		margin-bottom: 20px;
 		border-bottom: 1px solid #333;
 		padding-bottom: 15px;
 	}
 
 	header h1 {
 		color: #fff;
-		font-size: 1.2rem;
+		font-size: 1.1rem;
 		letter-spacing: 2px;
 		display: flex;
 		align-items: center;
@@ -263,11 +338,60 @@
 		display: flex;
 		align-items: center;
 		gap: 6px;
-		box-shadow: 0 0 15px rgba(139, 0, 0, 0.4);
 	}
 
-	.total-badge span {
+	/* Стилі генератора */
+	.generator-box {
+		background: #151515;
+		padding: 15px;
+		border-radius: 10px;
+		border: 1px dashed #444;
+		margin-bottom: 25px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.gen-input-group {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		color: #ccc;
+		font-size: 0.9rem;
+	}
+
+	.gen-input-group label {
+		color: #fff;
+	}
+
+	.gen-input-group input {
+		width: 60px;
+		background: #222;
+		border: 1px solid #444;
+		color: #fff;
+		padding: 5px;
+		border-radius: 4px;
+		text-align: center;
+	}
+
+	.random-btn-top {
+		background: #ff4444;
 		color: white;
+		border: none;
+		padding: 8px 15px;
+		border-radius: 6px;
+		font-weight: bold;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 0.8rem;
+		transition: transform 0.2s;
+	}
+
+	.random-btn-top:active {
+		transform: scale(0.95);
 	}
 
 	/* Стилі для повзунків та інпутів */
@@ -284,7 +408,7 @@
 
 	.label-row label {
 		color: #fff;
-		font-size: 1rem;
+		font-size: 0.95rem;
 		text-transform: uppercase;
 		letter-spacing: 1px;
 	}
@@ -318,20 +442,17 @@
 		background: #ff4444;
 		border-radius: 50%;
 		cursor: pointer;
-		box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
 	}
 
-	/* Сітка чекбоксів */
 	.special-roles-grid {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-		margin-top: 30px;
+		gap: 10px;
+		margin-top: 20px;
 	}
 
 	.role-checkbox {
 		cursor: pointer;
-		position: relative;
 	}
 
 	.role-checkbox input {
@@ -341,7 +462,7 @@
 	.role-box-content {
 		background: #1a1a1a;
 		border: 1px solid #333;
-		padding: 12px;
+		padding: 10px;
 		border-radius: 8px;
 		display: flex;
 		align-items: center;
@@ -352,49 +473,26 @@
 
 	.role-box-content span {
 		color: #fff;
+		font-size: 0.9rem;
 	}
 
 	.role-checkbox.active .role-box-content {
 		border-color: #ff4444;
-		color: #fff;
 		background: rgba(255, 68, 68, 0.1);
-		box-shadow: inset 0 0 10px rgba(255, 68, 68, 0.1);
-	}
-
-	/* Кнопка рандому */
-	.random-btn {
-		width: 100%;
-		margin-top: 30px;
-		background: transparent;
-		border: 2px solid #ff4444;
-		color: #ff4444;
-		padding: 15px;
-		border-radius: 8px;
-		font-weight: bold;
-		letter-spacing: 2px;
-		cursor: pointer;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 10px;
-		transition: all 0.3s;
-	}
-
-	.random-btn:hover {
-		background: #ff4444;
-		color: white;
-		box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
 	}
 
 	.footer {
 		display: flex;
 		justify-content: center;
-		margin-top: 30px;
+		margin-top: 25px;
 	}
 
 	@media (max-width: 400px) {
 		.special-roles-grid {
 			grid-template-columns: 1fr;
+		}
+		.generator-box {
+			flex-direction: column;
 		}
 	}
 </style>
