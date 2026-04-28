@@ -1,7 +1,7 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
-export const cardRules = writable({
+const cardRulesConst = {
    mans: 4,
    mafias: 1,
    withDoctor: true,
@@ -10,7 +10,9 @@ export const cardRules = writable({
    withManiac: false,
    withSecurity: false,
    withLawyer: false
-});
+}
+
+export const cardRules = writable(cardRulesConst);
 
 export function getData() {
    function getCookie(name) {
@@ -25,9 +27,13 @@ export function getData() {
 
    if (browser == true) {
       let data = getCookie("gameSettings");
-      if (!data || !data.mans) return console.log("error while reading data");;
-      console.log(data);
-      cardRules.set(data);
+      if (data && data.mans) {
+         cardRules.set(data);
+      } else {
+         console.log("error while reading data");
+         setCookie('gameSettings', cardRulesConst, 30);
+         cardRules.set(cardRulesConst);
+      }
    }
 
 }
