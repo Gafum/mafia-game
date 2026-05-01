@@ -4,12 +4,12 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import createArray from '$lib/functions/createData';
-	import { browser } from '$app/environment';
-	import { cardRules } from '$lib/stores';
+	import { cardRules, cardRulesConst } from '$lib/stores';
+	import { cardList } from '$lib/data';
 
-	let peopleList = [{ name: 'Мирний', description: 'Та я мириний мен', myImg: 'Man2', id: 1 }];
+	let peopleList = [...cardList];
 
-	let visiblePeople = [{ name: 'Мирний', description: 'Та я мириний мен', myImg: 'Man2', id: 1 }];
+	let visiblePeople = [...cardList];
 
 	let showingElement = 0;
 	let maxVisibleCards = 3;
@@ -29,19 +29,15 @@
 	}
 
 	onMount(() => {
-		let data = {
-			mans: 4,
-			mafias: 2,
-			withDoctor: true,
-			withCop: true
-		};
-		if (!browser) return;
+		let data = { ...cardRulesConst };
+
 		try {
 			data = $cardRules;
-			if (!data) return;
+			if (!data) data = cardRulesConst;
 		} catch (e) {
 			console.log(e);
 		}
+
 		peopleList = createArray(data).map(
 			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2' }, index) => {
 				return { name, description, myImg, id: index };

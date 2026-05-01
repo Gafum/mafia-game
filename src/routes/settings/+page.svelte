@@ -2,170 +2,80 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { cardRules, setCookie } from '$lib/stores';
-	import {
-		Users,
-		Shield,
-		Zap,
-		Annoyed,
-		Crosshair,
-		HeartPulse,
-		UserCheck,
-		Briefcase,
-		Bomb
-	} from 'lucide-svelte';
+	import { cardRules, setCookie, cardRulesConst } from '$lib/stores';
+	import { generateGame } from '$lib/functions/settingsRandomizer';
+	import { bigDescriptionList } from '$lib/data';
 
-	let mans = 4;
-	let mafias = 1;
-	let withDoctor = true,
-		withCop = true,
-		withKamikaze = false,
-		withManiac = false,
-		withSecurity = false,
-		withLawyer = false;
+	import { Users, Zap, Annoyed } from 'lucide-svelte';
 
+	let state = { ...cardRulesConst };
 	let targetTotal = 10;
-
 	let isMount = false;
 
-	// Розрахунок загальної кількості
+	const specialKeys = Object.keys(cardRulesConst).filter((k) => !['mans', 'mafias'].includes(k));
+
+	// total players
 	$: totalPlayers =
-		Number(mans) +
-		Number(mafias) +
-		(withDoctor ? 1 : 0) +
-		(withCop ? 1 : 0) +
-		(withKamikaze ? 1 : 0) +
-		(withManiac ? 1 : 0) +
-		(withSecurity ? 1 : 0) +
-		(withLawyer ? 1 : 0);
+		Number(state.mans) +
+		Number(state.mafias) +
+		specialKeys.reduce((sum, key) => sum + (state[key] ? 1 : 0), 0);
 
-	// Auto Save
+	// autosave
 	$: if (isMount) {
-		let data = {
-			mans: Number(mans),
-			mafias: Number(mafias),
-			withDoctor,
-			withCop,
-			withKamikaze,
-			withManiac,
-			withSecurity,
-			withLawyer
-		};
-		cardRules.set(data);
-		setCookie('gameSettings', data, 30);
+		cardRules.set(state);
+		setCookie('gameSettings', state, 30);
 	}
 
-	function handleMansInput(e) {
+	function onlyNumber(e, max) {
 		let val = e.target.value;
 		let num = parseInt(val.replace(/[^0-9]/g, ''));
-		if (val.length == 0) {
-			return;
+
+		if (val.toString().length > num.toString().length) return null;
+
+		if (!val) return '';
+
+		if (!isNaN(num) && num <= max) {
+			return num;
 		}
-		if (num <= 24 && !isNaN(val) && val.replace(/[^0-9]/g, '').length > 0) {
-			mans = num;
-			return;
-		}
-		e.target.value = mans;
+		return null;
 	}
 
-	function handleMansBlur() {
-		if (mans === '' || mans < 1 || typeof mans != 'number') {
-			mans = 1;
+	function handleNumber(e, key, max) {
+		let num = onlyNumber(e, max);
+		if (num !== null) {
+			state[key] = num;
 		} else {
-			if (mans > 24) {
-				mans = 24;
-			}
+			e.target.value = state[key];
 		}
 	}
 
-	function handleMafiaInput(e) {
-		let val = e.target.value;
-		let num = parseInt(val.replace(/[^0-9]/g, ''));
-		if (val.length == 0) {
-			return;
-		}
-		if (num <= 20 && !isNaN(val) && val.replace(/[^0-9]/g, '').length > 0) {
-			mafias = num;
-			return;
-		}
-		e.target.value = mafias;
+	function normalize(value, min, max) {
+		if (!value || value < min) return min;
+		if (value > max) return max;
+		return value;
 	}
 
-	function handleMafiaBlur() {
-		if (mafias === '' || mafias < 0 || typeof mafias != 'number') {
-			mafias = 0;
+	function handleRandomGameInput(e) {
+		let num = onlyNumber(e, 50);
+		if (num !== null) {
+			targetTotal = num;
 		} else {
-			if (mans > 20) {
-				mans = 20;
-			}
+			e.target.value = targetTotal;
 		}
 	}
 
-	// ФУНКЦІЯ РОЗУМНОГО РАНДОМУ
 	function handleRandom() {
-		let remaining = targetTotal;
-
-		// 1. Скидаємо все
-		withDoctor = false;
-		withCop = false;
-		withKamikaze = false;
-		withManiac = false;
-		withSecurity = false;
-		withLawyer = false;
-
-		// 2. Визначаємо кількість мафії (приблизно 25-30% від гравців)
-		let suggestedMafia = Math.max(1, Math.floor(remaining / 3.5));
-		mafias = suggestedMafia;
-		remaining -= mafias;
-
-		// 3. Додаємо ролі, якщо вистачає людей
-		if (remaining > 1 && Math.random() > 0.2) {
-			withCop = true;
-			remaining--;
-		}
-		if (remaining > 1 && Math.random() > 0.2) {
-			withDoctor = true;
-			remaining--;
-		}
-		if (remaining > 1 && Math.random() > 0.5) {
-			withManiac = true;
-			remaining--;
-		}
-		if (remaining > 1 && Math.random() > 0.7) {
-			withLawyer = true;
-			remaining--;
-		}
-		if (remaining > 1 && Math.random() > 0.7) {
-			withSecurity = true;
-			remaining--;
-		}
-		if (remaining > 1 && Math.random() > 0.8) {
-			withKamikaze = true;
-			remaining--;
-		}
-
-		// 4. Всі інші — мирні (але не менше 1)
-		mans = Math.max(1, remaining);
+		state = generateGame(targetTotal);
 	}
 
 	onMount(() => {
 		if (!browser) return;
-		try {
-			let data = $cardRules;
-			if (data) {
-				mans = data.mans || 4;
-				mafias =
-					data.mafias.toString().replace(/[^0-9]/g, '').length > 0 && data.mafias >= 0 ? data.mafias : 1;
-				withDoctor = data.withDoctor;
-				withCop = data.withCop;
-				withKamikaze = data.withKamikaze;
-				withManiac = data.withManiac;
-				withSecurity = data.withSecurity;
-				withLawyer = data.withLawyer;
-			}
-		} catch (e) {
-			console.log(e);
+
+		let data = $cardRules;
+		if (data) {
+			state = { ...cardRulesConst, ...data };
 		}
+
 		isMount = true;
 	});
 </script>
@@ -175,109 +85,71 @@
 		<header>
 			<h1><Annoyed color="#ff4444" size={32} /> НАЛАШТУВАННЯ</h1>
 			<div class="total-badge">
-				<Users size={18} color="#ffffff" />
+				<Users size={18} color="#fff" />
 				<span>{totalPlayers} / 50</span>
 			</div>
 		</header>
 
-		<main class="content">
-			<!-- НОВИЙ БЛОК ГЕНЕРАТОРА ЗВЕРХУ -->
+		<main>
 			<div class="generator-box">
 				<div class="gen-input-group">
 					<label for="targetTotal">Кількість гравців:</label>
-					<input type="number" id="targetTotal" bind:value={targetTotal} min="3" max="50" />
+					<input
+						id="randomPlayer"
+						type="text"
+						value={targetTotal}
+						on:input={(e) => handleRandomGameInput(e)}
+						on:blur={() => (targetTotal = normalize(targetTotal, 3, 50))}
+					/>
 				</div>
 				<button class="random-btn-top" on:click={handleRandom}>
-					<Zap size={18} fill="currentColor" /> РАНДОМ
+					<Zap size={18} color="#fff" /> РАНДОМ
 				</button>
 			</div>
 
-			<!-- Секція основних ролей -->
 			<section class="base-roles">
 				<div class="role-control">
 					<div class="label-row">
-						<label for="mans">Мирні жителі</label>
+						<label for="mansInput">Мирні жителі</label>
 						<input
-							type="string"
-							value={mans}
-							on:input={handleMansInput}
-							on:blur={handleMansBlur}
-							id="mans"
+							id="mansInput"
+							value={state.mans}
+							on:input={(e) => handleNumber(e, 'mans', 24)}
+							on:blur={() => (state.mans = normalize(state.mans, 1, 24))}
 						/>
 					</div>
-					<input type="range" bind:value={mans} min="1" max="24" class="red-slider" />
+					<input type="range" min="1" max="24" bind:value={state.mans} class="red-slider" />
 				</div>
 
 				<div class="role-control">
 					<div class="label-row">
-						<label for="mafia">Мафія</label>
+						<label for="mafiasInput">Мафія</label>
 						<input
-							id="mafia"
-							type="string"
-							value={mafias}
-							on:input={handleMafiaInput}
-							on:blur={handleMafiaBlur}
+							id="mafiasInput"
+							value={state.mafias}
+							on:input={(e) => handleNumber(e, 'mafias', 20)}
+							on:blur={() => (state.mafias = normalize(state.mafias, 0, 20))}
 						/>
 					</div>
-					<input type="range" bind:value={mafias} min="0" max="20" class="red-slider" />
+					<input type="range" min="0" max="20" bind:value={state.mafias} class="red-slider" />
 				</div>
 			</section>
 
-			<!-- Секція особливих ролей (Чекбокси) -->
 			<div class="special-roles-grid">
-				<label class="role-checkbox" class:active={withCop}>
-					<input type="checkbox" bind:checked={withCop} />
-					<div class="role-box-content">
-						<Shield size={20} color="#ffffff" />
-						<span>Шериф</span>
-					</div>
-				</label>
-
-				<label class="role-checkbox" class:active={withDoctor}>
-					<input type="checkbox" bind:checked={withDoctor} />
-					<div class="role-box-content">
-						<HeartPulse size={20} color="#ffffff" />
-						<span>Лікар</span>
-					</div>
-				</label>
-
-				<label class="role-checkbox" class:active={withManiac}>
-					<input type="checkbox" bind:checked={withManiac} />
-					<div class="role-box-content">
-						<Crosshair size={20} color="#ffffff" />
-						<span>Маньяк</span>
-					</div>
-				</label>
-
-				<label class="role-checkbox" class:active={withKamikaze}>
-					<input type="checkbox" bind:checked={withKamikaze} />
-					<div class="role-box-content">
-						<Bomb size={20} color="#ffffff" />
-						<span>Камікадзе</span>
-					</div>
-				</label>
-
-				<label class="role-checkbox" class:active={withSecurity}>
-					<input type="checkbox" bind:checked={withSecurity} />
-					<div class="role-box-content">
-						<UserCheck size={20} color="#ffffff" />
-						<span>Охоронець</span>
-					</div>
-				</label>
-
-				<label class="role-checkbox" class:active={withLawyer}>
-					<input type="checkbox" bind:checked={withLawyer} />
-					<div class="role-box-content">
-						<Briefcase size={20} color="#ffffff" />
-						<span>Адвокат</span>
-					</div>
-				</label>
+				{#each specialKeys as key}
+					<label class="role-checkbox" class:active={state[key]}>
+						<input type="checkbox" bind:checked={state[key]} />
+						<div class="role-box-content">
+							<svelte:component this={bigDescriptionList[key].icon} size={20} color="#ffffff" />
+							<span>{bigDescriptionList[key].name}</span>
+						</div>
+					</label>
+				{/each}
 			</div>
 		</main>
-
-		<footer class="footer">
+		<div class="home-btn">
 			<HomeBtn size={50} />
-		</footer>
+		</div>
 	</div>
 </div>
 
@@ -329,7 +201,7 @@
 	}
 
 	.total-badge {
-		background: #8b0000;
+		background: #ff4444;
 		color: white;
 		padding: 6px 12px;
 		border-radius: 20px;
@@ -338,6 +210,10 @@
 		display: flex;
 		align-items: center;
 		gap: 6px;
+	}
+
+	.total-badge span {
+		color: #fff;
 	}
 
 	/* Стилі генератора */
@@ -481,7 +357,8 @@
 		background: rgba(255, 68, 68, 0.1);
 	}
 
-	.footer {
+	.home-btn {
+		width: 100%;
 		display: flex;
 		justify-content: center;
 		margin-top: 25px;
