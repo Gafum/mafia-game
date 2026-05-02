@@ -1,8 +1,10 @@
 <script>
-	export let name = 'Мирний',
-		description = 'Ну шо ш?',
+	import { bigDescriptionList } from '$lib/data';
+
+	export let description = 'Ну шо ш?',
 		myImg = 'Man2',
 		id = 0,
+		tag = 'mans',
 		showingElement = 0,
 		elementIndex = 0,
 		changeData = () => {
@@ -40,10 +42,15 @@
 	<div class="back" />
 	<div class="front">
 		<div class="imgWrapper">
-			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} />
+			<svelte:component
+				this={bigDescriptionList[tag].icon}
+				color="#000000"
+				class="play-back-icon"
+			/>
+			<img src="/assets/cards/{myImg}.png" class="my-img" alt={bigDescriptionList[tag].name} />
 		</div>
 		<div class="my-text">
-			<h2>{name}</h2>
+			<h2>{bigDescriptionList[tag].name ?? bigDescriptionList.mans.name}</h2>
 			<p>{description}</p>
 		</div>
 	</div>
@@ -126,7 +133,17 @@
 		align-content: center;
 	}
 
+	:global(.imgWrapper > .play-back-icon) {
+		position: absolute;
+		z-index: 0;
+		width: 70px;
+		height: 70px;
+		display: none;
+	}
+
 	.my-img {
+		position: relative;
+		z-index: 1;
 		max-width: 100%;
 		max-height: 100%;
 		height: calc(40vw - 60px);
@@ -176,6 +193,12 @@
 		.my-text {
 			justify-content: flex-start;
 			gap: 5px;
+		}
+
+		:global(.imgWrapper > .play-back-icon) {
+			width: 40px;
+			height: 40px;
+			transform: translateY(-200%);
 		}
 	}
 

@@ -20,6 +20,8 @@
 		Number(state.mafias) +
 		specialKeys.reduce((sum, key) => sum + (state[key] ? 1 : 0), 0);
 
+	$: targetTotal = totalPlayers;
+
 	// autosave
 	$: if (isMount) {
 		cardRules.set(state);
@@ -370,6 +372,10 @@
 		}
 		.generator-box {
 			flex-direction: column;
+		}
+		header {
+			flex-direction: column;
+			gap: 10px;
 		}
 	}
 </style>

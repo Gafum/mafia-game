@@ -1,7 +1,7 @@
 import { cardList } from '$lib/data';
 import Randomizer from '$lib/Servises/Randomizer.servise';
 
-export default function createArray({ mans = 3, mafias = 1 }) {
+export default function createArray({ mans = 3, mafias = 1, ...specialRoles }) {
 	let result = [];
 
 	for (let i = 0; i < mans; i++) {
@@ -18,11 +18,7 @@ export default function createArray({ mans = 3, mafias = 1 }) {
 		}
 	}
 
-	const tagsToInclude = JSON.parse(JSON.stringify(arguments));
-	delete tagsToInclude.mans;
-	delete tagsToInclude.mafias;
-
-	result = [...result, ...cardList.filter((element) => tagsToInclude[element.tag])];
+	result = [...result, ...cardList.filter((element) => Boolean(specialRoles[element.tag]))];
 
 	return Randomizer.shuffleArray(result);
 }

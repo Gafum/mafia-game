@@ -9,7 +9,7 @@
 
 	let peopleList = [...cardList];
 
-	let visiblePeople = [...cardList];
+	let visiblePeople = [];
 
 	let showingElement = 0;
 	let maxVisibleCards = 3;
@@ -39,8 +39,8 @@
 		}
 
 		peopleList = createArray(data).map(
-			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2' }, index) => {
-				return { name, description, myImg, id: index };
+			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2', tag = 'mans' }, index) => {
+				return { name, description, myImg, tag, id: index };
 			}
 		);
 

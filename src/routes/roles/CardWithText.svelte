@@ -1,9 +1,11 @@
 <script>
+	import { bigDescriptionList } from '$lib/data';
+
 	export let name = 'Мирний',
 		description = 'Ну шо ш?',
 		myImg = 'Man2',
 		bigDescription = 'Я Люблю спати вночі...',
-		tag = '';
+		tag = 'mans';
 
 	let flipped = false;
 
@@ -17,6 +19,7 @@
 <div class={'card ' + tag} class:show={flipped} on:click={flip}>
 	<div class="back">
 		<div class="imgWrapper">
+			<svelte:component this={bigDescriptionList[tag].icon} color="#000000" class="back-icon" />
 			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} />
 		</div>
 		<div class="my-text">
@@ -25,6 +28,7 @@
 		</div>
 	</div>
 	<div class="front">
+		<svelte:component this={bigDescriptionList[tag].icon} color="#000000" class="role-icon" />
 		<h2>{name}</h2>
 		<p>{bigDescription}</p>
 	</div>
@@ -89,6 +93,7 @@
 
 	.imgWrapper {
 		max-height: 100%;
+		position: relative;
 	}
 
 	.my-img {
@@ -97,6 +102,8 @@
 		border-radius: 10px;
 		margin: auto;
 		object-fit: contain;
+		z-index: 1;
+		position: relative;
 	}
 
 	.my-text {
@@ -127,6 +134,25 @@
 		font-weight: 500;
 	}
 
+	:global(.front > .role-icon) {
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		width: 35px;
+		height: 35px;
+	}
+
+	:global(.imgWrapper > .back-icon) {
+		position: absolute;
+		z-index: 0;
+		width: 70px;
+		height: 70px;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -120%);
+		display: none;
+	}
+
 	@media (max-width: 720px) {
 		.back {
 			display: flex;
@@ -154,6 +180,13 @@
 		.my-text > h2,
 		.front > h2 {
 			font-size: 40px;
+		}
+
+		:global(.front > .role-icon) {
+			top: 10px;
+			right: 10px;
+			width: 27px;
+			height: 27px;
 		}
 	}
 
@@ -183,6 +216,24 @@
 		.front > p {
 			font-size: 15px;
 			max-width: auto;
+		}
+
+		:global(.front > .role-icon) {
+			top: 6px;
+			right: 6px;
+			width: 22px;
+			height: 22px;
+		}
+
+		:global(.imgWrapper > .back-icon) {
+			width: 40px;
+			height: 40px;
+			transform: translate(-50%, -140%);
+		}
+	}
+	@media (max-width: 330px) {
+		:global(.front > .role-icon) {
+			display: none;
 		}
 	}
 </style>
