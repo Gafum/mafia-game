@@ -20,7 +20,7 @@
 	<div class="back">
 		<div class="imgWrapper">
 			<svelte:component this={bigDescriptionList[tag].icon} color="#000000" class="back-icon" />
-			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} />
+			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} loading="lazy" />
 		</div>
 		<div class="my-text">
 			<h2>{name}</h2>
@@ -104,6 +104,7 @@
 		object-fit: contain;
 		z-index: 1;
 		position: relative;
+		background-color: white;
 	}
 
 	.my-text {
@@ -150,7 +151,7 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -120%);
-		display: none;
+		/* display: none; */
 	}
 
 	@media (max-width: 720px) {

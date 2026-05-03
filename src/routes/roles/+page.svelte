@@ -3,7 +3,12 @@
 	import CardWithText from './CardWithText.svelte';
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import createUnicCardList from '$lib/functions/createUnicCardList';
-	let visbleList = createUnicCardList(cardList);
+	import { onMount } from 'svelte';
+	let visbleList = [];
+
+	onMount(() => {
+		visbleList = createUnicCardList(cardList);
+	});
 </script>
 
 <div

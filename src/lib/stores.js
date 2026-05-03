@@ -1,16 +1,6 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
-
-export const cardRulesConst = {
-	mans: 4,
-	mafias: 1,
-	doctor: true,
-	cop: true,
-	kamikaze: false,
-	maniac: false,
-	security: false,
-	lawyer: false
-};
+import { cardRulesConst } from '$lib/data';
 
 export const cardRules = writable(cardRulesConst);
 

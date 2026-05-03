@@ -28,6 +28,17 @@
 			}
 		}
 	}
+
+	let imageError = false;
+	let imageLoaded = false;
+
+	function handleImageError() {
+		imageError = true;
+	}
+
+	function handleImageLoad() {
+		imageLoaded = true;
+	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -42,13 +53,24 @@
 	<div class="back" />
 	<div class="front">
 		<div class="imgWrapper">
-			<svelte:component
-				this={bigDescriptionList[tag].icon}
-				color="#000000"
-				class="play-back-icon"
+			{#if !imageLoaded || imageError}
+				<svelte:component
+					this={bigDescriptionList[tag].icon}
+					color="#000000"
+					class="fallback-icon"
+				/>
+			{/if}
+
+			<img
+				src="/assets/cards/{myImg}.png"
+				class="my-img"
+				alt={bigDescriptionList[tag].name}
+				on:load={handleImageLoad}
+				on:error={handleImageError}
+				loading="lazy"
 			/>
-			<img src="/assets/cards/{myImg}.png" class="my-img" alt={bigDescriptionList[tag].name} />
 		</div>
+
 		<div class="my-text">
 			<h2>{bigDescriptionList[tag].name ?? bigDescriptionList.mans.name}</h2>
 			<p>{description}</p>
@@ -124,6 +146,7 @@
 	/* IMG WITH contain size WORKING!!!! */
 
 	.imgWrapper {
+		position: relative;
 		max-width: 100%;
 		height: 100%;
 		overflow: hidden;
@@ -131,14 +154,15 @@
 		justify-content: center;
 		align-items: center;
 		align-content: center;
+		min-width: 230px;
 	}
 
-	:global(.imgWrapper > .play-back-icon) {
+	:global(.fallback-icon) {
+		max-height: 100%;
 		position: absolute;
 		z-index: 0;
-		width: 70px;
-		height: 70px;
-		display: none;
+		width: 120px;
+		height: 120px;
 	}
 
 	.my-img {
@@ -184,21 +208,17 @@
 
 		.imgWrapper {
 			height: auto;
+			min-width: auto;
 		}
 
 		.my-img {
 			height: auto;
+			color: transparent;
 		}
 
 		.my-text {
 			justify-content: flex-start;
 			gap: 5px;
-		}
-
-		:global(.imgWrapper > .play-back-icon) {
-			width: 40px;
-			height: 40px;
-			transform: translateY(-200%);
 		}
 	}
 
@@ -209,6 +229,11 @@
 		.my-text > p {
 			font-size: 20px;
 			text-align: center;
+		}
+
+		:global(.fallback-icon) {
+			width: 80px;
+			height: 80px;
 		}
 	}
 </style>

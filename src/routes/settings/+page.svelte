@@ -2,9 +2,9 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { cardRules, setCookie, cardRulesConst } from '$lib/stores';
+	import { cardRules, setCookie } from '$lib/stores';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
-	import { bigDescriptionList } from '$lib/data';
+	import { cardRulesConst, bigDescriptionList } from '$lib/data';
 
 	import { Users, Zap, Annoyed } from 'lucide-svelte';
 
@@ -116,11 +116,17 @@
 						<input
 							id="mansInput"
 							value={state.mans}
-							on:input={(e) => handleNumber(e, 'mans', 24)}
-							on:blur={() => (state.mans = normalize(state.mans, 1, 24))}
+							on:input={(e) => handleNumber(e, 'mans', cardRulesConst.mans)}
+							on:blur={() => (state.mans = normalize(state.mans, 1, cardRulesConst.mans))}
 						/>
 					</div>
-					<input type="range" min="1" max="24" bind:value={state.mans} class="red-slider" />
+					<input
+						type="range"
+						min="1"
+						max={cardRulesConst.mans}
+						bind:value={state.mans}
+						class="red-slider"
+					/>
 				</div>
 
 				<div class="role-control">
@@ -129,11 +135,17 @@
 						<input
 							id="mafiasInput"
 							value={state.mafias}
-							on:input={(e) => handleNumber(e, 'mafias', 20)}
-							on:blur={() => (state.mafias = normalize(state.mafias, 0, 20))}
+							on:input={(e) => handleNumber(e, 'mafias', cardRulesConst.mafias)}
+							on:blur={() => (state.mafias = normalize(state.mafias, 0, cardRulesConst.mafias))}
 						/>
 					</div>
-					<input type="range" min="0" max="20" bind:value={state.mafias} class="red-slider" />
+					<input
+						type="range"
+						min="0"
+						max={cardRulesConst.mafias}
+						bind:value={state.mafias}
+						class="red-slider"
+					/>
 				</div>
 			</section>
 
@@ -142,7 +154,7 @@
 					<label class="role-checkbox" class:active={state[key]}>
 						<input type="checkbox" bind:checked={state[key]} />
 						<div class="role-box-content">
-							<svelte:component this={bigDescriptionList[key].icon} size={20} color="#ffffff" />
+							<svelte:component this={bigDescriptionList[key].icon} size={25} color="#ffffff" />
 							<span>{bigDescriptionList[key].name}</span>
 						</div>
 					</label>
@@ -351,7 +363,7 @@
 
 	.role-box-content span {
 		color: #fff;
-		font-size: 0.9rem;
+		font-size: 1.2rem;
 	}
 
 	.role-checkbox.active .role-box-content {

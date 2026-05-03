@@ -4,8 +4,8 @@
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import createArray from '$lib/functions/createData';
-	import { cardRules, cardRulesConst } from '$lib/stores';
-	import { cardList } from '$lib/data';
+	import { cardRules } from '$lib/stores';
+	import { cardRulesConst, cardList } from '$lib/data';
 
 	let peopleList = [...cardList];
 
