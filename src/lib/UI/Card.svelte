@@ -1,4 +1,5 @@
 <script>
+	import { CircleQuestionMark } from 'lucide-svelte';
 	import { bigDescriptionList } from '$lib/data';
 
 	export let description = 'Ну шо ш?',
@@ -76,6 +77,7 @@
 			<p>{description}</p>
 		</div>
 	</div>
+	<CircleQuestionMark />
 </div>
 
 <style>

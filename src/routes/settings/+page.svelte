@@ -5,6 +5,7 @@
 	import { cardRules, setCookie } from '$lib/stores';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
 	import { cardRulesConst, bigDescriptionList } from '$lib/data';
+	import { findSpecialKeys, maxPlayerAmount } from '$lib/functions/findSpecialKeys';
 
 	import { Users, Zap, Annoyed } from 'lucide-svelte';
 
@@ -12,7 +13,7 @@
 	let targetTotal = 10;
 	let isMount = false;
 
-	const specialKeys = Object.keys(cardRulesConst).filter((k) => !['mans', 'mafias'].includes(k));
+	const specialKeys = findSpecialKeys();
 
 	// total players
 	$: totalPlayers =
@@ -58,7 +59,7 @@
 	}
 
 	function handleRandomGameInput(e) {
-		let num = onlyNumber(e, 50);
+		let num = onlyNumber(e, maxPlayerAmount);
 		if (num !== null) {
 			targetTotal = num;
 		} else {
@@ -88,7 +89,11 @@
 			<h1><Annoyed color="#ff4444" size={32} /> НАЛАШТУВАННЯ</h1>
 			<div class="total-badge">
 				<Users size={18} color="#fff" />
-				<span>{totalPlayers} / 50</span>
+				<span>
+					{totalPlayers}
+					/
+					{maxPlayerAmount}
+				</span>
 			</div>
 		</header>
 
@@ -101,7 +106,7 @@
 						type="text"
 						value={targetTotal}
 						on:input={(e) => handleRandomGameInput(e)}
-						on:blur={() => (targetTotal = normalize(targetTotal, 3, 50))}
+						on:blur={() => (targetTotal = normalize(targetTotal, 3, maxPlayerAmount))}
 					/>
 				</div>
 				<button class="random-btn-top" on:click={handleRandom}>

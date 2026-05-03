@@ -1,13 +1,12 @@
-import { cardRulesConst } from '../data';
+import { cardRulesConst } from '$lib/data';
+import { findSpecialKeys, maxPlayerAmount } from '$lib/functions/findSpecialKeys';
 
 function createSpecialRolesList() {
-	const keys = Object.keys(cardRulesConst).filter((k) => !['mans', 'mafias'].includes(k));
-
 	const start = 0.2;
-	const step = 0.2;
+	const step = 0.1;
 	const max = 0.7;
 
-	return keys.map((key, i) => {
+	return findSpecialKeys().map((key, i) => {
 		let chance = Math.min(max, start + Math.log(i + 1) * step);
 
 		if (chance > max) chance = max;
@@ -16,10 +15,10 @@ function createSpecialRolesList() {
 	});
 }
 
-export const specialRolesList = createSpecialRolesList();
+const specialRolesList = createSpecialRolesList();
 
 export function generateGame(targetTotal) {
-	let total = Math.min(50, Math.max(3, targetTotal));
+	let total = Math.min(maxPlayerAmount, Math.max(3, targetTotal));
 
 	let roles = {};
 	specialRolesList.forEach((r) => (roles[r.key] = false));
