@@ -1,6 +1,6 @@
 <script>
 	/** @type {import('./$types').PageData} */
-	import Card from '$lib/UI/Card.svelte';
+	import Card from './Card.svelte';
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
 	import createArray from '$lib/functions/createData';
