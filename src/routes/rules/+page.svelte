@@ -7,7 +7,7 @@
 	<ol>
 		{#each gameRules as { title, description }}
 			<li>
-				<span>{title}:</span>{description}
+				<span>{title}: </span>{description}
 			</li>
 		{/each}
 	</ol>

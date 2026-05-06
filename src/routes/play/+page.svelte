@@ -53,6 +53,7 @@
 		<!-- Must be first -->
 		<div class="home-btn">
 			<HomeBtn />
+			<a class="host-link" href="/host">Host</a>
 		</div>
 		{#each visiblePeople as person (person.id)}
 			<Card
@@ -91,5 +92,27 @@
 		position: absolute;
 		width: 100px;
 		height: 100px;
+		display: grid;
+		place-items: center;
+		gap: 12px;
+	}
+
+	.host-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 40px;
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.08);
+		color: #f7f7f7;
+		text-decoration: none;
+		font-weight: 700;
+		transition: background 0.2s ease, transform 0.2s ease;
+	}
+
+	.host-link:hover {
+		background: rgba(255, 255, 255, 0.14);
+		transform: translateY(-1px);
 	}
 </style>

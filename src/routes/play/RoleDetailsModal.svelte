@@ -156,13 +156,12 @@
 			align-items: flex-end;
 			justify-content: flex-end;
 			padding: 0;
-			position: absolute;
 		}
 
 		.details-panel {
 			width: 100vw;
-			width: calc(100vw + 4px);
-			max-width: 103vw;
+			width: 100svw;
+			max-width: 100vw;
 			border-radius: 24px 24px 0 0;
 			padding: 24px 18px 26px;
 			margin: 0;
