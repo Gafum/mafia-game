@@ -6,26 +6,37 @@
 	import createArray from '$lib/functions/createData';
 	import { cardRules } from '$lib/stores';
 	import { cardRulesConst, cardList } from '$lib/data';
+	import { goto } from '$app/navigation';
 
 	let peopleList = [...cardList];
 
 	let visiblePeople = [];
 
 	let showingElement = 0;
-	let maxVisibleCards = 3;
+	let maxVisibleCards = 2;
 
-	function changeData(person) {
+	function changeData() {
 		try {
-			if (peopleList.indexOf(person) + 1 == peopleList.length) {
+			if (showingElement == 0) {
 				return;
 			}
-			showingElement = peopleList[peopleList.indexOf(person) + 1].id;
-			maxVisibleCards++;
-			visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
+			if (showingElement < maxVisibleCards) {
+				maxVisibleCards--;
+			}
+			visiblePeople = peopleList.slice(showingElement - maxVisibleCards, showingElement + 1);
+			showingElement--;
 		} catch (e) {
 			console.log(e);
 			showingElement = 0;
 		}
+	}
+
+	function goToHost() {
+		goto('/host', {
+			state: {
+				peopleList
+			}
+		});
 	}
 
 	onMount(() => {
@@ -38,13 +49,12 @@
 			console.log(e);
 		}
 
-		peopleList = createArray(data).map(
-			({ name = 'Мирний', description = 'Ну шо ш?', myImg = 'Man2', tag = 'mans' }, index) => {
-				return { name, description, myImg, tag, id: index };
-			}
-		);
+		peopleList = createArray(data).map((id, index) => {
+			return { id, index };
+		});
 
-		visiblePeople = peopleList.slice(0, maxVisibleCards).reverse();
+		visiblePeople = peopleList.slice(peopleList.length - maxVisibleCards, peopleList.length);
+		showingElement = peopleList.length - 1; // index of last element
 	});
 </script>
 
@@ -53,15 +63,10 @@
 		<!-- Must be first -->
 		<div class="home-btn">
 			<HomeBtn />
-			<a class="host-link" href="/host">Host</a>
+			<a href="/host" on:click|preventDefault={goToHost} class="host-link"> Host </a>
 		</div>
-		{#each visiblePeople as person (person.id)}
-			<Card
-				{...person}
-				changeData={() => changeData(person)}
-				{showingElement}
-				elementIndex={peopleList.indexOf(person)}
-			/>
+		{#each visiblePeople as person (person.index)}
+			<Card {...person} {changeData} {showingElement} />
 		{/each}
 	</div>
 </div>

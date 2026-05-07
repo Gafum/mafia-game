@@ -1,23 +1,26 @@
 <script>
 	import { CircleQuestionMark } from 'lucide-svelte';
 	import RoleDetailsModal from './RoleDetailsModal.svelte';
-	import { bigDescriptionList } from '$lib/data';
+	import { cardList, bigDescriptionList } from '$lib/data';
 
-	export let description = 'Ну шо ш?',
-		myImg = 'Man2',
-		id = 0,
-		tag = 'mans',
+	export let id = 0,
+		index = 0,
 		showingElement = 0,
-		elementIndex = 0,
 		changeData = () => {
 			console.log('hi');
 		};
+
+	const personData = cardList.find((elem) => {
+		return elem.id == id;
+	});
+
+	personData.name = bigDescriptionList[personData.tag].name ?? bigDescriptionList.mans.name;
 
 	let flipped = false;
 	let isShown = false;
 
 	function flip(event) {
-		if (showingElement !== id) return;
+		if (showingElement !== index) return;
 
 		if (!flipped) {
 			flipped = true;
@@ -26,6 +29,7 @@
 				isShown = true;
 				event.target.onclick = '';
 				changeData();
+
 				setTimeout(() => (flipped = false), 400);
 			}
 		}
@@ -48,7 +52,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="card"
-	style={'--side: ' + (elementIndex % 2 ? '160%' : '-100%')}
+	style={'--side: ' + (index % 2 ? '160%' : '-100%')}
 	class:show={flipped}
 	class:hide={isShown}
 	on:click={flip}
@@ -58,16 +62,16 @@
 		<div class="imgWrapper">
 			{#if !imageLoaded || imageError}
 				<svelte:component
-					this={bigDescriptionList[tag].icon}
+					this={bigDescriptionList[personData.tag].icon}
 					color="#000000"
 					class="fallback-icon"
 				/>
 			{/if}
 
 			<img
-				src="/assets/cards/{myImg}.png"
+				src="/assets/cards/{personData.myImg}.png"
 				class="my-img"
-				alt={bigDescriptionList[tag].name}
+				alt={personData.name}
 				on:load={handleImageLoad}
 				on:error={handleImageError}
 				loading="lazy"
@@ -75,8 +79,8 @@
 		</div>
 
 		<div class="my-text">
-			<h2>{bigDescriptionList[tag].name ?? bigDescriptionList.mans.name}</h2>
-			<p>{description}</p>
+			<h2>{personData.name}</h2>
+			<p>{personData.description}</p>
 		</div>
 
 		<button
@@ -89,7 +93,11 @@
 		</button>
 	</div>
 
-	<RoleDetailsModal heroId={tag} open={showDetails} on:close={() => (showDetails = false)} />
+	<RoleDetailsModal
+		heroId={personData.tag}
+		open={showDetails}
+		on:close={() => (showDetails = false)}
+	/>
 </div>
 
 <style>
@@ -108,6 +116,7 @@
 		user-select: none;
 		cursor: pointer;
 		box-shadow: 0px 4px 5px #262626;
+		z-index: 10;
 	}
 
 	.card.show {
