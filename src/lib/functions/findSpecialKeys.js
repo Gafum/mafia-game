@@ -1,5 +1,6 @@
 import { cardRulesConst } from '$lib/data';
 
+
 export function findSpecialKeys() {
 	return Object.keys(cardRulesConst).filter((k) => !['mans', 'mafias'].includes(k));
 }

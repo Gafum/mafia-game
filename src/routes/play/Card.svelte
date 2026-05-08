@@ -4,7 +4,7 @@
 	import { cardList, bigDescriptionList } from '$lib/data';
 
 	export let id = 0,
-		index = 0,
+		uniqId = 0,
 		showingElement = 0,
 		changeData = () => {
 			console.log('hi');
@@ -20,7 +20,7 @@
 	let isShown = false;
 
 	function flip(event) {
-		if (showingElement !== index) return;
+		if (showingElement !== uniqId) return;
 
 		if (!flipped) {
 			flipped = true;
@@ -52,7 +52,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="card"
-	style={'--side: ' + (index % 2 ? '160%' : '-100%')}
+	style={'--side: ' + (uniqId % 2 ? '160%' : '-100%')}
 	class:show={flipped}
 	class:hide={isShown}
 	on:click={flip}

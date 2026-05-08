@@ -4,7 +4,7 @@
 
 <div class="rules-conteiner">
 	<h3>Правила гри:</h3>
-	<ol>
+	<ol class="rules-list">
 		{#each gameRules as { title, description }}
 			<li>
 				<span>{title}: </span>{description}
@@ -30,13 +30,13 @@
 		font-size: 25px;
 	}
 
-	.rules-conteiner > ol > li {
+	:global(.rules-list > li) {
 		color: white;
 		margin-left: 20px;
 		margin-top: 10px;
 	}
 
-	.rules-conteiner span {
+	:global(.rules-list span) {
 		color: white;
 		font-size: 23px;
 		text-shadow: 0 0 2px rgb(148, 148, 148);
@@ -69,11 +69,11 @@
 		.rules-conteiner > h3 {
 			font-size: 18px;
 		}
-		.rules-conteiner > ol > li {
+		:global(.rules-list > li) {
 			font-size: 15px;
 		}
 
-		.rules-conteiner span {
+		:global(.rules-list span) {
 			color: white;
 			font-size: 20px;
 		}

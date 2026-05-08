@@ -9,7 +9,7 @@ import {
 	User
 } from 'lucide-svelte';
 
-// Standart data for the game with all roles. It contains max value for mans and mafians
+// Standard data for the game with all roles. It contains max value for mans and mafians
 export const cardRulesConst = {
 	mans: 24,
 	mafias: 20,

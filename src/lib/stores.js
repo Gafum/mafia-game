@@ -51,8 +51,6 @@ export function getData() {
 	}
 }
 
-getData();
-
 export function setCookie(name, value, days = 30) {
 	if (!browser) return;
 
@@ -63,3 +61,5 @@ export function setCookie(name, value, days = 30) {
 		`${name}=${encodeURIComponent(JSON.stringify(value))};` +
 		`expires=${date.toUTCString()}; path=/`;
 }
+
+getData();

@@ -50,7 +50,7 @@
 		}
 
 		peopleList = createArray(data).map((id, index) => {
-			return { id, index };
+			return { id, uniqId: index };
 		});
 
 		visiblePeople = peopleList.slice(peopleList.length - maxVisibleCards, peopleList.length);
@@ -65,7 +65,7 @@
 			<HomeBtn />
 			<a href="/host" on:click|preventDefault={goToHost} class="host-link"> Host </a>
 		</div>
-		{#each visiblePeople as person (person.index)}
+		{#each visiblePeople as person (person.uniqId)}
 			<Card {...person} {changeData} {showingElement} />
 		{/each}
 	</div>
