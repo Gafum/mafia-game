@@ -155,6 +155,10 @@
 	}
 
 	@media (max-width: 720px) {
+		.card {
+			width: 100%;
+		}
+
 		.back {
 			display: flex;
 			justify-content: center;

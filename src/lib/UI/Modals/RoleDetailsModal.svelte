@@ -3,12 +3,12 @@
 	import { X } from 'lucide-svelte';
 	import { bigDescriptionList } from '$lib/data';
 
-	export let heroId = 'mans';
+	export let heroTag = 'mans';
 	export let open = false;
 
 	const dispatch = createEventDispatcher();
 
-	$: roleData = bigDescriptionList[heroId] ?? bigDescriptionList.mans;
+	$: roleData = bigDescriptionList[heroTag] ?? bigDescriptionList.mans;
 
 	function close() {
 		dispatch('close');
@@ -78,7 +78,7 @@
 	.details-panel {
 		position: relative;
 		width: min(520px, 100%);
-		background: rgba(14, 14, 18, 0.98);
+		background-color: #111;
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55);
 		backdrop-filter: blur(18px);

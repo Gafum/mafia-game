@@ -1,6 +1,6 @@
 <script>
 	import { CircleQuestionMark } from 'lucide-svelte';
-	import RoleDetailsModal from './RoleDetailsModal.svelte';
+	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 	import { cardList, bigDescriptionList } from '$lib/data';
 
 	export let id = 0,
@@ -94,7 +94,7 @@
 	</div>
 
 	<RoleDetailsModal
-		heroId={personData.tag}
+		heroTag={personData.tag}
 		open={showDetails}
 		on:close={() => (showDetails = false)}
 	/>

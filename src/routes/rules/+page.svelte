@@ -2,7 +2,7 @@
 	import { gameRules } from '$lib/data';
 </script>
 
-<div class="rules-conteiner">
+<div class="main-conteiner rules-conteiner">
 	<h3>Правила гри:</h3>
 	<ol class="rules-list">
 		{#each gameRules as { title, description }}
@@ -22,24 +22,11 @@
 	.rules-conteiner {
 		padding: 20px 25px 50px;
 		color: white;
-		padding: 20px;
 	}
 
 	.rules-conteiner > h3 {
 		color: white;
 		font-size: 25px;
-	}
-
-	:global(.rules-list > li) {
-		color: white;
-		margin-left: 20px;
-		margin-top: 10px;
-	}
-
-	:global(.rules-list span) {
-		color: white;
-		font-size: 23px;
-		text-shadow: 0 0 2px rgb(148, 148, 148);
 	}
 
 	.rules-btns-conteiner {
@@ -66,16 +53,12 @@
 	}
 
 	@media (max-width: 480px) {
-		.rules-conteiner > h3 {
-			font-size: 18px;
-		}
-		:global(.rules-list > li) {
-			font-size: 15px;
+		.rules-conteiner {
+			padding: 16px 10px 50px;
 		}
 
-		:global(.rules-list span) {
-			color: white;
-			font-size: 20px;
+		.rules-conteiner > h3 {
+			font-size: 18px;
 		}
 		.rules-btns-conteiner > a {
 			padding: 5px 10px;

@@ -1,12 +1,12 @@
 <script>
 	/** @type {import('./$types').PageData} */
+	import { goto } from '$app/navigation';
 	import Card from './Card.svelte';
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
-	import createArray from '$lib/functions/createData';
+	import { createArray } from '$lib/functions/createArray';
 	import { cardRules } from '$lib/stores';
 	import { cardRulesConst, cardList } from '$lib/data';
-	import { goto } from '$app/navigation';
 
 	let peopleList = [...cardList];
 
@@ -43,7 +43,7 @@
 		let data = { ...cardRulesConst };
 
 		try {
-			data = $cardRules;
+			data = { ...cardRulesConst, ...$cardRules };
 			if (!data) data = cardRulesConst;
 		} catch (e) {
 			console.log(e);
@@ -63,7 +63,7 @@
 		<!-- Must be first -->
 		<div class="home-btn">
 			<HomeBtn />
-			<a href="/host" on:click|preventDefault={goToHost} class="host-link"> Host </a>
+			<a href="/host" on:click|preventDefault={goToHost} class="host-link"> Ведучий </a>
 		</div>
 		{#each visiblePeople as person (person.uniqId)}
 			<Card {...person} {changeData} {showingElement} />

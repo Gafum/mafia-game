@@ -1,11 +1,13 @@
 <script>
 	import HomeBtn from '$lib/UI/HomeBtn.svelte';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { cardRules, setCookie } from '$lib/stores';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
 	import { cardRulesConst, bigDescriptionList } from '$lib/data';
 	import { findSpecialKeys, maxPlayerAmount } from '$lib/functions/findSpecialKeys';
+	import { createArray } from '$lib/functions/createArray';
 
 	import { Users, Zap, Annoyed } from 'lucide-svelte';
 
@@ -81,9 +83,19 @@
 
 		isMount = true;
 	});
+
+	function goToHost() {
+		goto('/host', {
+			state: {
+				peopleList: createArray($cardRules).map((id, index) => {
+					return { id, uniqId: index };
+				})
+			}
+		});
+	}
 </script>
 
-<div class="mafia-setup-screen">
+<div class="main-conteiner mafia-setup-screen">
 	<div class="setup-card">
 		<header>
 			<h1><Annoyed color="#ff4444" size={32} /> НАЛАШТУВАННЯ</h1>
@@ -166,6 +178,11 @@
 				{/each}
 			</div>
 		</main>
+
+		<a href="/host" on:click|preventDefault={goToHost} class="random-btn-top host-link">
+			<Users size={18} color="#fff" /> Ведучий
+		</a>
+
 		<div class="home-btn">
 			<HomeBtn size={50} />
 		</div>
@@ -173,20 +190,12 @@
 </div>
 
 <style>
-	:global(body) {
-		background-color: #050505;
-		margin: 0;
-		padding: 0;
-	}
-
 	.mafia-setup-screen {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		min-height: 100vh;
 		padding: 20px;
-		background: radial-gradient(circle at center, #1a0505 0%, #050505 100%);
-		font-family: 'Segoe UI', Roboto, sans-serif;
 	}
 
 	.setup-card {
@@ -376,14 +385,35 @@
 		background: rgba(255, 68, 68, 0.1);
 	}
 
+	.host-link {
+		margin-top: 20px;
+		font-size: 18px;
+		text-align: center;
+		width: 100%;
+		justify-content: center;
+		gap: 10px;
+	}
+
 	.home-btn {
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		margin-top: 25px;
+		margin-top: 18px;
 	}
 
 	@media (max-width: 400px) {
+		.mafia-setup-screen {
+			padding: 0;
+		}
+		.setup-card {
+			background: #111;
+			border: none;
+			border-top: none;
+			max-width: auto;
+			border-radius: 0;
+			box-shadow: none;
+			padding: 16px;
+		}
 		.special-roles-grid {
 			grid-template-columns: 1fr;
 		}

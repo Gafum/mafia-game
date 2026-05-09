@@ -1,4 +1,4 @@
-<div class="main-conteiner">
+<div class="home-conteiner main-conteiner">
 	<h1>Mafia</h1>
 	<a href="/play" class="menu_btn play-btn">Грати</a>
 	<a href="/settings" class="menu_btn settings">Налаштування</a>
@@ -8,7 +8,7 @@
 </div>
 
 <style>
-	.main-conteiner {
+	.home-conteiner {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -20,14 +20,14 @@
 		background-color: #111;
 	}
 
-	.main-conteiner > h1 {
+	.home-conteiner > h1 {
 		color: #912c2c;
 		font-size: 80px;
 		font-weight: bold;
 		transition: text-shadow 0.2s;
 	}
 
-	.main-conteiner > a.menu_btn {
+	.home-conteiner > a.menu_btn {
 		padding: 10px 20px;
 		border-radius: 10px;
 		color: rgb(235, 235, 235);
@@ -35,18 +35,18 @@
 		transition-duration: 0.2s;
 	}
 
-	.main-conteiner > a.menu_btn.settings {
+	.home-conteiner > a.menu_btn.settings {
 		font-size: 30px;
 		background-color: #493066;
 	}
 
-	.main-conteiner > a.menu_btn.play-btn {
+	.home-conteiner > a.menu_btn.play-btn {
 		font-size: 70px;
 		padding: 13px 35px;
 		background-color: #2c9182;
 	}
 
-	.main-conteiner > a.menu_btn.rules-btn {
+	.home-conteiner > a.menu_btn.rules-btn {
 		font-size: 25px;
 		background-color: #306740;
 	}
@@ -61,7 +61,7 @@
 	}
 
 	@media (hover: hover) {
-		.main-conteiner > h1:hover {
+		.home-conteiner > h1:hover {
 			text-shadow: 0 0 7px rgb(185, 57, 57);
 			filter: brightness(1.1);
 		}
@@ -84,20 +84,20 @@
 	}
 
 	@media (max-width: 480px) {
-		.main-conteiner {
+		.home-conteiner {
 			gap: 15px;
 		}
-		.main-conteiner > h1 {
+		.home-conteiner > h1 {
 			font-size: 70px;
 		}
-		.main-conteiner > a.menu_btn.settings {
+		.home-conteiner > a.menu_btn.settings {
 			font-size: 20px;
 		}
-		.main-conteiner > a.menu_btn.play-btn {
+		.home-conteiner > a.menu_btn.play-btn {
 			font-size: 55px;
 			padding: 8px 20px;
 		}
-		.main-conteiner > a.menu_btn.rules-btn {
+		.home-conteiner > a.menu_btn.rules-btn {
 			font-size: 20px;
 		}
 	}
