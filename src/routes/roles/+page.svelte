@@ -25,7 +25,7 @@
 		justify-content: center;
 		align-items: center;
 		gap: 10px;
-		padding: 16px;
+		padding: 16px 16px 40px;
 		height: auto;
 	}
 </style>

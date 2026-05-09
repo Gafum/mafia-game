@@ -1,17 +1,10 @@
 <script>
-	import { gameRules } from '$lib/data';
+	import RulesList from './RulesList.svelte';
 </script>
 
 <div class="main-conteiner rules-conteiner">
 	<h3>Правила гри:</h3>
-	<ol class="rules-list">
-		{#each gameRules as { title, description }}
-			<li>
-				<span>{title}: </span>{description}
-			</li>
-		{/each}
-	</ol>
-
+	<RulesList />
 	<div class="rules-btns-conteiner">
 		<a href="/roles">Персонажі</a>
 		<a href="/">Головна</a>

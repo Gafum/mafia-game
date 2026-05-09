@@ -4,7 +4,7 @@
 	<a href="/settings" class="menu_btn settings">Налаштування</a>
 	<a href="/rules" class="menu_btn rules-btn">Правила гри</a>
 
-	<a href="https://github.com/Gafum" target="_blank" class="madeBy">by Gafum</a>
+	<a href="https://github.com/Gafum" target="_blank" class="madeBy">Dmytro Marchuk</a>
 </div>
 
 <style>

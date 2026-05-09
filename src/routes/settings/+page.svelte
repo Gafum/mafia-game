@@ -206,7 +206,7 @@
 		max-width: 500px;
 		border-radius: 12px;
 		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-		padding: 25px;
+		padding: 25px 25px 50px;
 	}
 
 	header {
@@ -412,7 +412,7 @@
 			max-width: auto;
 			border-radius: 0;
 			box-shadow: none;
-			padding: 16px;
+			padding: 16px 16px 50px;
 		}
 		.special-roles-grid {
 			grid-template-columns: 1fr;
