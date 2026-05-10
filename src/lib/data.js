@@ -7,7 +7,8 @@ import {
 	Bomb,
 	HatGlasses,
 	User,
-	Drama
+	Drama,
+	Brain,
 } from 'lucide-svelte';
 
 // Standard data for the game with all roles. It contains max value for mans and mafians
@@ -21,6 +22,7 @@ export const cardRulesConst = {
 	security: false,
 	lawyer: false,
 	agent: false,
+	idiot: false,
 };
 
 // All possible Cards data. Here you can add or change cards
@@ -122,6 +124,12 @@ export const cardList =
 			myImg: 'Agent',
 			tag: 'agent',
 			id: 15
+		},
+		{
+			description: 'ЕЕЕЕЕЕ',
+			myImg: 'Idiot',
+			tag: 'idiot',
+			id: 16
 		}
 	];
 
@@ -180,6 +188,12 @@ export const bigDescriptionList = {
 			'Він «прокидається» вночі разом із мафією, знає їх у обличчя та бачить, кого вони обирають жертвою. При цьому мафіозі вважають його «своїм» (вони бачать його вночі, але не знають, що він — агент). Його завдання — тонко маніпулювати голосуванням на користь мирних.',
 		icon: Drama,
 		name: 'Агент під прикриттям'
+	},
+	idiot: {
+		description:
+			'Це пасивна роль мирного жителя, якого неможливо вбити вночі, бо «він нікому не відчиняє двері». Єдиний спосіб прибрати його з гри — вигнати на денному голосуванні загальним рішенням міста.',
+		icon: Brain,
+		name: 'Дурачок'
 	}
 	
 };
