@@ -6,7 +6,8 @@ import {
 	Briefcase,
 	Bomb,
 	HatGlasses,
-	User
+	User,
+	Drama
 } from 'lucide-svelte';
 
 // Standard data for the game with all roles. It contains max value for mans and mafians
@@ -18,7 +19,8 @@ export const cardRulesConst = {
 	kamikaze: false,
 	maniac: false,
 	security: false,
-	lawyer: false
+	lawyer: false,
+	agent: false,
 };
 
 // All possible Cards data. Here you can add or change cards
@@ -114,6 +116,12 @@ export const cardList =
 			myImg: 'Lawyer',
 			tag: 'lawyer',
 			id: 14
+		},
+		{
+			description: 'Я Глебік, чесно чесно!',
+			myImg: 'Agent',
+			tag: 'agent',
+			id: 15
 		}
 	];
 
@@ -166,7 +174,14 @@ export const bigDescriptionList = {
 			'Він може вказати на іншого гравця протягом ночі, вибраний гравець не може бути обрана жертвою на наступний день пíд час голосування. Адвокат здатний забезпечити безпеку, дозволяючи іншому вижити вíд лíнчування та продовжити гру. Одного персонажа не можна захищати двi ночi пiдряд!',
 		icon: Briefcase,
 		name: 'Адвокат'
+	},
+	agent: {
+		description:
+			'Він «прокидається» вночі разом із мафією, знає їх у обличчя та бачить, кого вони обирають жертвою. При цьому мафіозі вважають його «своїм» (вони бачать його вночі, але не знають, що він — агент). Його завдання — тонко маніпулювати голосуванням на користь мирних.',
+		icon: Drama,
+		name: 'Агент під прикриттям'
 	}
+	
 };
 
 // All game rules. Here you can change rules or add new ones
