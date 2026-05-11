@@ -46,10 +46,6 @@
 		background: #1a1a1a;
 	}
 
-	/* .dropdown-block:active {
-		transform: scale(0.995);
-	} */
-
 	.dropdown-block.active {
 		background: #181818;
 	}

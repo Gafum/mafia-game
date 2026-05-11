@@ -2,7 +2,7 @@
 	/** @type {import('./$types').PageData} */
 	import { goto } from '$app/navigation';
 	import Card from './Card.svelte';
-	import HomeBtn from '$lib/UI/HomeBtn.svelte';
+	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import { onMount } from 'svelte';
 	import { createArray } from '$lib/functions/createArray';
 	import { cardRules } from '$lib/stores';
@@ -60,9 +60,9 @@
 
 <div class="center">
 	<div class="conteiner-inner">
-		<!-- Must be first -->
 		<div class="home-btn">
-			<HomeBtn />
+			<!-- Must be first -->
+			<StandardLinks size={75} blockStyles="flex-direction: column;" />
 			<a href="/host" on:click|preventDefault={goToHost} class="host-link"> Ведучий </a>
 		</div>
 		{#each visiblePeople as person (person.uniqId)}
@@ -95,14 +95,10 @@
 		top: 50%;
 		left: 50%;
 		position: absolute;
-		width: 100px;
-		height: 100px;
-		display: grid;
-		place-items: center;
-		gap: 12px;
 	}
 
 	.host-link {
+		margin-top: 17px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

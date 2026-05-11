@@ -7,7 +7,7 @@
 
 <header class="header">
 	<div class="title">
-		<Users size={22} color="#fff" />
+		<Users size={22} color="#fff" class="mobile-hidden-icon" />
 		<h1>Панель ведучого</h1>
 	</div>
 
@@ -53,10 +53,12 @@
 		gap: 7px;
 
 		cursor: pointer;
+		transition: transform 0.2s;
 	}
 
 	.night-btn:active {
-		opacity: 0.7;
+		opacity: 0.9;
+		transform: scale(0.95);
 	}
 
 	@media (max-width: 500px) {

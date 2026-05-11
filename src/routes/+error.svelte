@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import HomeBtn from '$lib/UI/HomeBtn.svelte';
+	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 </script>
 
 <div class="center-conteiner">
@@ -9,7 +9,7 @@
 		Виникла проблема. Якщо після переходу на <a class="text" href="/">головну сторінку</a> вона не зникне,
 		то повідомте про це адміністратора
 	</p>
-	<HomeBtn size="50" />
+	<StandardLinks />
 </div>
 
 <style>

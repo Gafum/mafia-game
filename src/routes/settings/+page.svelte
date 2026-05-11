@@ -1,5 +1,5 @@
 <script>
-	import HomeBtn from '$lib/UI/HomeBtn.svelte';
+	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
@@ -98,7 +98,7 @@
 <div class="main-conteiner mafia-setup-screen">
 	<div class="setup-card">
 		<header>
-			<h1><Annoyed color="#ff4444" size={32} /> НАЛАШТУВАННЯ</h1>
+			<h1><Annoyed color="#ff4444" size={32} class="mobile-hidden-icon" /> Налаштування</h1>
 			<div class="total-badge">
 				<Users size={18} color="#fff" />
 				<span>
@@ -122,7 +122,7 @@
 					/>
 				</div>
 				<button class="random-btn-top" on:click={handleRandom}>
-					<Zap size={18} color="#fff" /> РАНДОМ
+					<Zap size={18} color="#fff" class="mobile-hidden-icon" /> РАНДОМ
 				</button>
 			</div>
 
@@ -180,12 +180,9 @@
 		</main>
 
 		<a href="/host" on:click|preventDefault={goToHost} class="random-btn-top host-link">
-			<Users size={18} color="#fff" /> Ведучий
+			<Users size={18} color="#fff" class="mobile-hidden-icon" /> Панель ведучого
 		</a>
-
-		<div class="home-btn">
-			<HomeBtn size={50} />
-		</div>
+		<StandardLinks />
 	</div>
 </div>
 
@@ -220,8 +217,7 @@
 
 	header h1 {
 		color: #fff;
-		font-size: 1.1rem;
-		letter-spacing: 2px;
+		font-size: 1.4rem;
 		display: flex;
 		align-items: center;
 		gap: 10px;
@@ -292,13 +288,13 @@
 		gap: 5px;
 		font-size: 0.8rem;
 		transition: transform 0.2s;
+		min-height: 33px;
 	}
 
 	.random-btn-top:active {
 		transform: scale(0.95);
 	}
 
-	/* Стилі для повзунків та інпутів */
 	.role-control {
 		margin-bottom: 25px;
 	}
@@ -392,13 +388,6 @@
 		width: 100%;
 		justify-content: center;
 		gap: 10px;
-	}
-
-	.home-btn {
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		margin-top: 18px;
 	}
 
 	@media (max-width: 400px) {

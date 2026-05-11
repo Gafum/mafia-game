@@ -8,6 +8,8 @@
 		return findSpecialKeys().filter((tag) => Boolean($cardRules[tag]));
 	}
 
+	let showScript = true;
+
 	let hostScript = [
 		'Місто засинає',
 		'Мафія прокидається',
@@ -16,7 +18,7 @@
 	];
 </script>
 
-<DropdownBlock>
+<DropdownBlock open={showScript}>
 	<h2 slot="title" class="host-headline">Слова ведучого</h2>
 
 	<div class="script-list">

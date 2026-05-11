@@ -17,7 +17,7 @@
 	<div class="left">
 		<div class="index">{index + 1}</div>
 
-		<svelte:component this={roleData.icon} size={20} color="#fff" />
+		<svelte:component this={roleData.icon} size={20} color="#fff" class="mobile-hidden-icon" />
 
 		<span>{roleData.name}</span>
 	</div>
@@ -115,7 +115,7 @@
 		padding-inline: 2px;
 	}
 
-	@media (max-width: 500px) {
+	@media (max-width: 340px) {
 		.player {
 			flex-direction: column;
 			align-items: stretch;

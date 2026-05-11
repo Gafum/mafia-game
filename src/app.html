@@ -73,6 +73,10 @@
 			font-family: inherit;
 		}
 
+		input[type="range"] {
+			touch-action: pan-y;
+		}
+
 		input::-ms-clear {
 			display: none;
 		}
@@ -120,6 +124,12 @@
 			min-height: 100%;
 			width: 100%;
 			background-color: #111;
+		}
+
+		@media (max-width:500px) {
+			.mobile-hidden-icon {
+				display: none;
+			}
 		}
 	</style>
 	%sveltekit.head%

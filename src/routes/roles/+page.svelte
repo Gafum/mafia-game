@@ -1,7 +1,7 @@
 <script>
 	import { cardList } from '$lib/data';
 	import CardWithText from './CardWithText.svelte';
-	import HomeBtn from '$lib/UI/HomeBtn.svelte';
+	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import createUnicCardList from '$lib/functions/createUnicCardList';
 	import { onMount } from 'svelte';
 	let visbleList = [];
@@ -15,7 +15,7 @@
 	{#each visbleList as card}
 		<CardWithText {...card} />
 	{/each}
-	<HomeBtn />
+	<StandardLinks size={75} blockStyles="max-width: 280px;" />
 </div>
 
 <style>

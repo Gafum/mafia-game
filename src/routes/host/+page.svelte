@@ -1,5 +1,5 @@
 <script>
-	import HomeBtn from '$lib/UI/HomeBtn.svelte';
+	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 
 	import HostHeader from './HostHeader.svelte';
@@ -37,9 +37,7 @@
 		on:close={() => (isModalOpen = false)}
 	/>
 
-	<div class="home-wrapper">
-		<HomeBtn size={50} />
-	</div>
+	<StandardLinks />
 </div>
 
 <style>
@@ -50,12 +48,6 @@
 		flex-direction: column;
 		gap: 18px;
 		color: white;
-	}
-
-	.home-wrapper {
-		display: flex;
-		justify-content: center;
-		margin-top: 10px;
 	}
 
 	:global(.host-block) {

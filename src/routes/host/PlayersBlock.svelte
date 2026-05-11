@@ -11,6 +11,8 @@
 
 	let people = page.state?.peopleList ?? [];
 
+	let showPlayers = true;
+
 	function toggleAlive(index) {
 		people[index].alive = !people[index].alive;
 		console.log(people);
@@ -30,7 +32,7 @@
 </script>
 
 {#if people.length > 0}
-	<DropdownBlock>
+	<DropdownBlock open={showPlayers}>
 		<h2 slot="title" class="host-headline">Гравці</h2>
 
 		<div class="players">

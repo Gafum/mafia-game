@@ -1,5 +1,4 @@
 <script>
-	import { BookOpen } from 'lucide-svelte';
 	import DropdownBlock from '$lib/UI/DropdownBlock.svelte';
 
 	import RulesList from '../rules/RulesList.svelte';
@@ -8,20 +7,7 @@
 </script>
 
 <DropdownBlock open={showRules}>
-	<div slot="title" class="title">
-		<BookOpen size={18} color="#fff" />
-		{showRules ? 'Скрий' : 'Покажи'} правила
-	</div>
+	<h2 slot="title" class="host-headline">Правила гри</h2>
 
 	<RulesList />
 </DropdownBlock>
-
-<style>
-	.title {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: 18px;
-		color: #fff;
-	}
-</style>
