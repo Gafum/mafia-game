@@ -8,7 +8,7 @@ import {
 	HatGlasses,
 	User,
 	Drama,
-	Brain,
+	Brain
 } from 'lucide-svelte';
 
 // Standard data for the game with all roles. It contains max value for mans and mafians
@@ -22,7 +22,7 @@ export const cardRulesConst = {
 	security: false,
 	lawyer: false,
 	agent: false,
-	idiot: false,
+	idiot: false
 };
 
 // All possible Cards data. Here you can add or change cards
@@ -84,7 +84,7 @@ export const cardList =
 			id: 8
 		},
 		{
-			description: 'Вам пора в дурка',
+			description: 'Вам пора в дурку',
 			myImg: 'Doctor',
 			tag: 'doctor',
 			id: 9
@@ -185,17 +185,16 @@ export const bigDescriptionList = {
 	},
 	agent: {
 		description:
-			'Він «прокидається» вночі разом із мафією, знає їх у обличчя та бачить, кого вони обирають жертвою. При цьому мафіозі вважають його «своїм» (вони бачать його вночі, але не знають, що він — агент). Його завдання — тонко маніпулювати голосуванням на користь мирних.',
+			'Агент під прикриттям прокидається вночі разом із мафією, знає їх у обличчя та бачить, кого вони обирають жертвою. При цьому мафіозі вважають його своїм, бо не знають, що він агент. Йому потрібно тонко маніпулювати голосуванням на користь мирних. *Для комісара це мафія',
 		icon: Drama,
-		name: 'Агент під прикриттям'
+		name: 'Агент'
 	},
 	idiot: {
 		description:
-			'Це пасивна роль мирного жителя, якого неможливо вбити вночі, бо «він нікому не відчиняє двері». Єдиний спосіб прибрати його з гри — вигнати на денному голосуванні загальним рішенням міста.',
+			'Це роль мирного жителя, якого неможливо вбити вночі, бо «він нікому не відчиняє двері». Єдиний спосіб прибрати його з гри — вигнати на денному голосуванні загальним рішенням міста.',
 		icon: Brain,
 		name: 'Дурачок'
 	}
-	
 };
 
 // All game rules. Here you can change rules or add new ones

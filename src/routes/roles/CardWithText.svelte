@@ -1,17 +1,48 @@
 <script>
+	import { onMount } from 'svelte';
 	import { bigDescriptionList } from '$lib/data';
+	import { tagMap } from '$lib/functions/createListByTags';
+	import Randomizer from '$lib/Servises/Randomizer.servise';
 
-	export let name = 'Мирний',
-		description = 'Ну шо ш?',
-		myImg = 'Man2',
-		bigDescription = 'Я Люблю спати вночі...',
-		tag = 'mans';
+	export let tag;
 
+	let cartData = bigDescriptionList[tag];
+	let additionData = tagMap[tag][0];
 	let flipped = false;
 
+	let lastIndex = -1;
+
+	function changeInfo() {
+		let sameRoleList = tagMap[tag];
+
+		if (!sameRoleList?.length) return;
+
+		if (sameRoleList.length === 1) {
+			additionData = sameRoleList[0];
+			return;
+		}
+
+		let newIndex;
+
+		do {
+			newIndex = Randomizer.randomInteger(0, sameRoleList.length - 1);
+		} while (newIndex === lastIndex);
+
+		lastIndex = newIndex;
+		additionData = sameRoleList[newIndex];
+	}
+
 	function flip() {
+		if (flipped) {
+			changeInfo();
+		}
+
 		flipped = !flipped;
 	}
+
+	onMount(() => {
+		changeInfo();
+	});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -19,18 +50,23 @@
 <div class={'card ' + tag} class:show={flipped} on:click={flip}>
 	<div class="back">
 		<div class="imgWrapper">
-			<svelte:component this={bigDescriptionList[tag].icon} color="#000000" class="back-icon" />
-			<img src="/assets/cards/{myImg}.png" class="my-img" alt={name} loading="lazy" />
+			<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+			<img
+				src="/assets/cards/{additionData.myImg}.png"
+				class="my-img"
+				alt={cartData.name}
+				loading="lazy"
+			/>
 		</div>
 		<div class="my-text">
-			<h2>{name}</h2>
-			<p>{description}</p>
+			<h2>{cartData.name}</h2>
+			<p>{additionData.description}</p>
 		</div>
 	</div>
 	<div class="front">
-		<svelte:component this={bigDescriptionList[tag].icon} color="#000000" class="role-icon" />
-		<h2>{name}</h2>
-		<p>{bigDescription}</p>
+		<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
+		<h2>{cartData.name}</h2>
+		<p>{cartData.description}</p>
 	</div>
 </div>
 

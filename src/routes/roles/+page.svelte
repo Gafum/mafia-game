@@ -1,19 +1,14 @@
 <script>
-	import { cardList } from '$lib/data';
+	import { cardRulesConst } from '$lib/data';
 	import CardWithText from './CardWithText.svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
-	import createUnicCardList from '$lib/functions/createUnicCardList';
-	import { onMount } from 'svelte';
-	let visbleList = [];
 
-	onMount(() => {
-		visbleList = createUnicCardList(cardList);
-	});
+	let rolesList = Object.keys(cardRulesConst);
 </script>
 
 <div class="main-conteiner roles-conteiner">
-	{#each visbleList as card}
-		<CardWithText {...card} />
+	{#each rolesList as tag}
+		<CardWithText {tag} />
 	{/each}
 	<StandardLinks size={75} blockStyles="max-width: 280px;" />
 </div>
