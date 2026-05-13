@@ -104,6 +104,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		width: 82vw;
+		max-width: 400px;
 
 		padding: 30px;
 		border-radius: 35px;
@@ -120,18 +122,27 @@
 		z-index: 10;
 	}
 
+	@media (max-width: 500px) {
+		.home-btn {
+			max-width: 280px;
+			width: 70vw;
+			padding: 20px 10px;
+			border-radius: 25px;
+		}
+	}
+
 	.host-link {
-		margin-top: 25px;
+		margin-top: 20px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 100%;
-		min-width: 160px;
+		width: 80%;
+		max-width: 220px;
 		height: 44px;
 
 		background: rgba(255, 255, 255, 0.1);
 		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 12px;
+		border-radius: 10px;
 
 		color: #fff;
 		font-weight: 700;

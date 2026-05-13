@@ -35,9 +35,9 @@
 			{/if}
 		</button>
 
-		<div class="drag">
+		<!-- <div class="drag">
 			<GripVertical size={20} color="#888" />
-		</div>
+		</div> -->
 	</div>
 </div>
 

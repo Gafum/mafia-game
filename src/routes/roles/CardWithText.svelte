@@ -16,10 +16,14 @@
 		const sameRoleList = tagMap[tag] || [];
 		if (sameRoleList.length === 0) return null;
 
-		if (currentIndex === -1) {
-			currentIndex = Randomizer.randomInteger(0, sameRoleList.length - 1);
+		if (sameRoleList.length >= 1) {
+			if (currentIndex === -1) {
+				currentIndex = Randomizer.randomInteger(0, sameRoleList.length - 1);
+			} else {
+				currentIndex = (currentIndex + 1) % sameRoleList.length;
+			}
 		} else {
-			currentIndex = (currentIndex + 1) % sameRoleList.length;
+			currentIndex == 0;
 		}
 
 		return sameRoleList[currentIndex];
@@ -46,7 +50,9 @@
 		<div class="back">
 			<div class="imgWrapper">
 				<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
-				<img src="/assets/cards/{additionData.myImg}.png" class="my-img" alt={cartData.name} />
+				{#key additionData.myImg}
+					<img src="/assets/cards/{additionData.myImg}.png" class="my-img" alt={cartData.name} />
+				{/key}
 			</div>
 			<div class="my-text">
 				<h2>{cartData.name}</h2>

@@ -5,15 +5,19 @@
 </script>
 
 <div class="main-conteiner rules-conteiner">
-	<h3>Правила гри:</h3>
+	<h3>Правила гри</h3>
 
-	<NumberedList list={gameRules} textStyles="font-size: 20px;" indexStyles="padding-top: 8px;" />
+	<NumberedList list={gameRules} textStyles="font-size: 18px;" indexStyles="padding-top: 5px;" />
 
 	<a href="/roles">Персонажі</a>
 	<StandardLinks />
 </div>
 
 <style>
+	h3 {
+		text-align: center;
+	}
+
 	.rules-conteiner {
 		padding: 20px 25px 50px;
 		color: white;

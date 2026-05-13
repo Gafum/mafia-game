@@ -1,11 +1,25 @@
 <script>
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
+	import DropdownBlock from '$lib/UI/DropdownBlock.svelte';
 
 	import HostHeader from './HostHeader.svelte';
 	import RulesBlock from './RulesBlock.svelte';
 	import PlayersBlock from './PlayersBlock.svelte';
 	import HostScriptBlock from './HostScriptBlock.svelte';
+	import NotesBlock from './NotesBlock.svelte';
+
+	const hostPageBlocks = [
+		{ name: 'Правила гри', component: RulesBlock, isDefaultOpen: false, props: {} },
+		{
+			name: 'Гравці',
+			component: PlayersBlock,
+			isDefaultOpen: true,
+			props: { onOpenRole: openRole }
+		},
+		{ name: 'Слова ведучого', component: HostScriptBlock, isDefaultOpen: true, props: {} },
+		{ name: 'Нотатки', component: NotesBlock, isDefaultOpen: false, props: {} }
+	];
 
 	let night = 1;
 
@@ -25,11 +39,12 @@
 <div class="host-page main-conteiner">
 	<HostHeader {night} onAddNight={addNight} />
 
-	<RulesBlock />
-
-	<PlayersBlock onOpenRole={openRole} />
-
-	<HostScriptBlock />
+	{#each hostPageBlocks as blockData}
+		<DropdownBlock open={blockData.isDefaultOpen}>
+			<h2 slot="title" class="host-headline">{blockData.name}</h2>
+			<svelte:component this={blockData.component} {...blockData.props} />
+		</DropdownBlock>
+	{/each}
 
 	<RoleDetailsModal
 		open={isModalOpen}
@@ -50,13 +65,7 @@
 		color: white;
 	}
 
-	:global(.host-block) {
-		padding: 14px;
-		border-radius: 14px;
-		background: #141414;
-	}
-
-	:global(.host-headline) {
+	.host-headline {
 		font-size: 23px;
 		color: white;
 	}
