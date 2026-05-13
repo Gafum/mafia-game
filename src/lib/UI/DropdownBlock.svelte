@@ -41,9 +41,10 @@
 
 		transition: background 0.2s ease, transform 0.15s ease;
 	}
-
-	.dropdown-block:hover {
-		background: #1a1a1a;
+	@media (hover: hover) {
+		.dropdown-block:hover {
+			background: #1a1a1a;
+		}
 	}
 
 	.dropdown-block.active {

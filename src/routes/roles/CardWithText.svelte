@@ -6,69 +6,60 @@
 
 	export let tag;
 
-	let cartData = bigDescriptionList[tag];
-	let additionData = tagMap[tag][0];
+	const cartData = bigDescriptionList[tag]; // Information about this type of
+
+	let currentIndex = -1;
+	let additionData = null; // uniq Image and description (it changes every flip)
 	let flipped = false;
 
-	let lastIndex = -1;
+	function findNextData() {
+		const sameRoleList = tagMap[tag] || [];
+		if (sameRoleList.length === 0) return null;
 
-	function changeInfo() {
-		let sameRoleList = tagMap[tag];
-
-		if (!sameRoleList?.length) return;
-
-		if (sameRoleList.length === 1) {
-			additionData = sameRoleList[0];
-			return;
+		if (currentIndex === -1) {
+			currentIndex = Randomizer.randomInteger(0, sameRoleList.length - 1);
+		} else {
+			currentIndex = (currentIndex + 1) % sameRoleList.length;
 		}
 
-		let newIndex;
-
-		do {
-			newIndex = Randomizer.randomInteger(0, sameRoleList.length - 1);
-		} while (newIndex === lastIndex);
-
-		lastIndex = newIndex;
-		additionData = sameRoleList[newIndex];
+		return sameRoleList[currentIndex];
 	}
 
 	function flip() {
-		if (flipped) {
-			changeInfo();
+		if (!flipped) {
+			setTimeout(() => {
+				additionData = findNextData();
+			}, 300);
 		}
-
 		flipped = !flipped;
 	}
 
 	onMount(() => {
-		changeInfo();
+		additionData = findNextData();
 	});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class={'card ' + tag} class:show={flipped} on:click={flip}>
-	<div class="back">
-		<div class="imgWrapper">
-			<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
-			<img
-				src="/assets/cards/{additionData.myImg}.png"
-				class="my-img"
-				alt={cartData.name}
-				loading="lazy"
-			/>
+{#if Boolean(additionData)}
+	<div class={'card ' + tag} class:show={flipped} on:click={flip}>
+		<div class="back">
+			<div class="imgWrapper">
+				<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+				<img src="/assets/cards/{additionData.myImg}.png" class="my-img" alt={cartData.name} />
+			</div>
+			<div class="my-text">
+				<h2>{cartData.name}</h2>
+				<p>{additionData.description}</p>
+			</div>
 		</div>
-		<div class="my-text">
+		<div class="front">
+			<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
 			<h2>{cartData.name}</h2>
-			<p>{additionData.description}</p>
+			<p>{cartData.description}</p>
 		</div>
 	</div>
-	<div class="front">
-		<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
-		<h2>{cartData.name}</h2>
-		<p>{cartData.description}</p>
-	</div>
-</div>
+{/if}
 
 <style>
 	.card {

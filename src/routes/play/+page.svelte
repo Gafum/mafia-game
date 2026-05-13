@@ -62,8 +62,13 @@
 	<div class="conteiner-inner">
 		<div class="home-btn">
 			<!-- Must be first -->
-			<StandardLinks size={75} blockStyles="flex-direction: column;" />
-			<a href="/host" on:click|preventDefault={goToHost} class="host-link"> Ведучий </a>
+			<StandardLinks
+				size={78}
+				blockStyles="flex-direction: column; margin-top: 0px; padding: 0; justify-content: center;"
+			/>
+			<a href="/host" on:click|preventDefault={goToHost} class="host-link">
+				Панель<br /> ведучого
+			</a>
 		</div>
 		{#each visiblePeople as person (person.uniqId)}
 			<Card {...person} {changeData} {showingElement} />
@@ -91,29 +96,58 @@
 	}
 
 	.home-btn {
-		transform: translate(-50%, -50%);
+		position: absolute;
 		top: 50%;
 		left: 50%;
-		position: absolute;
+		transform: translate(-50%, -50%);
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		padding: 30px;
+		border-radius: 35px;
+		background: rgba(20, 20, 20, 0.8);
+
+		@supports (backdrop-filter: blur(1px)) {
+			background: rgba(0, 0, 0, 0.4);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+		}
+
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+		z-index: 10;
 	}
 
 	.host-link {
-		margin-top: 17px;
+		margin-top: 25px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		height: 40px;
-		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.08);
-		color: #f7f7f7;
-		text-decoration: none;
+		min-width: 160px;
+		height: 44px;
+
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 12px;
+
+		color: #fff;
 		font-weight: 700;
-		transition: background 0.2s ease, transform 0.2s ease;
+		text-decoration: none;
+		text-transform: uppercase;
+		font-size: 13px;
+		letter-spacing: 1px;
+		transition: all 0.3s ease;
+		text-align: center;
 	}
 
-	.host-link:hover {
-		background: rgba(255, 255, 255, 0.14);
-		transform: translateY(-1px);
+	@media (hover: hover) {
+		.host-link:hover {
+			background: rgba(255, 255, 255, 0.2);
+			transform: translateY(-2px);
+			border-color: rgba(255, 255, 255, 0.4);
+		}
 	}
 </style>

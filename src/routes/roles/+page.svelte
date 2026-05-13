@@ -3,11 +3,11 @@
 	import CardWithText from './CardWithText.svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 
-	let rolesList = Object.keys(cardRulesConst);
+	let tagList = Object.keys(cardRulesConst);
 </script>
 
 <div class="main-conteiner roles-conteiner">
-	{#each rolesList as tag}
+	{#each tagList as tag}
 		<CardWithText {tag} />
 	{/each}
 	<StandardLinks size={75} blockStyles="max-width: 280px;" />

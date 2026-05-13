@@ -237,10 +237,11 @@
 		pointer-events: auto;
 		touch-action: manipulation;
 	}
-
-	.info-button:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+	@media (hover: hover) {
+		.info-button:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+		}
 	}
 
 	@media (max-width: 850px) {

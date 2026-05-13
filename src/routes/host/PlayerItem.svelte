@@ -53,7 +53,7 @@
 		gap: 12px;
 
 		transition: 0.2s;
-		box-shadow: 4px 4px 5px #0e0e0e50;
+		box-shadow: 4px 4px 5px #0e0e0e60;
 	}
 
 	.player.dead {
@@ -67,18 +67,9 @@
 	}
 
 	.index {
-		color: #fff;
-		width: 28px;
-		height: 28px;
-
-		background: #252525;
-		border-radius: 8px;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
+		color: #999;
 		font-size: 14px;
+		min-width: 15px;
 	}
 
 	span {

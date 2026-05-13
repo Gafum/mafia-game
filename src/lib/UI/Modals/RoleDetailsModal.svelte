@@ -108,9 +108,10 @@
 		line-height: 1;
 		transition: background 0.2s ease;
 	}
-
-	.details-close:hover {
-		background: rgba(255, 255, 255, 0.16);
+	@media (hover: hover) {
+		.details-close:hover {
+			background: rgba(255, 255, 255, 0.16);
+		}
 	}
 
 	:global(.details-close svg) {

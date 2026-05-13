@@ -287,12 +287,22 @@
 		align-items: center;
 		gap: 5px;
 		font-size: 0.8rem;
-		transition: transform 0.2s;
 		min-height: 33px;
+		transition-property: filter box-shadow transform;
+		transition-duration: 0.2s;
 	}
 
-	.random-btn-top:active {
-		transform: scale(0.95);
+	@media (hover: hover) {
+		.random-btn-top:active {
+			transform: scale(0.95);
+		}
+		.random-btn-top:hover {
+			filter: brightness(1.15);
+			box-shadow: 0px 0px 8px #ff4444;
+		}
+		.role-checkbox:hover .role-box-content {
+			border-color: #ff4444;
+		}
 	}
 
 	.role-control {

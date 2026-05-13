@@ -1,11 +1,14 @@
 <script>
 	import StandardLinks from '../../lib/UI/StandardLinks.svelte';
-	import RulesList from './RulesList.svelte';
+	import { gameRules } from '$lib/data';
+	import NumberedList from '../../lib/UI/NumberedList.svelte';
 </script>
 
 <div class="main-conteiner rules-conteiner">
 	<h3>Правила гри:</h3>
-	<RulesList />
+
+	<NumberedList list={gameRules} textStyles="font-size: 20px;" indexStyles="padding-top: 8px;" />
+
 	<a href="/roles">Персонажі</a>
 	<StandardLinks />
 </div>
@@ -19,6 +22,7 @@
 	.rules-conteiner > h3 {
 		color: white;
 		font-size: 25px;
+		margin-bottom: 20px;
 	}
 
 	a {
@@ -32,6 +36,8 @@
 		width: 100%;
 		max-width: 500px;
 		margin: 20px auto;
+		font-size: 22px;
+		color: #fff;
 	}
 
 	@media (hover: hover) {
@@ -48,9 +54,10 @@
 		.rules-conteiner > h3 {
 			font-size: 18px;
 		}
+
 		a {
-			padding: 5px 10px;
-			font-size: 14px;
+			padding: 8px 10px;
+			font-size: 18px;
 		}
 	}
 </style>
