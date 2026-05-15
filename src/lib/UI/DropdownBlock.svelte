@@ -30,32 +30,23 @@
 		</div>
 	</div>
 
-	{#if open}
-		<div class="content" on:click|stopPropagation>
+	<div class="content-wrapper" class:hidden={!open} on:click|stopPropagation>
+		<div class="content">
 			<slot />
 		</div>
 		<div class="bottom-padding" />
-	{/if}
+	</div>
 </section>
 
 <style>
 	.dropdown-block {
 		background: #141414;
 		border-radius: 14px;
-		padding: 14px;
+		padding: 0;
 		cursor: pointer;
 		box-shadow: 4px 4px 5px #0e0e0e30;
-
 		transition: background 0.2s ease, transform 0.15s ease;
-	}
-	@media (hover: hover) {
-		.dropdown-block:hover {
-			background: #1a1a1a;
-		}
-	}
-
-	.dropdown-block.active {
-		background: #181818;
+		overflow: hidden;
 	}
 
 	.top {
@@ -63,32 +54,55 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 12px;
+		padding: 14px;
+		user-select: none;
+		transition: background 0.2s ease;
+	}
+
+	@media (hover: hover) {
+		.top:hover {
+			background: #181818;
+		}
+	}
+
+	.dropdown-block.active .top {
+		background: #181818;
+	}
+
+	.dropdown-block.active {
+		background: #181818;
 	}
 
 	.left {
 		display: flex;
 		align-items: center;
 		gap: 10px;
-
 		font-size: 18px;
 		color: #fff;
 	}
 
+	.content-wrapper {
+		padding: 0 14px;
+		background: #181818;
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
 	.content {
-		margin-top: 14px;
 		cursor: default;
 	}
 
 	.bottom-padding {
 		width: 100%;
-		height: 15px;
+		height: 20px;
 	}
 
 	.rotatable {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
 		transition: transform 0.2s ease;
 	}
 

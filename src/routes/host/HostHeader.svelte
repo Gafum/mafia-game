@@ -70,5 +70,10 @@
 		.night-btn {
 			justify-content: center;
 		}
+
+		h1 {
+			text-align: center;
+			width: 100%;
+		}
 	}
 </style>

@@ -11,14 +11,14 @@
 
 	const hostPageBlocks = [
 		{ name: 'Правила гри', component: RulesBlock, isDefaultOpen: false, props: {} },
+		{ name: 'Нотатки', component: NotesBlock, isDefaultOpen: true, props: {} },
 		{
 			name: 'Гравці',
 			component: PlayersBlock,
 			isDefaultOpen: true,
 			props: { onOpenRole: openRole }
 		},
-		{ name: 'Слова ведучого', component: HostScriptBlock, isDefaultOpen: true, props: {} },
-		{ name: 'Нотатки', component: NotesBlock, isDefaultOpen: false, props: {} }
+		{ name: 'Слова ведучого', component: HostScriptBlock, isDefaultOpen: false, props: {} }
 	];
 
 	let night = 1;
