@@ -2,7 +2,7 @@
 	import { bigDescriptionList } from '$lib/data';
 	import { cardRules } from '$lib/stores';
 	import { findSpecialKeys } from '$lib/functions/findSpecialKeys';
-	import NumberedList from '../../lib/UI/NumberedList.svelte';
+	import NumberedList from '$lib/UI/NumberedList.svelte';
 
 	function findEnabledKeys() {
 		return findSpecialKeys().filter((tag) => Boolean($cardRules[tag]));

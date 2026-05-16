@@ -3,7 +3,7 @@ import { findSpecialKeys, maxPlayerAmount } from '$lib/functions/findSpecialKeys
 
 function createSpecialRolesList() {
 	const start = 0.2;
-	const step = 0.1;
+	const step = 0.05;
 	const max = 0.7;
 
 	return findSpecialKeys().map((key, i) => {

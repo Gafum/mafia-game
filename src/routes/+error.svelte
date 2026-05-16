@@ -6,8 +6,10 @@
 <div class="center-conteiner">
 	<h2 class="text">{$page.status} : {$page.error.message}</h2>
 	<p class="text">
-		Виникла проблема. Якщо після переходу на <a class="text" href="/">головну сторінку</a> вона не зникне,
-		то повідомте про це адміністратора
+		<a href="/" class="text"
+			>Виникла проблема. Якщо після переходу на <span class="link-text">головну сторінку</span> вона
+			не зникне, то повідомте про це адміністратора</a
+		>
 	</p>
 	<StandardLinks />
 </div>
@@ -25,12 +27,12 @@
 		padding: 10px;
 	}
 
-	.center-conteiner > .text {
+	.center-conteiner .text {
 		color: white;
 		text-align: center;
 	}
 
-	a.text {
+	.link-text {
 		color: white;
 		font-weight: bold;
 		text-decoration: underline;

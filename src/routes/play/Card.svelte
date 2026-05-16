@@ -9,10 +9,12 @@
 		changeData = () => {
 			console.log('hi');
 		};
+	//old data:
+	// const personData = cardList.find((elem) => {
+	// 	return elem.id == id;
+	// });
 
-	const personData = cardList.find((elem) => {
-		return elem.id == id;
-	});
+	const personData = cardList[id];
 
 	personData.name = bigDescriptionList[personData.tag].name ?? bigDescriptionList.mans.name;
 

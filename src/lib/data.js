@@ -1,3 +1,4 @@
+import { addRandomID } from './functions/addRandomId';
 import {
 	Shield,
 	Crosshair,
@@ -13,8 +14,8 @@ import {
 
 // Standard data for the game with all roles. It contains max value for mans and mafians
 export const cardRulesConst = {
-	mans: 24,
-	mafias: 20,
+	mans: 24, // max amount of mans is 24
+	mafias: 20, // max amount of mafias is 20
 	cop: true,
 	doctor: true,
 	kamikaze: false,
@@ -26,112 +27,96 @@ export const cardRulesConst = {
 };
 
 // All possible Cards data. Here you can add or change cards
-export const cardList =
-	//Spreites in the static folder must have the same word as in this list, also tags must be the same as in the cardRulesConst
-	[
-		{
-			description: 'Ти коли таким бандитом став?',
-			myImg: 'Man1',
-			tag: 'mans',
-			id: 0
-		},
-		{
-			description: 'Квасний Сас',
-			myImg: 'Man2',
-			tag: 'mans',
-			id: 1
-		},
-		{
-			description: 'Та я мириний мен',
-			myImg: 'Man3',
-			tag: 'mans',
-			id: 2
-		},
-		{
-			description: 'Майнкрафт - топ!!!',
-			myImg: 'Man4',
-			tag: 'mans',
-			id: 3
-		},
-		{
-			description: 'Гра-мафія за 3 дня!',
-			myImg: 'Man5',
-			tag: 'mans',
-			id: 4
-		},
-		{
-			description: 'Якщо тобі не сподобається стрижка, то ...',
-			myImg: 'Mafia1',
-			tag: 'mafias',
-			id: 5
-		},
-		{
-			description: 'Ільящер',
-			myImg: 'Mafia2',
-			tag: 'mafias',
-			id: 6
-		},
-		{
-			description: 'Мото-мото в клубі',
-			myImg: 'Mafia3',
-			tag: 'mafias',
-			id: 7
-		},
-		{
-			description: 'Sangre por sangre',
-			myImg: 'Mafia4',
-			tag: 'mafias',
-			id: 8
-		},
-		{
-			description: 'Вам пора в дурку',
-			myImg: 'Doctor',
-			tag: 'doctor',
-			id: 9
-		},
-		{
-			description: 'Чорний плащ! Чооорний плащ',
-			myImg: 'Commissar',
-			tag: 'cop',
-			id: 10
-		},
-		{
-			description: 'Я йду за тобою!',
-			myImg: 'Maniac',
-			tag: 'maniac',
-			id: 11
-		},
-		{
-			description: 'Завжди було цікаво - що якщо зʼїсти карсар 1',
-			myImg: 'Kamikaze',
-			tag: 'kamikaze',
-			id: 12
-		},
-		{
-			description: 'Тобі потрібно більше тренеруватися!',
-			myImg: 'Security',
-			tag: 'security',
-			id: 13
-		},
-		{
-			description: 'Better call Saul',
-			myImg: 'Lawyer',
-			tag: 'lawyer',
-			id: 14
-		},
-		{
-			description: 'Я Глєбік, чесно чесно!',
-			myImg: 'Agent',
-			tag: 'agent',
-			id: 15
-		},
-		{
-			description: 'ЕЕЕЕЕЕ',
-			myImg: 'Idiot',
-			tag: 'idiot',
-			id: 16
-		}
-	];
+// Sprites in the static folder must have the same word as in this list, also tags must be the same as in the cardRulesConst
+// ID is the element Index
+export const cardList = addRandomID([
+	{
+		description: 'Ти коли таким бандитом став?',
+		myImg: 'Man1',
+		tag: 'mans'
+		//, id: 0... everywhere
+	},
+	{
+		description: 'Квасний Сас',
+		myImg: 'Man2',
+		tag: 'mans'
+	},
+	{
+		description: 'Та я мирний мен',
+		myImg: 'Man3',
+		tag: 'mans'
+	},
+	{
+		description: 'Майнкрафт - топ!!!',
+		myImg: 'Man4',
+		tag: 'mans'
+	},
+	{
+		description: 'Гра-мафія за 3 дня!',
+		myImg: 'Man5',
+		tag: 'mans'
+	},
+	{
+		description: 'Якщо тобі не сподобається стрижка, то ...',
+		myImg: 'Mafia1',
+		tag: 'mafias'
+	},
+	{
+		description: 'Ільящер',
+		myImg: 'Mafia2',
+		tag: 'mafias'
+	},
+	{
+		description: 'Мото-мото в клубі',
+		myImg: 'Mafia3',
+		tag: 'mafias'
+	},
+	{
+		description: 'Sangre por sangre',
+		myImg: 'Mafia4',
+		tag: 'mafias'
+	},
+	{
+		description: 'Вам пора в дурку',
+		myImg: 'Doctor',
+		tag: 'doctor'
+	},
+	{
+		description: 'Чорний плащ! Чооорний плащ',
+		myImg: 'Commissar',
+		tag: 'cop'
+	},
+	{
+		description: 'Я йду за тобою!',
+		myImg: 'Maniac',
+		tag: 'maniac'
+	},
+	{
+		description: 'Завжди було цікаво - що якщо зʼїсти карсар 1',
+		myImg: 'Kamikaze',
+		tag: 'kamikaze'
+	},
+	{
+		description: 'Тобі потрібно більше тренеруватися!',
+		myImg: 'Security',
+		tag: 'security'
+	},
+	{
+		description: 'Better call Saul',
+		myImg: 'Lawyer',
+		tag: 'lawyer'
+	},
+	{
+		description: 'Я Глєбік, чесно чесно!',
+		myImg: 'Agent',
+		tag: 'agent'
+	},
+	{
+		description: 'ЕЕЕЕЕЕ',
+		myImg: 'Idiot',
+		tag: 'idiot'
+	}
+]);
 
 // All possible roles of cards with description and icons. Here you can change description and icons
 export const bigDescriptionList = {
@@ -191,7 +176,7 @@ export const bigDescriptionList = {
 	},
 	idiot: {
 		description:
-			'Це роль мирного жителя, якого неможливо вбити вночі, бо «він нікому не відчиняє двері». Єдиний спосіб прибрати його з гри — вигнати на денному голосуванні загальним рішенням міста.',
+			'Це роль мирного жителя, якого неможливо вбити вночі, бо «він нікому не відчиняє двері». Єдиний спосіб прибрати його з гри - це вигнати на денному голосуванні загальним рішенням міста.',
 		icon: Brain,
 		name: 'Дурачок'
 	}

@@ -1,11 +1,11 @@
 <script>
-	export let onOpenRole = () => {};
-
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 
 	import PlayerItem from './PlayerItem.svelte';
+
+	export let onOpenRole = () => {};
 
 	let people = page.state?.peopleList ?? [];
 
