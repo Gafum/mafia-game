@@ -38,9 +38,9 @@
 			{/if}
 		</button>
 
-		<!-- <div class="drag">
+		<div class="drag handle">
 			<GripVertical size={20} color="#888" />
-		</div> -->
+		</div>
 	</div>
 </div>
 
@@ -49,13 +49,10 @@
 		background: #1c1c1c;
 		border-radius: 12px;
 		padding: 12px;
-
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: 12px;
-
-		transition: 0.2s;
 		box-shadow: 4px 4px 5px #0e0e0e60;
 	}
 
@@ -89,24 +86,24 @@
 	button {
 		background: #242424;
 		border: none;
-
 		width: 38px;
 		height: 38px;
-
 		border-radius: 10px;
-
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
 		cursor: pointer;
 	}
 
-	.drag {
+	.handle {
+		cursor: grab;
+		padding: 10px;
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		padding-inline: 2px;
+	}
+
+	.handle:active {
+		cursor: grabbing;
 	}
 
 	@media (max-width: 340px) {
