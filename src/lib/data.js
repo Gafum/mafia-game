@@ -1,4 +1,4 @@
-import { addRandomID } from './functions/addRandomId';
+import { addRandomID } from './functions/addRandomID';
 import {
 	Shield,
 	Crosshair,
