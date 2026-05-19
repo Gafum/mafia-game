@@ -86,6 +86,7 @@
 		justify-content: center;
 		align-items: center;
 		min-height: 100vh;
+		min-height: 100lvh;
 		padding: 20px;
 	}
 
@@ -119,6 +120,8 @@
 			border-radius: 0;
 			box-shadow: none;
 			padding: 16px 16px 50px;
+			min-height: 100vh;
+			min-height: 100lvh;
 		}
 		.special-roles-grid {
 			grid-template-columns: 1fr;

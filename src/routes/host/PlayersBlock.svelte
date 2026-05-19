@@ -22,9 +22,14 @@
 		}
 
 		Sortable.create(listElement, {
+			touchStartThreshold: 3,
+			delay: 200,
+			delayOnTouchOnly: true,
 			handle: '.handle',
 			animation: 200,
 			ghostClass: 'sortable-ghost',
+			forceFallback: true,
+			fallbackClass: 'sortable-drag',
 			onEnd: (evt) => {
 				const reordered = [...people];
 				const [movedItem] = reordered.splice(evt.oldIndex, 1);
@@ -63,5 +68,10 @@
 		opacity: 0.3;
 		border-radius: 12px;
 		box-shadow: none;
+	}
+	:global(.sortable-drag) {
+		opacity: 0.3;
+		border-radius: 12px;
+		scale: 0.92;
 	}
 </style>

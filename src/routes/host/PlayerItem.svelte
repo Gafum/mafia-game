@@ -100,10 +100,17 @@
 		padding: 10px;
 		display: flex;
 		align-items: center;
+		transition: filter 0.2s;
+		cursor: grabbing;
 	}
 
-	.handle:active {
-		cursor: grabbing;
+	@media (hover: hover) {
+		.handle:active {
+			opacity: 0.4;
+		}
+		.handle:hover {
+			opacity: 0.4;
+		}
 	}
 
 	@media (max-width: 340px) {

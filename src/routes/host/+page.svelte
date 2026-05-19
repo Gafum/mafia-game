@@ -58,6 +58,7 @@
 <style>
 	.host-page {
 		min-height: 100vh;
+		min-height: 100lvh;
 		padding: 16px 16px 40px;
 		display: flex;
 		flex-direction: column;
