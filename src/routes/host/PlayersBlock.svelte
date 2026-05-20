@@ -4,8 +4,10 @@
 	import { goto } from '$app/navigation';
 	import Sortable from 'sortablejs';
 	import PlayerItem from './PlayerItem.svelte';
+	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 
 	export let onOpenRole = () => {};
+	export let allowToManipulate = false;
 
 	let people = page.state?.peopleList ?? [];
 	let listElement;
@@ -55,6 +57,9 @@
 			</div>
 		{/each}
 	</div>
+	{#if allowToManipulate}
+		<SimpleLink href="/play">Почати гру</SimpleLink>
+	{/if}
 {/if}
 
 <style>

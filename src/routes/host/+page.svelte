@@ -9,22 +9,10 @@
 	import HostScriptBlock from './HostScriptBlock.svelte';
 	import NotesBlock from './NotesBlock.svelte';
 
-	const hostPageBlocks = [
-		{ name: 'Правила гри', component: RulesBlock, isDefaultOpen: false, props: {} },
-		{ name: 'Нотатки', component: NotesBlock, isDefaultOpen: true, props: {} },
-		{
-			name: 'Гравці',
-			component: PlayersBlock,
-			isDefaultOpen: true,
-			props: { onOpenRole: openRole }
-		},
-		{ name: 'Слова ведучого', component: HostScriptBlock, isDefaultOpen: false, props: {} }
-	];
-
 	let night = 1;
-
 	let modalHeroTag = 'mans';
 	let isModalOpen = false;
+	let allowToManipulate = false;
 
 	function addNight() {
 		night++;
@@ -34,13 +22,35 @@
 		modalHeroTag = tag;
 		isModalOpen = true;
 	}
+
+	$: hostPageBlocks = [
+		{
+			name: 'Правила гри',
+			component: RulesBlock,
+			isOpen: false,
+			props: {
+				setManipulate: () => {
+					allowToManipulate = !allowToManipulate;
+				},
+				allowToManipulate: allowToManipulate
+			}
+		},
+		{ name: 'Нотатки', component: NotesBlock, isOpen: true, props: {} },
+		{
+			name: 'Гравці',
+			component: PlayersBlock,
+			isOpen: true,
+			props: { onOpenRole: openRole, allowToManipulate: allowToManipulate }
+		},
+		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false, props: {} }
+	];
 </script>
 
 <div class="host-page main-conteiner">
 	<HostHeader {night} onAddNight={addNight} />
 
-	{#each hostPageBlocks as blockData}
-		<DropdownBlock open={blockData.isDefaultOpen}>
+	{#each hostPageBlocks as blockData, index (blockData.name)}
+		<DropdownBlock bind:open={hostPageBlocks[index].isOpen}>
 			<h2 slot="title" class="host-headline">{blockData.name}</h2>
 			<svelte:component this={blockData.component} {...blockData.props} />
 		</DropdownBlock>
