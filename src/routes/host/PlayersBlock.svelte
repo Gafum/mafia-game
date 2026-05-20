@@ -7,18 +7,18 @@
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 
 	export let onOpenRole = () => {};
-	export let allowToManipulate = false;
+	export let allowToManipulate;
 
-	let people = page.state?.peopleList ?? [];
+	let peopleList = page.state?.peopleList ?? [];
 	let listElement;
 
 	function toggleAlive(index) {
-		people[index].alive = !people[index].alive;
-		people = [...people];
+		peopleList[index].alive = !peopleList[index].alive;
+		peopleList = [...peopleList];
 	}
 
 	onMount(() => {
-		if (people.length === 0) {
+		if (peopleList.length === 0) {
 			goto('/');
 			return;
 		}
@@ -33,32 +33,43 @@
 			forceFallback: true,
 			fallbackClass: 'sortable-drag',
 			onEnd: (evt) => {
-				const reordered = [...people];
+				const reordered = [...peopleList];
 				const [movedItem] = reordered.splice(evt.oldIndex, 1);
 				reordered.splice(evt.newIndex, 0, movedItem);
 
-				people = reordered;
+				peopleList = reordered;
 			}
 		});
 
-		people = people.reverse().map(({ id, uniqId }) => ({
+		peopleList = peopleList.map(({ id, uniqId }) => ({
 			id,
 			uniqId,
 			alive: true
 		}));
 	});
+
+	const goToPlay = () => {
+		goto('/play', {
+			state: {
+				peopleList: peopleList.reverse().map(({ id }, index) => ({
+					id,
+					uniqId: index
+				}))
+			}
+		});
+	};
 </script>
 
-{#if people.length > 0}
+{#if peopleList.length > 0}
 	<div class="players" bind:this={listElement}>
-		{#each people as person, index (person.uniqId)}
+		{#each peopleList as person, index (person.uniqId)}
 			<div class="sort-item">
 				<PlayerItem {person} {index} {toggleAlive} {onOpenRole} />
 			</div>
 		{/each}
 	</div>
-	{#if allowToManipulate}
-		<SimpleLink href="/play">Почати гру</SimpleLink>
+	{#if $allowToManipulate}
+		<SimpleLink href="/play" actionCallback={goToPlay}>Почати гру</SimpleLink>
 	{/if}
 {/if}
 

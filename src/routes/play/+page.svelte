@@ -1,13 +1,14 @@
 <script>
 	/** @type {import('./$types').PageData} */
-	import Card from './Card.svelte';
-
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { createArray } from '$lib/functions/createArray';
 	import { cardRules } from '$lib/stores';
 	import { cardRulesConst, cardList } from '$lib/data';
 	import EndScreen from './EndScreen.svelte';
+	import Card from './Card.svelte';
 
+	let hostPeopleList = page.state?.peopleList ?? [];
 	let peopleList = [...cardList];
 
 	let visiblePeople = [];
@@ -41,9 +42,13 @@
 			console.log(e);
 		}
 
-		peopleList = createArray(data).map((id, index) => {
-			return { id, uniqId: index };
-		});
+		if (hostPeopleList && hostPeopleList.length > 0) {
+			peopleList = hostPeopleList;
+		} else {
+			peopleList = createArray(data).map((id, index) => {
+				return { id, uniqId: index };
+			});
+		}
 
 		visiblePeople = peopleList.slice(peopleList.length - maxVisibleCards, peopleList.length);
 		showingElement = peopleList.length - 1; // index of last element

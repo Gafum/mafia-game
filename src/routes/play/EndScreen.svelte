@@ -6,7 +6,7 @@
 	function goToHost() {
 		goto('/host', {
 			state: {
-				peopleList
+				peopleList: peopleList.reverse()
 			}
 		});
 	}

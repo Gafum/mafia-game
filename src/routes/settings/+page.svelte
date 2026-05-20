@@ -60,13 +60,7 @@
 					min={1}
 				/>
 
-				<RoleSlider
-					label="Мафія"
-					bind:value={state.mafias}
-					max={cardRulesConst.mafias}
-					min={0}
-					mokeData
-				/>
+				<RoleSlider label="Мафія" bind:value={state.mafias} max={cardRulesConst.mafias} min={0} />
 			</section>
 
 			<div class="special-roles-grid">
