@@ -1,28 +1,26 @@
 <script>
 	import { CircleQuestionMark } from 'lucide-svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
-	import { cardList, bigDescriptionList } from '$lib/data';
+	import { bigDescriptionList } from '$lib/data';
+	import { tagMap } from '$lib/functions/createListByTags';
+	import Randomizer from '$lib/Servises/Randomizer.servise';
 
-	export let id = 0,
-		uniqId = 0,
+	export let tag = '',
+		myIndex = 0,
 		showingElement = 0,
 		changeData = () => {
 			console.log('hi');
 		};
-	//old data:
-	// const personData = cardList.find((elem) => {
-	// 	return elem.id == id;
-	// });
 
-	const personData = cardList[id];
+	const personData = tagMap[tag][Randomizer.randomInteger(0, tagMap[tag].length - 1)];
 
-	personData.name = bigDescriptionList[personData.tag].name ?? bigDescriptionList.mans.name;
+	const typeData = bigDescriptionList[tag] ?? bigDescriptionList.mans;
 
 	let flipped = false;
 	let isShown = false;
 
 	function flip(event) {
-		if (showingElement !== uniqId) return;
+		if (showingElement !== myIndex) return;
 
 		if (!flipped) {
 			flipped = true;
@@ -54,7 +52,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="card"
-	style={'--side: ' + (uniqId % 2 ? '160%' : '-100%')}
+	style={'--side: ' + (myIndex % 2 ? '160%' : '-100%')}
 	class:show={flipped}
 	class:hide={isShown}
 	on:click={flip}
@@ -63,17 +61,13 @@
 	<div class="front">
 		<div class="imgWrapper">
 			{#if !imageLoaded || imageError}
-				<svelte:component
-					this={bigDescriptionList[personData.tag].icon}
-					color="#000000"
-					class="fallback-icon"
-				/>
+				<svelte:component this={typeData.icon} color="#000000" class="fallback-icon" />
 			{/if}
 
 			<img
 				src="/assets/cards/{personData.myImg}.png"
 				class="my-img"
-				alt={personData.name}
+				alt={typeData.name}
 				on:load={handleImageLoad}
 				on:error={handleImageError}
 				loading="lazy"
@@ -81,7 +75,7 @@
 		</div>
 
 		<div class="my-text">
-			<h2>{personData.name}</h2>
+			<h2>{typeData.name}</h2>
 			<p>{personData.description}</p>
 		</div>
 
@@ -95,11 +89,7 @@
 		</button>
 	</div>
 
-	<RoleDetailsModal
-		heroTag={personData.tag}
-		open={showDetails}
-		on:close={() => (showDetails = false)}
-	/>
+	<RoleDetailsModal heroTag={tag} open={showDetails} on:close={() => (showDetails = false)} />
 </div>
 
 <style>

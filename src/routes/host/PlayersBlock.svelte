@@ -5,6 +5,7 @@
 	import Sortable from 'sortablejs';
 	import PlayerItem from './PlayerItem.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
+	import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
 
 	export let onOpenRole = () => {};
 	export let allowToManipulate;
@@ -13,7 +14,7 @@
 	let listElement;
 
 	function toggleAlive(index) {
-		peopleList[index].alive = !peopleList[index].alive;
+		peopleList[index].alive = !Boolean(peopleList[index].alive);
 		peopleList = [...peopleList];
 	}
 
@@ -41,20 +42,16 @@
 			}
 		});
 
-		peopleList = peopleList.map(({ id, uniqId }) => ({
-			id,
-			uniqId,
+		peopleList = peopleList.map((element) => ({
+			...element,
 			alive: true
 		}));
 	});
 
-	const goToPlay = () => {
+	const goToModifiedPlay = () => {
 		goto('/play', {
 			state: {
-				peopleList: peopleList.reverse().map(({ id }, index) => ({
-					id,
-					uniqId: index
-				}))
+				peopleList: addKeyToObjects(peopleList.reverse(), 'myIndex')
 			}
 		});
 	};
@@ -62,14 +59,14 @@
 
 {#if peopleList.length > 0}
 	<div class="players" bind:this={listElement}>
-		{#each peopleList as person, index (person.uniqId)}
+		{#each peopleList as person, index (person.myIndex)}
 			<div class="sort-item">
 				<PlayerItem {person} {index} {toggleAlive} {onOpenRole} />
 			</div>
 		{/each}
 	</div>
 	{#if $allowToManipulate}
-		<SimpleLink href="/play" actionCallback={goToPlay}>Почати гру</SimpleLink>
+		<SimpleLink href="/play" actionCallback={goToModifiedPlay}>Почати гру</SimpleLink>
 	{/if}
 {/if}
 

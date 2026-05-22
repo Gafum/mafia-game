@@ -45,9 +45,7 @@
 		if (hostPeopleList && hostPeopleList.length > 0) {
 			peopleList = hostPeopleList;
 		} else {
-			peopleList = createArray(data).map((id, index) => {
-				return { id, uniqId: index };
-			});
+			peopleList = createArray(data);
 		}
 
 		visiblePeople = peopleList.slice(peopleList.length - maxVisibleCards, peopleList.length);
@@ -58,7 +56,7 @@
 <div class="center">
 	<div class="container-inner">
 		<EndScreen {peopleList} />
-		{#each visiblePeople as person (person.uniqId)}
+		{#each visiblePeople as person (person.myIndex)}
 			<Card {...person} {changeData} {showingElement} />
 		{/each}
 	</div>

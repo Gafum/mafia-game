@@ -10,9 +10,7 @@
 	const goToHost = () =>
 		goto('/host', {
 			state: {
-				peopleList: createArray(settingsState).map((id, index) => {
-					return { id, uniqId: index };
-				})
+				peopleList: createArray(settingsState)
 			}
 		});
 </script>

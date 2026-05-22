@@ -8,10 +8,7 @@
 	export let toggleAlive = () => {};
 	export let onOpenRole = () => {};
 
-	// Because Id is index we can write simply the index of cardList,
-	// old data:
-	// $: roleTag = cardList.find((c) => c.id == person.id)?.tag ?? 'mans';
-	$: roleTag = cardList[Number(person.id)].tag ?? 'mans';
+	$: roleTag = person.tag;
 
 	$: roleData = bigDescriptionList[roleTag];
 </script>

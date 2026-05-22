@@ -1,4 +1,3 @@
-import { addRandomID } from './functions/addRandomID';
 import {
 	Shield,
 	Crosshair,
@@ -28,13 +27,11 @@ export const cardRulesConst = {
 
 // All possible Cards data. Here you can add or change cards
 // Sprites in the static folder must have the same word as in this list, also tags must be the same as in the cardRulesConst
-// ID is the element Index
-export const cardList = addRandomID([
+export const cardList = [
 	{
 		description: 'Ти коли таким бандитом став?',
 		myImg: 'Man1',
 		tag: 'mans'
-		//, id: 0... everywhere
 	},
 	{
 		description: 'Квасний Сас',
@@ -116,7 +113,7 @@ export const cardList = addRandomID([
 		myImg: 'Idiot',
 		tag: 'idiot'
 	}
-]);
+];
 
 // All possible roles of cards with description and icons. Here you can change description and icons
 export const bigDescriptionList = {

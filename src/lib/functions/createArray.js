@@ -1,27 +1,26 @@
-import { cardList } from '$lib/data';
 import Randomizer from '$lib/Servises/Randomizer.servise';
+import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
 
 export function createArray({ mans = 3, mafias = 1, ...specialRoles }) {
-	let result = [];
+	const result = [];
 
-	for (let i = 0; i < mans; i++) {
-		const mansList = cardList.filter((element) => element.tag === 'mans');
-		if (mansList.length > 0) {
-			result.push(mansList[Randomizer.randomInteger(0, mansList.length - 1)].id);
+	for (let i = 0; i < mans; i++) result.push('mans');
+	for (let i = 0; i < mafias; i++) result.push('mafias');
+
+	for (const role in specialRoles) {
+		if (specialRoles[role]) {
+			result.push(role);
 		}
 	}
 
-	for (let i = 0; i < mafias; i++) {
-		const mafiaList = cardList.filter((element) => element.tag === 'mafias');
-		if (mafiaList.length > 0) {
-			result.push(mafiaList[Randomizer.randomInteger(0, mafiaList.length - 1)].id);
-		}
-	}
-
-	result = [
-		...result,
-		...cardList.filter((element) => Boolean(specialRoles[element.tag])).map(({ id }) => id)
-	];
-
-	return Randomizer.shuffleArray(result);
+	return addKeyToObjects(
+		Randomizer.shuffleArray(
+			result.map((tag) => {
+				return {
+					tag
+				};
+			})
+		),
+		'myIndex'
+	);
 }
