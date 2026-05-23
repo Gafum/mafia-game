@@ -2,6 +2,7 @@
 	import { handleNumericInput, normalize } from './inputHelpers';
 	import { Zap } from 'lucide-svelte';
 	import { maxPlayerAmount } from '$lib/functions/findSpecialKeys';
+	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 
 	export let handleRandom = (targetTotal) => {};
 	export let totalPlayers = 0;
@@ -31,9 +32,13 @@
 			on:blur={() => (targetTotal = normalize(targetTotal, 3, maxPlayerAmount))}
 		/>
 	</div>
-	<button class="random-btn-top" on:click={submitForm}>
+	<SimpleLink
+		href="/random"
+		actionCallback={submitForm}
+		props={{ style: 'font-size: 0.8rem; min-height: 33px; margin: 0; width: auto;' }}
+	>
 		<Zap size={18} color="#fff" class="mobile-hidden-icon" /> РАНДОМ
-	</button>
+	</SimpleLink>
 </form>
 
 <style>
@@ -69,33 +74,6 @@
 		padding: 5px;
 		border-radius: 4px;
 		text-align: center;
-	}
-
-	.random-btn-top {
-		background: #ff4444;
-		color: white;
-		border: none;
-		padding: 8px 15px;
-		border-radius: 6px;
-		font-weight: bold;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		font-size: 0.8rem;
-		min-height: 33px;
-		transition-property: filter box-shadow transform;
-		transition-duration: 0.2s;
-	}
-
-	@media (hover: hover) {
-		.random-btn-top:active {
-			transform: scale(0.95);
-		}
-		.random-btn-top:hover {
-			filter: brightness(1.15);
-			box-shadow: 0px 0px 8px #ff4444;
-		}
 	}
 
 	@media (max-width: 400px) {

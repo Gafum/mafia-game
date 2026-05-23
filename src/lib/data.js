@@ -49,7 +49,7 @@ export const cardList = [
 		tag: 'mans'
 	},
 	{
-		description: 'Гра-мафія за 3 дня!',
+		description: 'Вабшето це я Глеб!',
 		myImg: 'Man5',
 		tag: 'mans'
 	},

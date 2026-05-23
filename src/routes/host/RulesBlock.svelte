@@ -3,8 +3,7 @@
 	import NumberedList from '$lib/UI/NumberedList.svelte';
 	import { Annoyed } from 'lucide-svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
-
-	export let allowToManipulate;
+	import { allowToManipulate } from './hostStore.js';
 
 	function setManipulate() {
 		allowToManipulate.update((n) => !n);

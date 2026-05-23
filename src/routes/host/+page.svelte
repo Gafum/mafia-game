@@ -14,8 +14,6 @@
 	let modalHeroTag = 'mans';
 	let isModalOpen = false;
 
-	const allowToManipulate = writable(false);
-
 	function addNight() {
 		night++;
 	}
@@ -29,17 +27,14 @@
 		{
 			name: 'Правила гри',
 			component: RulesBlock,
-			isOpen: false,
-			props: {
-				allowToManipulate
-			}
+			isOpen: false
 		},
 		{ name: 'Нотатки', component: NotesBlock, isOpen: true, props: {} },
 		{
 			name: 'Гравці',
 			component: PlayersBlock,
 			isOpen: true,
-			props: { onOpenRole: openRole, allowToManipulate }
+			props: { onOpenRole: openRole }
 		},
 		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false, props: {} }
 	];

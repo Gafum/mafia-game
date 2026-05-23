@@ -6,15 +6,34 @@
 	import PlayerItem from './PlayerItem.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 	import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
+	import { Play, Plus } from 'lucide-svelte';
+	import { allowToManipulate } from './hostStore.js';
 
 	export let onOpenRole = () => {};
-	export let allowToManipulate;
 
 	let peopleList = page.state?.peopleList ?? [];
 	let listElement;
 
 	function toggleAlive(index) {
 		peopleList[index].alive = !Boolean(peopleList[index].alive);
+		peopleList = [...peopleList];
+	}
+
+	function addPlayer() {
+		const newPlayer = {
+			tag: 'mans',
+			alive: true,
+			myIndex: `new_${Date.now()}_${Math.random()}`
+		};
+		peopleList = [...peopleList, newPlayer];
+	}
+
+	function deletePlayer(index) {
+		if (peopleList.length <= 1) {
+			return;
+		}
+
+		peopleList.splice(index, 1);
 		peopleList = [...peopleList];
 	}
 
@@ -42,13 +61,15 @@
 			}
 		});
 
-		peopleList = peopleList.map((element) => ({
+		peopleList = peopleList.map((element, i) => ({
+			myIndex: element.myIndex ?? `init_${i}`,
 			...element,
-			alive: true
+			alive: element.alive ?? true
 		}));
 	});
 
 	const goToModifiedPlay = () => {
+		allowToManipulate.update(() => false);
 		goto('/play', {
 			state: {
 				peopleList: addKeyToObjects(peopleList.reverse(), 'myIndex')
@@ -58,23 +79,61 @@
 </script>
 
 {#if peopleList.length > 0}
-	<div class="players" bind:this={listElement}>
-		{#each peopleList as person, index (person.myIndex)}
-			<div class="sort-item">
-				<PlayerItem {person} {index} {toggleAlive} {onOpenRole} />
-			</div>
-		{/each}
+	<div class="players-container">
+		<div class="players" bind:this={listElement}>
+			{#each peopleList as person, index (person.myIndex)}
+				<div class="sort-item">
+					<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
+				</div>
+			{/each}
+		</div>
+
+		{#if $allowToManipulate}
+			<button class="add-player-btn" on:click={addPlayer}>
+				<Plus size={20} color="#fff" />
+				Додати персонажа
+			</button>
+		{/if}
 	</div>
+
 	{#if $allowToManipulate}
-		<SimpleLink href="/play" actionCallback={goToModifiedPlay}>Почати гру</SimpleLink>
+		<SimpleLink href="/play" actionCallback={goToModifiedPlay}>
+			<Play size={20} color="#fff" class="mobile-hidden-icon" />Почати гру
+		</SimpleLink>
 	{/if}
 {/if}
 
 <style>
+	.players-container {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
+
 	.players {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
+
+	.add-player-btn {
+		background: #242424;
+		border: 2px dashed #444;
+		border-radius: 12px;
+		padding: 14px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		cursor: pointer;
+		color: white;
+		font-size: 16px;
+		transition: background 0.2s, border-color 0.2s;
+	}
+
+	.add-player-btn:hover {
+		background: #2a2a2a;
+		border-color: #666;
 	}
 
 	:global(.sortable-ghost) {

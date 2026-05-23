@@ -1,28 +1,47 @@
 <script>
-	import { cardList, bigDescriptionList } from '$lib/data';
-	import { CircleQuestionMark, Eye, EyeOff, GripVertical } from 'lucide-svelte';
+	import { bigDescriptionList } from '$lib/data';
+	import { CircleQuestionMark, Eye, EyeOff, GripVertical, Trash2 } from 'lucide-svelte';
+	import { allowToManipulate } from './hostStore.js';
 
 	export let person;
 	export let index;
 
 	export let toggleAlive = () => {};
 	export let onOpenRole = () => {};
+	export let onDelete = () => {};
 
 	$: roleTag = person.tag;
-
 	$: roleData = bigDescriptionList[roleTag];
+
+	const allRoles = Object.keys(bigDescriptionList);
 </script>
 
 <div class="player" class:dead={!person.alive}>
 	<div class="left">
 		<div class="index">{index + 1}</div>
 
-		<svelte:component this={roleData.icon} size={20} color="#fff" class="mobile-hidden-icon" />
+		<svelte:component this={roleData?.icon} size={20} color="#fff" class="mobile-hidden-icon" />
 
-		<span>{roleData.name}</span>
+		{#if $allowToManipulate}
+			<select bind:value={person.tag} class="role-select">
+				{#each allRoles as roleKey}
+					<option value={roleKey}>
+						{bigDescriptionList[roleKey]?.name || roleKey}
+					</option>
+				{/each}
+			</select>
+		{:else}
+			<span>{roleData?.name}</span>
+		{/if}
 	</div>
 
 	<div class="actions">
+		{#if $allowToManipulate}
+			<button class="delete-btn" on:click|stopPropagation={() => onDelete(index)}>
+				<Trash2 size={21} color="#ff4a4a" />
+			</button>
+		{/if}
+
 		<button on:click|stopPropagation={() => onOpenRole(roleTag)}>
 			<CircleQuestionMark size={21} color="#fff" />
 		</button>
@@ -61,6 +80,7 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		flex-grow: 1;
 	}
 
 	.index {
@@ -72,6 +92,23 @@
 	span {
 		color: white;
 		font-size: 17px;
+	}
+
+	.role-select {
+		background: #242424;
+		color: white;
+		border: 1px solid #333;
+		padding: 6px 10px;
+		border-radius: 8px;
+		font-size: 16px;
+		cursor: pointer;
+		outline: none;
+		max-width: 180px;
+	}
+
+	.role-select > option {
+		color: white;
+		font-size: 16px;
 	}
 
 	.actions {
@@ -92,13 +129,16 @@
 		cursor: pointer;
 	}
 
+	.delete-btn {
+		background: #2a1a1a;
+	}
+
 	.handle {
 		cursor: grab;
 		padding: 10px;
 		display: flex;
 		align-items: center;
 		transition: filter 0.2s;
-		cursor: grabbing;
 	}
 
 	@media (hover: hover) {
@@ -110,12 +150,11 @@
 		}
 	}
 
-	@media (max-width: 340px) {
+	@media (max-width: 420px) {
 		.player {
 			flex-direction: column;
 			align-items: stretch;
 		}
-
 		.actions {
 			justify-content: flex-end;
 		}
