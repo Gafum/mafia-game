@@ -1,6 +1,9 @@
 <script>
 	let text = '';
 	let scrollTop = 0;
+	let textareaElement;
+	let currentSuggestion = '';
+	let remainingPart = '';
 
 	const keywords = {
 		red: [
@@ -15,7 +18,10 @@
 			'злодії',
 			'кіллер',
 			'злочинці',
-			'мафіозі'
+			'мафіозі',
+			'агент',
+			'агента',
+			'агенти'
 		],
 		blue: [
 			'мирний',
@@ -30,17 +36,75 @@
 			'мирні',
 			'добро',
 			'містяни',
-			'житель'
+			'житель',
+			'охоронець',
+			'охоронця',
+			'захист',
+			'тіпочка'
+		],
+		green: [
+			'маньяк',
+			'маніяк',
+			'маніяка',
+			'камікадзе',
+			'бомба',
+			'адвокат',
+			'адвоката',
+			'дурачок',
+			'дурень',
+			'ідіот'
 		]
 	};
+
+	const allKeywords = [...keywords.red, ...keywords.blue, ...keywords.green];
 
 	function handleScroll(event) {
 		scrollTop = event.target.scrollTop;
 	}
 
+	$: lastWord = text.split(/[\s,.!]+/).pop() || '';
+
+	$: {
+		if (lastWord.length >= 2) {
+			const match = allKeywords.find(
+				(w) => w.startsWith(lastWord.toLowerCase()) && w !== lastWord.toLowerCase()
+			);
+			if (match) {
+				currentSuggestion = match;
+				remainingPart = match.substring(lastWord.length);
+			} else {
+				currentSuggestion = '';
+				remainingPart = '';
+			}
+		} else {
+			currentSuggestion = '';
+			remainingPart = '';
+		}
+	}
+
+	function autocompleteWord() {
+		if (!currentSuggestion) return;
+
+		const words = text.split(/(\s+)/);
+		words[words.length - 1] = currentSuggestion + ' ';
+		text = words.join('');
+
+		setTimeout(() => {
+			textareaElement.focus();
+			textareaElement.selectionStart = textareaElement.selectionEnd = text.length;
+		}, 0);
+	}
+
+	function handleKeyDown(event) {
+		if (event.key === 'Tab' && currentSuggestion) {
+			event.preventDefault();
+			autocompleteWord();
+		}
+	}
+
 	$: highlightedHTML = text
 		.split(/(\s+)/)
-		.map((word) => {
+		.map((word, index, arr) => {
 			if (!word) return '';
 
 			if (word.includes('\n')) {
@@ -48,15 +112,26 @@
 			}
 
 			const cleanWord = word.toLowerCase().trim().replace(/[.,!]/g, '');
+			const isLast = index === arr.length - 1;
 
-			if (keywords.red.includes(cleanWord)) {
-				return `<span style="color: #ff4d4d;">${word}</span>`;
-			}
-			if (keywords.blue.includes(cleanWord)) {
-				return `<span style="color: #4d94ff;">${word}</span>`;
+			let color = '';
+
+			for (const teamName in keywords) {
+				if (!Object.hasOwn(keywords, teamName)) continue;
+
+				const oneTeamWords = keywords[teamName];
+				if (oneTeamWords.includes(cleanWord)) {
+					color = teamName;
+				}
 			}
 
-			return word;
+			const baseSpan = color ? `<span class="${color}-notes-text">${word}</span>` : word;
+
+			if (isLast && remainingPart) {
+				return `${baseSpan}<span class="phantom-text">${remainingPart}</span>`;
+			}
+
+			return baseSpan;
 		})
 		.join('');
 </script>
@@ -68,11 +143,25 @@
 		</div>
 
 		<textarea
+			bind:this={textareaElement}
 			bind:value={text}
 			on:scroll={handleScroll}
-			placeholder="Тут можна писати нотатки... (мафія, шериф і т.д. підсвічуються)"
+			on:keydown={handleKeyDown}
+			placeholder="Нотатки ведучого... (мафія, шериф, маніяк підсвічуються)"
 			spellcheck="false"
+			autocomplete="off"
 		/>
+
+		{#if remainingPart}
+			<button
+				class="mobile-tap-zone"
+				on:touchstart|preventDefault={autocompleteWord}
+				on:mousedown|preventDefault={autocompleteWord}
+				style="top: {12 - scrollTop}px"
+			>
+				Дописати
+			</button>
+		{/if}
 	</div>
 </div>
 
@@ -87,7 +176,7 @@
 
 	.editor-wrapper {
 		position: relative;
-		height: 200px;
+		height: min-content;
 		padding: 12px;
 		overflow: hidden;
 	}
@@ -98,7 +187,7 @@
 	:global(.backdrop br) {
 		width: 100%;
 		height: 100%;
-		min-height: 150px;
+		min-height: 160px;
 		font-family: inherit;
 		font-size: 16px;
 		line-height: 1.5;
@@ -116,9 +205,9 @@
 		color: transparent;
 		caret-color: white;
 		outline: none;
-		resize: none;
 		overflow-y: auto;
 		display: block;
+		resize: vertical;
 	}
 
 	.backdrop {
@@ -132,8 +221,42 @@
 		min-height: 100%;
 	}
 
+	:global(.phantom-text) {
+		color: #ffffff !important;
+		opacity: 0.25;
+		font-style: italic;
+		letter-spacing: 0.5px;
+		animation: pulse-ghost 1.5s infinite ease-in-out;
+	}
+
+	@keyframes pulse-ghost {
+		0% {
+			opacity: 0.2;
+		}
+		50% {
+			opacity: 0.35;
+		}
+		100% {
+			opacity: 0.2;
+		}
+	}
+
+	.mobile-tap-zone {
+		position: absolute;
+		left: 12px;
+		width: calc(100% - 24px);
+		height: 100%;
+		min-height: 160px;
+		z-index: 3;
+		background: transparent;
+		border: none;
+		color: transparent;
+		cursor: pointer;
+		text-indent: -9999px;
+	}
+
 	textarea::placeholder {
-		color: #666;
+		color: #555;
 	}
 
 	:global(.red-notes-text) {
@@ -142,5 +265,9 @@
 
 	:global(.blue-notes-text) {
 		color: #4d94ff;
+	}
+
+	:global(.green-notes-text) {
+		color: #2ecc71;
 	}
 </style>

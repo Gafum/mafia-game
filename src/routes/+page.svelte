@@ -31,7 +31,7 @@
 		padding: 10px 20px;
 		border-radius: 10px;
 		color: rgb(235, 235, 235);
-		transition-property: filter box-shadow;
+		transition-property: filter, box-shadow;
 		transition-duration: 0.2s;
 	}
 
@@ -81,6 +81,21 @@
 
 	a:active {
 		filter: brightness(1.3);
+	}
+
+	@media (hover: none) {
+		a.settings:active {
+			filter: brightness(1.2);
+			box-shadow: 0 0 10px #493066;
+		}
+
+		a.play-btn:active {
+			box-shadow: 0 0 12px #2c9182;
+		}
+
+		a.rules-btn:active {
+			box-shadow: 0 0 8px #306740;
+		}
 	}
 
 	@media (max-width: 480px) {

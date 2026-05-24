@@ -15,8 +15,7 @@
 
 	$: targetTotal = totalPlayers;
 
-	function submitForm(event) {
-		event.preventDefault();
+	function submitForm() {
 		handleRandom(targetTotal);
 	}
 </script>
@@ -30,6 +29,7 @@
 			value={targetTotal}
 			on:input={handleTargetInput}
 			on:blur={() => (targetTotal = normalize(targetTotal, 3, maxPlayerAmount))}
+			autocomplete="off"
 		/>
 	</div>
 	<SimpleLink

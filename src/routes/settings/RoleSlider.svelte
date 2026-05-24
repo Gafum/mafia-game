@@ -21,6 +21,7 @@
 			{value}
 			on:input={onInput}
 			on:blur={() => (value = normalize(value, min, max))}
+			autocomplete="off"
 		/>
 	</div>
 	<input type="range" {min} {max} bind:value class="red-slider" />

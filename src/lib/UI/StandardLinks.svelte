@@ -42,6 +42,13 @@
 		}
 	}
 
+	@media (hover: none) {
+		.standard-links a:active {
+			transform: scale(0.94);
+			filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
+		}
+	}
+
 	.standard-links a {
 		display: flex;
 		transition: transform 0.2s ease;

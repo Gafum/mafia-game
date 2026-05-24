@@ -16,23 +16,21 @@
 	const allRoles = Object.keys(bigDescriptionList);
 </script>
 
-<div class="player" class:dead={!person.alive}>
+<div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>
 	<div class="left">
 		<div class="index">{index + 1}</div>
 
 		<svelte:component this={roleData?.icon} size={20} color="#fff" class="mobile-hidden-icon" />
 
-		{#if $allowToManipulate}
-			<select bind:value={person.tag} class="role-select">
-				{#each allRoles as roleKey}
-					<option value={roleKey}>
-						{bigDescriptionList[roleKey]?.name || roleKey}
-					</option>
-				{/each}
-			</select>
-		{:else}
-			<span>{roleData?.name}</span>
-		{/if}
+		<select bind:value={person.tag} class="role-select ignore-drag">
+			{#each allRoles as roleKey}
+				<option value={roleKey}>
+					{bigDescriptionList[roleKey]?.name || roleKey}
+				</option>
+			{/each}
+		</select>
+
+		<span class="role-name">{roleData?.name}</span>
 	</div>
 
 	<div class="actions">
@@ -89,12 +87,8 @@
 		min-width: 15px;
 	}
 
-	span {
-		color: white;
-		font-size: 17px;
-	}
-
 	.role-select {
+		display: none;
 		background: #242424;
 		color: white;
 		border: 1px solid #333;
@@ -104,6 +98,26 @@
 		cursor: pointer;
 		outline: none;
 		max-width: 180px;
+	}
+
+	.role-name {
+		display: inline;
+		color: white;
+		font-size: 17px;
+	}
+
+	.player.manipulate .role-select {
+		display: inline-block;
+	}
+	.player.manipulate .role-name {
+		display: none;
+	}
+
+	:global(.sortable-drag .role-select) {
+		display: none !important;
+	}
+	:global(.sortable-drag .role-name) {
+		display: inline !important;
 	}
 
 	.role-select > option {
@@ -142,12 +156,12 @@
 	}
 
 	@media (hover: hover) {
-		.handle:active {
-			opacity: 0.4;
-		}
 		.handle:hover {
 			opacity: 0.4;
 		}
+	}
+	.handle:active {
+		opacity: 0.4;
 	}
 
 	@media (max-width: 420px) {

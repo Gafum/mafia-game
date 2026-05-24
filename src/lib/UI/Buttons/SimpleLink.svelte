@@ -50,14 +50,24 @@
 		justify-content: center;
 		gap: 10px;
 		max-width: 500px;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	@media (hover: hover) {
+		.link-style:hover {
+			filter: brightness(1.15);
+			box-shadow: 0px 0px 8px var(--main-bg-color);
+		}
+
 		.link-style:active {
 			transform: scale(0.95);
 		}
-		.link-style:hover {
-			filter: brightness(1.15);
+	}
+
+	@media (hover: none) {
+		.link-style:active {
+			transform: scale(0.94);
+			filter: brightness(0.85);
 			box-shadow: 0px 0px 8px var(--main-bg-color);
 		}
 	}

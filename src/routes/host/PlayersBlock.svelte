@@ -49,6 +49,8 @@
 			delayOnTouchOnly: true,
 			handle: '.handle',
 			animation: 200,
+			filter: '.ignore-drag',
+			preventOnFilter: false,
 			ghostClass: 'sortable-ghost',
 			forceFallback: true,
 			fallbackClass: 'sortable-drag',
@@ -64,7 +66,7 @@
 		peopleList = peopleList.map((element, i) => ({
 			myIndex: element.myIndex ?? `init_${i}`,
 			...element,
-			alive: element.alive ?? true
+			alive: true
 		}));
 	});
 
@@ -141,6 +143,7 @@
 		border-radius: 12px;
 		box-shadow: none;
 	}
+
 	:global(.sortable-drag) {
 		opacity: 0.3;
 		border-radius: 12px;

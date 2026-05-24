@@ -86,8 +86,13 @@
 	@media (hover: hover) {
 		.host-link:hover {
 			background: rgba(255, 255, 255, 0.2);
-			transform: translateY(-2px);
 			border-color: rgba(255, 255, 255, 0.4);
 		}
+	}
+
+	.host-link:active {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(2px) scale(0.97);
+		border-color: rgba(255, 255, 255, 0.4);
 	}
 </style>
