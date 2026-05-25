@@ -2,17 +2,20 @@
 	import { gameRules } from '$lib/data';
 	import NumberedList from '$lib/UI/NumberedList.svelte';
 	import { Annoyed } from 'lucide-svelte';
-	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
+	import '$lib/UI/Buttons/SimpleLink.css';
 	import { allowToManipulate } from './hostStore.js';
 
-	function setManipulate() {
+	function toggleManipulate() {
 		allowToManipulate.update((n) => !n);
 	}
 </script>
 
 <NumberedList list={gameRules} />
 
-<SimpleLink href="/host" actionCallback={setManipulate} type={$allowToManipulate ? 'green' : 'red'}>
+<button
+	on:click|preventDefault={toggleManipulate}
+	class={'link-style ' + ($allowToManipulate ? 'green' : 'red')}
+>
 	<Annoyed size={20} color="#fff" class="mobile-hidden-icon" />
 	{$allowToManipulate ? 'Скрити махлювання' : 'Підмішати карти'}
-</SimpleLink>
+</button>

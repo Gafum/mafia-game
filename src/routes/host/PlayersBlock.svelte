@@ -2,16 +2,21 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import Sortable from 'sortablejs';
 	import PlayerItem from './PlayerItem.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 	import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
 	import { Play, Plus } from 'lucide-svelte';
 	import { allowToManipulate } from './hostStore.js';
+	import { slide, fade } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
 
 	export let onOpenRole = () => {};
 
-	let peopleList = page.state?.peopleList ?? [];
+	let peopleList = (page.state?.peopleList ?? []).map((element, i) => ({
+		myIndex: element.myIndex ?? `init_${i}`,
+		...element,
+		alive: element.hasOwnProperty('alive') ? element.alive : true
+	}));
 	let listElement;
 
 	function toggleAlive(index) {
@@ -37,11 +42,14 @@
 		peopleList = [...peopleList];
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		allowToManipulate.update(() => false);
 		if (peopleList.length === 0) {
 			goto('/');
 			return;
 		}
+
+		const Sortable = (await import('sortablejs')).default;
 
 		Sortable.create(listElement, {
 			touchStartThreshold: 3,
@@ -62,16 +70,9 @@
 				peopleList = reordered;
 			}
 		});
-
-		peopleList = peopleList.map((element, i) => ({
-			myIndex: element.myIndex ?? `init_${i}`,
-			...element,
-			alive: true
-		}));
 	});
 
 	const goToModifiedPlay = () => {
-		allowToManipulate.update(() => false);
 		goto('/play', {
 			state: {
 				peopleList: addKeyToObjects(peopleList.reverse(), 'myIndex')
@@ -84,7 +85,12 @@
 	<div class="players-container">
 		<div class="players" bind:this={listElement}>
 			{#each peopleList as person, index (person.myIndex)}
-				<div class="sort-item">
+				<div
+					class="sort-item"
+					animate:flip={{ duration: 200 }}
+					in:fade|local={{ duration: 200 }}
+					out:slide|local={{ duration: 200 }}
+				>
 					<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
 				</div>
 			{/each}

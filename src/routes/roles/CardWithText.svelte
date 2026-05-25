@@ -60,7 +60,10 @@
 			</div>
 		</div>
 		<div class="front">
-			<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
+			{#if flipped}
+				<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
+			{/if}
+
 			<h2>{cartData.name}</h2>
 			<p>{cartData.description}</p>
 		</div>

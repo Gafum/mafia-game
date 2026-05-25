@@ -68,6 +68,7 @@
 		align-items: center;
 		gap: 12px;
 		box-shadow: 4px 4px 5px #0e0e0e60;
+		transition: opacity 0.2s;
 	}
 
 	.player.dead {
@@ -109,6 +110,7 @@
 	.player.manipulate .role-select {
 		display: inline-block;
 	}
+
 	.player.manipulate .role-name {
 		display: none;
 	}
@@ -116,6 +118,7 @@
 	:global(.sortable-drag .role-select) {
 		display: none !important;
 	}
+
 	:global(.sortable-drag .role-name) {
 		display: inline !important;
 	}
@@ -165,12 +168,19 @@
 	}
 
 	@media (max-width: 420px) {
-		.player {
+		.player.manipulate {
 			flex-direction: column;
 			align-items: stretch;
 		}
 		.actions {
 			justify-content: flex-end;
+		}
+	}
+
+	@media (max-width: 320px) {
+		.player {
+			flex-direction: column;
+			align-items: stretch;
 		}
 	}
 </style>

@@ -2,9 +2,9 @@
 	import { handleNumericInput, normalize } from './inputHelpers';
 	import { Zap } from 'lucide-svelte';
 	import { maxPlayerAmount } from '$lib/functions/findSpecialKeys';
-	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
+	import '$lib/UI/Buttons/SimpleLink.css';
 
-	export let handleRandom = (targetTotal) => {};
+	export let handleRandom = () => {};
 	export let totalPlayers = 0;
 
 	function handleTargetInput(e) {
@@ -32,13 +32,13 @@
 			autocomplete="off"
 		/>
 	</div>
-	<SimpleLink
-		href="/random"
-		actionCallback={submitForm}
-		props={{ style: 'font-size: 0.8rem; min-height: 33px; margin: 0; width: auto;' }}
+	<button
+		on:click|preventDefault={submitForm}
+		class="link-style red"
+		style="font-size: 0.8rem; min-height: 33px; margin: 0; width: auto;"
 	>
 		<Zap size={18} color="#fff" class="mobile-hidden-icon" /> РАНДОМ
-	</SimpleLink>
+	</button>
 </form>
 
 <style>

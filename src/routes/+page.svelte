@@ -14,6 +14,9 @@
 		justify-content: center;
 		align-items: center;
 		align-content: center;
+		min-height: 100vh;
+		min-height: 100svh;
+		min-height: 100dvh;
 		height: 100%;
 		width: 100%;
 		gap: 20px;
