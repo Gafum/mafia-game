@@ -1,5 +1,5 @@
 <script>
-	let text = '';
+	export let text = '';
 	let scrollTop = 0;
 	let textareaElement;
 	let currentSuggestion = '';

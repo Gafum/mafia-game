@@ -33,6 +33,10 @@
 		box-shadow: 4px 4px 5px #0e0e0e60;
 	}
 
+	.line:nth-child(even) {
+		background: #1e1e1e;
+	}
+
 	.index {
 		color: #999;
 		font-size: 13px;

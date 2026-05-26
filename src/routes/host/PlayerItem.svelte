@@ -16,7 +16,12 @@
 	const allRoles = Object.keys(bigDescriptionList);
 </script>
 
-<div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>
+<div
+	class="player"
+	class:even={index % 2 === 0}
+	class:dead={!person.alive}
+	class:manipulate={$allowToManipulate}
+>
 	<div class="left">
 		<div class="index">{index + 1}</div>
 
@@ -69,6 +74,10 @@
 		gap: 12px;
 		box-shadow: 4px 4px 5px #0e0e0e60;
 		transition: opacity 0.2s;
+	}
+
+	.player.even {
+		background: #1f1f1f;
 	}
 
 	.player.dead {

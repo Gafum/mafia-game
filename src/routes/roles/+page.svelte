@@ -21,9 +21,9 @@
 			{#each tagList as tag}
 				<CardWithText {tag} />
 			{/each}
+			<StandardLinks size={75} blockStyles="max-width: 280px;" />
 		</div>
 	{/if}
-	<StandardLinks size={75} blockStyles="max-width: 280px;" />
 </div>
 
 <style>

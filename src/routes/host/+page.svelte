@@ -1,5 +1,5 @@
 <script>
-	import { writable } from 'svelte/store';
+	import { page } from '$app/state';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 	import DropdownBlock from '$lib/UI/DropdownBlock.svelte';
@@ -23,40 +23,41 @@
 		isModalOpen = true;
 	}
 
-	let hostPageBlocks = [
-		{
-			name: 'Правила гри',
-			component: RulesBlock,
-			isOpen: false
-		},
-		{ name: 'Нотатки', component: NotesBlock, isOpen: false, props: {} },
-		{
-			name: 'Гравці',
-			component: PlayersBlock,
-			isOpen: false,
-			props: { onOpenRole: openRole }
-		},
-		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false, props: {} }
-	];
+	let isRulesOpen = false;
+	let isNotesOpen = true;
+	let isPlayersOpen = true;
+	let isScriptOpen = false;
 
-	import { onMount } from 'svelte';
-	onMount(() => {
-		setTimeout(() => {
-			hostPageBlocks[1].isOpen = true;
-			hostPageBlocks[2].isOpen = true;
-		}, 100);
-	});
+	let notesText = '';
+	let peopleList = (page.state?.peopleList ?? []).map((element, i) => ({
+		myIndex: element.myIndex ?? `init_${i}`,
+		...element,
+		alive: element.hasOwnProperty('alive') ? element.alive : true
+	}));
 </script>
 
 <div class="host-page main-conteiner">
 	<HostHeader {night} onAddNight={addNight} />
 
-	{#each hostPageBlocks as blockData (blockData.name)}
-		<DropdownBlock bind:open={blockData.isOpen}>
-			<h2 slot="title" class="host-headline">{blockData.name}</h2>
-			<svelte:component this={blockData.component} {...blockData.props} />
-		</DropdownBlock>
-	{/each}
+	<DropdownBlock bind:open={isRulesOpen}>
+		<h2 slot="title" class="host-headline">Правила гри</h2>
+		<RulesBlock />
+	</DropdownBlock>
+
+	<DropdownBlock bind:open={isNotesOpen}>
+		<h2 slot="title" class="host-headline">Нотатки</h2>
+		<NotesBlock bind:text={notesText} />
+	</DropdownBlock>
+
+	<DropdownBlock bind:open={isPlayersOpen}>
+		<h2 slot="title" class="host-headline">Гравці</h2>
+		<PlayersBlock bind:peopleList {openRole} />
+	</DropdownBlock>
+
+	<DropdownBlock bind:open={isScriptOpen}>
+		<h2 slot="title" class="host-headline">Слова ведучого</h2>
+		<HostScriptBlock />
+	</DropdownBlock>
 
 	<RoleDetailsModal
 		open={isModalOpen}

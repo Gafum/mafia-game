@@ -31,10 +31,12 @@
 	</div>
 
 	<div class="content-wrapper" class:hidden={!open} on:click|stopPropagation>
-		<div class="content">
-			<slot />
-		</div>
-		<div class="bottom-padding" />
+		{#if open}
+			<div class="content">
+				<slot />
+			</div>
+			<div class="bottom-padding" />
+		{/if}
 	</div>
 </section>
 

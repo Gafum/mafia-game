@@ -8,16 +8,12 @@
 	import { Play, Plus } from 'lucide-svelte';
 	import { allowToManipulate } from './hostStore.js';
 	import { slide, fade } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
 
 	export let onOpenRole = () => {};
+	export let peopleList = [];
 
-	let peopleList = (page.state?.peopleList ?? []).map((element, i) => ({
-		myIndex: element.myIndex ?? `init_${i}`,
-		...element,
-		alive: element.hasOwnProperty('alive') ? element.alive : true
-	}));
 	let listElement;
+	let mounted = false;
 
 	function toggleAlive(index) {
 		peopleList[index].alive = !Boolean(peopleList[index].alive);
@@ -70,6 +66,8 @@
 				peopleList = reordered;
 			}
 		});
+
+		mounted = true;
 	});
 
 	const goToModifiedPlay = () => {
@@ -85,14 +83,19 @@
 	<div class="players-container">
 		<div class="players" bind:this={listElement}>
 			{#each peopleList as person, index (person.myIndex)}
-				<div
-					class="sort-item"
-					animate:flip={{ duration: 200 }}
-					in:fade|local={{ duration: 200 }}
-					out:slide|local={{ duration: 200 }}
-				>
-					<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
-				</div>
+				{#if mounted}
+					<div
+						class="sort-item"
+						in:fade|local={{ duration: 200 }}
+						out:slide|local={{ duration: 200 }}
+					>
+						<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
+					</div>
+				{:else}
+					<div class="sort-item">
+						<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
+					</div>
+				{/if}
 			{/each}
 		</div>
 
