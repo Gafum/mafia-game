@@ -29,15 +29,23 @@
 			component: RulesBlock,
 			isOpen: false
 		},
-		{ name: 'Нотатки', component: NotesBlock, isOpen: true, props: {} },
+		{ name: 'Нотатки', component: NotesBlock, isOpen: false, props: {} },
 		{
 			name: 'Гравці',
 			component: PlayersBlock,
-			isOpen: true,
+			isOpen: false,
 			props: { onOpenRole: openRole }
 		},
 		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false, props: {} }
 	];
+
+	import { onMount } from 'svelte';
+	onMount(() => {
+		setTimeout(() => {
+			hostPageBlocks[1].isOpen = true;
+			hostPageBlocks[2].isOpen = true;
+		}, 100);
+	});
 </script>
 
 <div class="host-page main-conteiner">

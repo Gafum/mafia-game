@@ -99,7 +99,7 @@
 		{#if $allowToManipulate}
 			<button class="add-player-btn" on:click={addPlayer}>
 				<Plus size={20} color="#fff" />
-				Додати персонажа
+				<span> Новий герой </span>
 			</button>
 		{/if}
 	</div>
@@ -134,14 +134,20 @@
 		justify-content: center;
 		gap: 10px;
 		cursor: pointer;
-		color: white;
-		font-size: 16px;
+
 		transition: background 0.2s, border-color 0.2s;
 	}
 
-	.add-player-btn:hover {
-		background: #2a2a2a;
-		border-color: #666;
+	.add-player-btn > span {
+		color: white;
+		font-size: 18px;
+	}
+
+	@media (hover: hover) {
+		.add-player-btn:hover {
+			background: #2a2a2a;
+			border-color: #666;
+		}
 	}
 
 	:global(.sortable-ghost) {
@@ -154,5 +160,12 @@
 		opacity: 0.3;
 		border-radius: 12px;
 		scale: 0.92;
+	}
+
+	@media (max-width: 300px) {
+		.add-player-btn > span {
+			color: white;
+			font-size: 15px;
+		}
 	}
 </style>

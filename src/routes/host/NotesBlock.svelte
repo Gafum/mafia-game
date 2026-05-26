@@ -88,9 +88,7 @@
 	function autocompleteWord() {
 		if (!currentSuggestion) return;
 
-		const words = text.split(/(\s+)/);
-		words[words.length - 1] = currentSuggestion + ' ';
-		text = words.join('');
+		text = text.toString() + remainingPart + ' ';
 
 		setTimeout(() => {
 			textareaElement.focus();

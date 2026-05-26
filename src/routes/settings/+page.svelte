@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { cardRules, setCookie } from '$lib/stores';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
@@ -14,6 +15,7 @@
 
 	let state = { ...cardRulesConst };
 	let isMount = false;
+	let renderContent = false;
 
 	const specialKeys = findSpecialKeys();
 
@@ -38,6 +40,9 @@
 		}
 
 		isMount = true;
+		setTimeout(() => {
+			renderContent = true;
+		}, 100);
 	});
 
 	const handleRandom = (targetTotal) => {
@@ -50,24 +55,28 @@
 		<SettingsHeader {totalPlayers} />
 
 		<main>
-			<PlayerGenerator {handleRandom} {totalPlayers} />
+			{#if renderContent}
+				<div in:fade={{ duration: 200 }}>
+					<PlayerGenerator {handleRandom} {totalPlayers} />
 
-			<section class="base-roles">
-				<RoleSlider
-					label="Мирні жителі"
-					bind:value={state.mans}
-					max={cardRulesConst.mans}
-					min={1}
-				/>
+					<section class="base-roles">
+						<RoleSlider
+							label="Мирні жителі"
+							bind:value={state.mans}
+							max={cardRulesConst.mans}
+							min={1}
+						/>
 
-				<RoleSlider label="Мафія" bind:value={state.mafias} max={cardRulesConst.mafias} min={0} />
-			</section>
+						<RoleSlider label="Мафія" bind:value={state.mafias} max={cardRulesConst.mafias} min={0} />
+					</section>
 
-			<div class="special-roles-grid">
-				{#each specialKeys as key}
-					<SpecialRoleToggle bind:active={state[key]} roleData={bigDescriptionList[key]} />
-				{/each}
-			</div>
+					<div class="special-roles-grid">
+						{#each specialKeys as key}
+							<SpecialRoleToggle bind:active={state[key]} roleData={bigDescriptionList[key]} />
+						{/each}
+					</div>
+				</div>
+			{/if}
 		</main>
 
 		<LinksBlock settingsState={state} />

@@ -12,6 +12,31 @@
 	let additionData = null; // uniq Image and description (it changes every flip)
 	let flipped = false;
 
+	let isVisible = false;
+
+	function intersect(node) {
+		if (typeof IntersectionObserver === 'undefined') {
+			isVisible = true;
+			return;
+		}
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					isVisible = true;
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.15 }
+		);
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
+
 	function findNextData() {
 		const sameRoleList = tagMap[tag] || [];
 		if (sameRoleList.length === 0) return null;
@@ -46,31 +71,46 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if Boolean(additionData)}
-	<div class={'card ' + tag} class:show={flipped} on:click={flip}>
-		<div class="back">
-			<div class="imgWrapper">
-				<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
-				{#key additionData.myImg}
-					<img src="/assets/cards/{additionData.myImg}.png" class="my-img" alt={cartData.name} />
-				{/key}
+	<div class="reveal-wrapper" use:intersect class:visible={isVisible}>
+		<div class={'card ' + tag} class:show={flipped} on:click={flip}>
+			<div class="back">
+				<div class="imgWrapper">
+					<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+					{#key additionData.myImg}
+						<img src="/assets/cards/{additionData.myImg}.png" class="my-img" alt={cartData.name} />
+					{/key}
+				</div>
+				<div class="my-text">
+					<h2>{cartData.name}</h2>
+					<p>{additionData.description}</p>
+				</div>
 			</div>
-			<div class="my-text">
-				<h2>{cartData.name}</h2>
-				<p>{additionData.description}</p>
-			</div>
-		</div>
-		<div class="front">
-			{#if flipped}
+			<div class="front">
 				<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
-			{/if}
 
-			<h2>{cartData.name}</h2>
-			<p>{cartData.description}</p>
+				<h2>{cartData.name}</h2>
+				<p>{cartData.description}</p>
+			</div>
 		</div>
 	</div>
 {/if}
 
 <style>
+	.reveal-wrapper {
+		opacity: 0;
+		transform: translateY(60px);
+		transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
+			transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+		width: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	.reveal-wrapper.visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
 	.card {
 		width: 85vw;
 		height: 54vmax;
@@ -177,6 +217,9 @@
 		right: 15px;
 		width: 35px;
 		height: 35px;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform: translateZ(1px);
 	}
 
 	:global(.imgWrapper > .back-icon) {

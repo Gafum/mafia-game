@@ -34,7 +34,7 @@
 		padding: 10px 20px;
 		border-radius: 10px;
 		color: rgb(235, 235, 235);
-		transition-property: filter, box-shadow;
+		transition-property: filter, box-shadow, transform;
 		transition-duration: 0.2s;
 	}
 
@@ -83,7 +83,8 @@
 	}
 
 	a:active {
-		filter: brightness(1.3);
+		filter: brightness(0.85);
+		transform: scale(0.96);
 	}
 
 	@media (hover: none) {

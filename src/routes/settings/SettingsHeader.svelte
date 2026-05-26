@@ -55,6 +55,8 @@
 		header {
 			flex-direction: column;
 			gap: 10px;
+			border-bottom: none;
+			padding-bottom: 3px;
 		}
 	}
 </style>
