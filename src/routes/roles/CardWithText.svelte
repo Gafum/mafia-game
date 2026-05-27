@@ -6,13 +6,13 @@
 
 	export let tag;
 
-	const cartData = bigDescriptionList[tag]; // Information about this type of
+	const cartData = bigDescriptionList[tag];
 
 	let currentIndex = -1;
 	let additionData = null; // uniq Image and description (it changes every flip)
 	let flipped = false;
-
 	let isVisible = false;
+	let imgLoaded = false;
 
 	function intersect(node) {
 		if (typeof IntersectionObserver === 'undefined') {
@@ -48,7 +48,7 @@
 				currentIndex = (currentIndex + 1) % sameRoleList.length;
 			}
 		} else {
-			currentIndex == 0;
+			currentIndex = 0;
 		}
 
 		return sameRoleList[currentIndex];
@@ -57,8 +57,9 @@
 	function flip() {
 		if (!flipped) {
 			setTimeout(() => {
+				imgLoaded = false;
 				additionData = findNextData();
-			}, 300);
+			}, 180);
 		}
 		flipped = !flipped;
 	}
@@ -76,8 +77,15 @@
 			<div class="back">
 				<div class="imgWrapper">
 					<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+
 					{#key additionData.myImg}
-						<img src="/assets/cards/{additionData.myImg}.png" class="my-img" alt={cartData.name} />
+						<img
+							src="/assets/cards/{additionData.myImg}.png"
+							class="my-img"
+							class:loaded={imgLoaded}
+							alt={cartData.name}
+							on:load={() => (imgLoaded = true)}
+						/>
 					{/key}
 				</div>
 				<div class="my-text">
@@ -87,7 +95,6 @@
 			</div>
 			<div class="front">
 				<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
-
 				<h2>{cartData.name}</h2>
 				<p>{cartData.description}</p>
 			</div>
@@ -181,6 +188,14 @@
 		z-index: 1;
 		position: relative;
 		background-color: white;
+		opacity: 0;
+		transform: scale(0.98);
+		transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+	}
+
+	.my-img.loaded {
+		opacity: 1;
+		transform: scale(1);
 	}
 
 	.my-text {
@@ -188,7 +203,6 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		align-content: center;
 		gap: 20px;
 	}
 
@@ -230,7 +244,7 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -120%);
-		/* display: none; */
+		animation: 1s ease-out showIcon;
 	}
 
 	@media (max-width: 720px) {
@@ -315,9 +329,24 @@
 			transform: translate(-50%, -140%);
 		}
 	}
+
 	@media (max-width: 330px) {
 		:global(.front > .role-icon) {
 			display: none;
+		}
+	}
+
+	@keyframes showIcon {
+		0% {
+			opacity: 0;
+			scale: 0;
+		}
+		70% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+			scale: 1;
 		}
 	}
 </style>

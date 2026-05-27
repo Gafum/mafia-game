@@ -1,8 +1,10 @@
 <script>
 	import { Users, Moon, Plus } from 'lucide-svelte';
 
-	export let night = 1;
-	export let onAddNight = () => {};
+	let night = 1;
+	function addNight() {
+		night++;
+	}
 </script>
 
 <header class="header">
@@ -11,7 +13,7 @@
 		<h1>Панель ведучого</h1>
 	</div>
 
-	<button class="night-btn" on:click={onAddNight}>
+	<button class="night-btn" on:click={addNight}>
 		<Moon size={17} color="#fff" />
 		Ніч {night}
 		<Plus size={15} color="#fff" />

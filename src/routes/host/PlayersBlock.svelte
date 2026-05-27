@@ -1,6 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
-	import { page } from '$app/state';
+	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import PlayerItem from './PlayerItem.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
@@ -8,15 +7,29 @@
 	import { Play, Plus } from 'lucide-svelte';
 	import { allowToManipulate } from './hostStore.js';
 	import { slide, fade } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 
-	export let onOpenRole = () => {};
 	export let peopleList = [];
 
+	let visibleCount = 0;
 	let listElement;
-	let mounted = false;
+
+	let modalHeroTag = 'mans';
+	let isModalOpen = false;
+
+	function openRole(tag) {
+		modalHeroTag = tag;
+		isModalOpen = true;
+	}
 
 	function toggleAlive(index) {
-		peopleList[index].alive = !Boolean(peopleList[index].alive);
+		peopleList[index].alive = !peopleList[index].alive;
+		peopleList = [...peopleList];
+	}
+
+	function handleRoleChange(index, newTag) {
+		peopleList[index].tag = newTag;
 		peopleList = [...peopleList];
 	}
 
@@ -27,23 +40,42 @@
 			myIndex: `new_${Date.now()}_${Math.random()}`
 		};
 		peopleList = [...peopleList, newPlayer];
+		visibleCount += 1;
 	}
 
 	function deletePlayer(index) {
-		if (peopleList.length <= 1) {
-			return;
-		}
-
+		if (peopleList.length <= 1) return;
 		peopleList.splice(index, 1);
 		peopleList = [...peopleList];
+		if (visibleCount > peopleList.length) {
+			visibleCount = peopleList.length;
+		}
+	}
+
+	function startLazyRender(chunkSize = 5) {
+		visibleCount = 0;
+
+		function nextChunk() {
+			if (visibleCount >= peopleList.length) {
+				visibleCount = peopleList.length;
+				return;
+			}
+			visibleCount += chunkSize;
+			requestAnimationFrame(nextChunk);
+		}
+
+		nextChunk();
 	}
 
 	onMount(async () => {
-		allowToManipulate.update(() => false);
 		if (peopleList.length === 0) {
 			goto('/');
 			return;
 		}
+
+		startLazyRender();
+
+		await tick();
 
 		const Sortable = (await import('sortablejs')).default;
 
@@ -58,7 +90,10 @@
 			ghostClass: 'sortable-ghost',
 			forceFallback: true,
 			fallbackClass: 'sortable-drag',
+			fallbackOnBody: true,
 			onEnd: (evt) => {
+				if (evt.oldIndex === evt.newIndex) return;
+
 				const reordered = [...peopleList];
 				const [movedItem] = reordered.splice(evt.oldIndex, 1);
 				reordered.splice(evt.newIndex, 0, movedItem);
@@ -66,8 +101,6 @@
 				peopleList = reordered;
 			}
 		});
-
-		mounted = true;
 	});
 
 	const goToModifiedPlay = () => {
@@ -82,20 +115,22 @@
 {#if peopleList.length > 0}
 	<div class="players-container">
 		<div class="players" bind:this={listElement}>
-			{#each peopleList as person, index (person.myIndex)}
-				{#if mounted}
-					<div
-						class="sort-item"
-						in:fade|local={{ duration: 200 }}
-						out:slide|local={{ duration: 200 }}
-					>
-						<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
-					</div>
-				{:else}
-					<div class="sort-item">
-						<PlayerItem bind:person {index} {toggleAlive} {onOpenRole} onDelete={deletePlayer} />
-					</div>
-				{/if}
+			{#each peopleList.slice(0, visibleCount) as person, index (person.myIndex)}
+				<div
+					class="sort-item"
+					animate:flip={{ duration: 200 }}
+					in:fade={{ duration: 200 }}
+					out:slide={{ duration: 200 }}
+				>
+					<PlayerItem
+						{person}
+						{index}
+						{toggleAlive}
+						{openRole}
+						onDelete={deletePlayer}
+						onRoleChange={(newTag) => handleRoleChange(index, newTag)}
+					/>
+				</div>
 			{/each}
 		</div>
 
@@ -113,6 +148,12 @@
 		</SimpleLink>
 	{/if}
 {/if}
+
+<RoleDetailsModal
+	open={isModalOpen}
+	heroTag={modalHeroTag}
+	on:close={() => (isModalOpen = false)}
+/>
 
 <style>
 	.players-container {
@@ -137,8 +178,8 @@
 		justify-content: center;
 		gap: 10px;
 		cursor: pointer;
-
-		transition: background 0.2s, border-color 0.2s;
+		-webkit-tap-highlight-color: transparent;
+		transition: transform 0.1s ease-out, background 0.2s;
 	}
 
 	.add-player-btn > span {
@@ -151,6 +192,11 @@
 			background: #2a2a2a;
 			border-color: #666;
 		}
+	}
+
+	.add-player-btn:active {
+		transform: scale(0.96);
+		background: #1a1a1a;
 	}
 
 	:global(.sortable-ghost) {

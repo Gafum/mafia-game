@@ -1,69 +1,53 @@
 <script>
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
+
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
-	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 	import DropdownBlock from '$lib/UI/DropdownBlock.svelte';
 
+	import { allowToManipulate } from './hostStore.js';
 	import HostHeader from './HostHeader.svelte';
 	import RulesBlock from './RulesBlock.svelte';
 	import PlayersBlock from './PlayersBlock.svelte';
 	import HostScriptBlock from './HostScriptBlock.svelte';
 	import NotesBlock from './NotesBlock.svelte';
 
-	let night = 1;
-	let modalHeroTag = 'mans';
-	let isModalOpen = false;
-
-	function addNight() {
-		night++;
-	}
-
-	function openRole(tag) {
-		modalHeroTag = tag;
-		isModalOpen = true;
-	}
-
-	let isRulesOpen = false;
-	let isNotesOpen = true;
-	let isPlayersOpen = true;
-	let isScriptOpen = false;
-
 	let notesText = '';
+
+	// It is here because it prevent rebuilding of this array after each dropdown
 	let peopleList = (page.state?.peopleList ?? []).map((element, i) => ({
 		myIndex: element.myIndex ?? `init_${i}`,
 		...element,
-		alive: element.hasOwnProperty('alive') ? element.alive : true
+		alive: element.alive ?? true
 	}));
+
+	let hostPageBlocks = [
+		{ name: 'Правила гри', component: RulesBlock, isOpen: false },
+		{ name: 'Нотатки', component: null, isOpen: true },
+		{ name: 'Гравці', component: null, isOpen: false },
+		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false }
+	];
+
+	onMount(() => {
+		allowToManipulate.set(false);
+	});
 </script>
 
 <div class="host-page main-conteiner">
-	<HostHeader {night} onAddNight={addNight} />
+	<HostHeader />
 
-	<DropdownBlock bind:open={isRulesOpen}>
-		<h2 slot="title" class="host-headline">Правила гри</h2>
-		<RulesBlock />
-	</DropdownBlock>
-
-	<DropdownBlock bind:open={isNotesOpen}>
-		<h2 slot="title" class="host-headline">Нотатки</h2>
-		<NotesBlock bind:text={notesText} />
-	</DropdownBlock>
-
-	<DropdownBlock bind:open={isPlayersOpen}>
-		<h2 slot="title" class="host-headline">Гравці</h2>
-		<PlayersBlock bind:peopleList {openRole} />
-	</DropdownBlock>
-
-	<DropdownBlock bind:open={isScriptOpen}>
-		<h2 slot="title" class="host-headline">Слова ведучого</h2>
-		<HostScriptBlock />
-	</DropdownBlock>
-
-	<RoleDetailsModal
-		open={isModalOpen}
-		heroTag={modalHeroTag}
-		on:close={() => (isModalOpen = false)}
-	/>
+	{#each hostPageBlocks as blockData (blockData.name)}
+		<DropdownBlock bind:open={blockData.isOpen}>
+			<h2 slot="title" class="host-headline">{blockData.name}</h2>
+			{#if blockData.name === 'Нотатки'}
+				<NotesBlock bind:text={notesText} />
+			{:else if blockData.name === 'Гравці'}
+				<PlayersBlock bind:peopleList />
+			{:else}
+				<svelte:component this={blockData.component} {...blockData.props} />
+			{/if}
+		</DropdownBlock>
+	{/each}
 
 	<StandardLinks />
 </div>

@@ -7,8 +7,9 @@
 	export let index;
 
 	export let toggleAlive = () => {};
-	export let onOpenRole = () => {};
+	export let openRole = () => {};
 	export let onDelete = () => {};
+	export let onRoleChange = (tag) => {};
 
 	$: roleTag = person.tag;
 	$: roleData = bigDescriptionList[roleTag];
@@ -27,7 +28,11 @@
 
 		<svelte:component this={roleData?.icon} size={20} color="#fff" class="mobile-hidden-icon" />
 
-		<select bind:value={person.tag} class="role-select ignore-drag">
+		<select
+			value={person.tag}
+			on:change={(e) => onRoleChange(e.target.value)}
+			class="role-select ignore-drag"
+		>
 			{#each allRoles as roleKey}
 				<option value={roleKey}>
 					{bigDescriptionList[roleKey]?.name || roleKey}
@@ -45,7 +50,7 @@
 			</button>
 		{/if}
 
-		<button on:click|stopPropagation={() => onOpenRole(roleTag)}>
+		<button on:click|stopPropagation={() => openRole(roleTag)}>
 			<CircleQuestionMark size={21} color="#fff" />
 		</button>
 
@@ -65,19 +70,20 @@
 
 <style>
 	.player {
-		background: #1c1c1c;
+		background: #1b1b1bbd;
 		border-radius: 12px;
 		padding: 12px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: 12px;
-		box-shadow: 4px 4px 5px #0e0e0e60;
-		transition: opacity 0.2s;
+		box-shadow: 4px 4px 5px #0d0d0d60;
+		will-change: transform, opacity;
 	}
 
 	.player.even {
-		background: #1f1f1f;
+		background: #1c1c1c;
+		box-shadow: 4px 4px 5px #0e0e0e60;
 	}
 
 	.player.dead {
@@ -153,6 +159,8 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+		transition: transform 0.1s ease-out;
 	}
 
 	.delete-btn {
