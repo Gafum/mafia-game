@@ -70,7 +70,7 @@
 
 <style>
 	.player {
-		background: #1b1b1b66;
+		background: #1b1b1baa;
 		border-radius: 12px;
 		padding: 12px;
 		display: flex;

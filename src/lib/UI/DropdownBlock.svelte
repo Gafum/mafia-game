@@ -20,7 +20,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <section class="dropdown-block" class:active={open} on:click={handleSectionClick}>
-	<div class="top" on:click={handleTopClick} style={open ? 'background: #181818;' : ''}>
+	<div class="top" on:click={handleTopClick}>
 		<div class="left">
 			<slot name="title" />
 		</div>
@@ -51,6 +51,16 @@
 		overflow: hidden;
 	}
 
+	.dropdown-block.active {
+		background: #181818;
+	}
+
+	@media (hover: hover) {
+		.dropdown-block:not(.active):hover {
+			background: #1c1c1c;
+		}
+	}
+
 	.top {
 		display: flex;
 		justify-content: space-between;
@@ -58,21 +68,12 @@
 		gap: 12px;
 		padding: 14px;
 		user-select: none;
-		transition: background 0.2s ease;
+		background: transparent;
 	}
 
-	@media (hover: hover) {
-		.top:hover {
-			background: #181818;
-		}
-	}
-
-	.dropdown-block.active .top {
-		background: #181818;
-	}
-
-	.dropdown-block.active {
-		background: #181818;
+	.content-wrapper {
+		padding: 0 14px;
+		background: transparent;
 	}
 
 	.left {
@@ -81,11 +82,6 @@
 		gap: 10px;
 		font-size: 18px;
 		color: #fff;
-	}
-
-	.content-wrapper {
-		padding: 0 14px;
-		background: #181818;
 	}
 
 	.hidden {
