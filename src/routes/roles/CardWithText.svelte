@@ -1,3 +1,7 @@
+<script context="module">
+	const loadedImagesCache = new Set();
+</script>
+
 <script>
 	import { onMount } from 'svelte';
 	import { bigDescriptionList } from '$lib/data';
@@ -9,10 +13,13 @@
 	const cartData = bigDescriptionList[tag];
 
 	let currentIndex = -1;
-	let additionData = null; // uniq Image and description (it changes every flip)
+	let additionData = null;
 	let flipped = false;
 	let isVisible = false;
+
 	let imgLoaded = false;
+	let showFallbackIcon = false;
+	let fallbackTimeout = null;
 
 	function intersect(node) {
 		if (typeof IntersectionObserver === 'undefined') {
@@ -39,9 +46,8 @@
 
 	function findNextData() {
 		const sameRoleList = tagMap[tag] || [];
-		if (sameRoleList.length === 0) return null;
 
-		if (sameRoleList.length >= 1) {
+		if (sameRoleList.length > 1) {
 			if (currentIndex === -1) {
 				currentIndex = Randomizer.randomInteger(0, sameRoleList.length - 1);
 			} else {
@@ -54,11 +60,39 @@
 		return sameRoleList[currentIndex];
 	}
 
+	function handleImgLoad(imgName) {
+		imgLoaded = true;
+		showFallbackIcon = false;
+		if (fallbackTimeout) clearTimeout(fallbackTimeout);
+		loadedImagesCache.add(imgName);
+	}
+
+	function handleImgError() {
+		showFallbackIcon = true;
+		if (fallbackTimeout) clearTimeout(fallbackTimeout);
+	}
+
 	function flip() {
-		if (!flipped) {
+		if (!flipped && tagMap[tag].length > 1) {
+			const nextData = findNextData();
+
+			const isImageChanging = additionData && nextData && additionData.myImg !== nextData.myImg;
+
 			setTimeout(() => {
-				imgLoaded = false;
-				additionData = findNextData();
+				if (isImageChanging) {
+					if (!loadedImagesCache.has(nextData.myImg)) {
+						imgLoaded = false;
+						showFallbackIcon = false;
+
+						fallbackTimeout = setTimeout(() => {
+							if (!imgLoaded) showFallbackIcon = true;
+						}, 400);
+					} else {
+						imgLoaded = true;
+						showFallbackIcon = false;
+					}
+				}
+				additionData = nextData;
 			}, 180);
 		}
 		flipped = !flipped;
@@ -66,6 +100,9 @@
 
 	onMount(() => {
 		additionData = findNextData();
+		if (additionData && loadedImagesCache.has(additionData.myImg)) {
+			imgLoaded = true;
+		}
 	});
 </script>
 
@@ -76,15 +113,19 @@
 		<div class={'card ' + tag} class:show={flipped} on:click={flip}>
 			<div class="back">
 				<div class="imgWrapper">
-					<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+					{#if showFallbackIcon}
+						<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+					{/if}
 
 					{#key additionData.myImg}
 						<img
 							src="/assets/cards/{additionData.myImg}.png"
 							class="my-img"
 							class:loaded={imgLoaded}
-							alt={cartData.name}
-							on:load={() => (imgLoaded = true)}
+							class:cached={loadedImagesCache.has(additionData.myImg)}
+							alt={'⠀' + cartData.name + '⠀'}
+							on:load={() => handleImgLoad(additionData.myImg)}
+							on:error={handleImgError}
 						/>
 					{/key}
 				</div>
@@ -177,6 +218,9 @@
 	.imgWrapper {
 		max-height: 100%;
 		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.my-img {
@@ -196,6 +240,12 @@
 	.my-img.loaded {
 		opacity: 1;
 		transform: scale(1);
+	}
+
+	.my-img.cached {
+		opacity: 1 !important;
+		transform: scale(1) !important;
+		transition: none !important;
 	}
 
 	.my-text {

@@ -20,7 +20,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <section class="dropdown-block" class:active={open} on:click={handleSectionClick}>
-	<div class="top" on:click={handleTopClick}>
+	<div class="top" on:click={handleTopClick} style={open ? 'background: #181818;' : ''}>
 		<div class="left">
 			<slot name="title" />
 		</div>

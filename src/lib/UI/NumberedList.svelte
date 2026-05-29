@@ -34,7 +34,7 @@
 	}
 
 	.line:nth-child(even) {
-		background: #1b1b1bbd;
+		background: #1b1b1b66;
 		box-shadow: 4px 4px 5px #0d0d0d60;
 	}
 

@@ -52,7 +52,7 @@
 		}
 	}
 
-	function startLazyRender(chunkSize = 5) {
+	function startLazyRender(chunkSize = 4) {
 		visibleCount = 0;
 
 		function nextChunk() {
