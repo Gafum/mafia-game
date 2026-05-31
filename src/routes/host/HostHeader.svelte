@@ -9,14 +9,14 @@
 
 <header class="header">
 	<div class="title">
-		<Users size={22} color="#fff" class="mobile-hidden-icon" />
+		<Users size={22} class="mobile-hidden-icon" />
 		<h1>Панель ведучого</h1>
 	</div>
 
 	<button class="night-btn" on:click={addNight}>
-		<Moon size={17} color="#fff" />
+		<Moon size={17} />
 		Ніч {night}
-		<Plus size={15} color="#fff" />
+		<Plus size={15} />
 	</button>
 </header>
 

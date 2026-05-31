@@ -26,7 +26,7 @@
 		</div>
 
 		<div class="rotatable" class:rotate={open}>
-			<ChevronDown size={18} color="#fff" />
+			<ChevronDown size={18} />
 		</div>
 	</div>
 

@@ -16,6 +16,6 @@
 	on:click|preventDefault={toggleManipulate}
 	class={'link-style ' + ($allowToManipulate ? 'green' : 'red')}
 >
-	<Annoyed size={20} color="#fff" class="mobile-hidden-icon" />
+	<Annoyed size={20} class="mobile-hidden-icon" />
 	{$allowToManipulate ? 'Скрити махлювання' : 'Підмішати карти'}
 </button>

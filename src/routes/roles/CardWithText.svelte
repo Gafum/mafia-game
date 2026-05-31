@@ -114,7 +114,7 @@
 			<div class="back">
 				<div class="imgWrapper">
 					{#if showFallbackIcon}
-						<svelte:component this={cartData.icon} color="#000000" class="back-icon" />
+						<svelte:component this={cartData.icon} style="stroke: #000;" class="back-icon" />
 					{/if}
 
 					{#key additionData.myImg}
@@ -141,7 +141,7 @@
 				</div>
 			</div>
 			<div class="front">
-				<svelte:component this={cartData.icon} color="#000000" class="role-icon" />
+				<svelte:component this={cartData.icon} style="stroke:#000;" class="role-icon" />
 				<h2>{cartData.name}</h2>
 				<p>{cartData.description}</p>
 			</div>
@@ -238,12 +238,20 @@
 		z-index: 1;
 		position: relative;
 		background-color: white;
+
 		opacity: 0;
-		transition: opacity 0.3s ease-out;
+		transform: scale(0.97);
+		filter: blur(8px);
+
+		transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+			transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease-out;
+		will-change: transform, opacity, filter;
 	}
 
 	.my-img.loaded {
 		opacity: 1;
+		transform: scale(1);
+		filter: blur(0);
 	}
 
 	.image-placeholder {
@@ -263,6 +271,7 @@
 	.my-img.cached {
 		opacity: 1 !important;
 		transform: scale(1) !important;
+		filter: blur(0) !important;
 		transition: none !important;
 	}
 

@@ -5,9 +5,9 @@
 </script>
 
 <header>
-	<h1><Annoyed color="#ff4444" size={32} class="mobile-hidden-icon" /> Налаштування</h1>
+	<h1><Annoyed style="stroke: #ff4444;" size={32} class="mobile-hidden-icon" /> Налаштування</h1>
 	<div class="total-badge">
-		<Users size={18} color="#fff" />
+		<Users size={18} />
 		<span>
 			{totalPlayers}
 			/

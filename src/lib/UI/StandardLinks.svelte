@@ -14,11 +14,11 @@
 
 <div class="standard-links" style={blockStyles}>
 	<a href="/play" on:click={handlePlayClick}>
-		<Play {size} color="#fff" />
+		<Play {size} />
 	</a>
 
 	<a href="/">
-		<House {size} color="#fff" />
+		<House {size} />
 	</a>
 </div>
 

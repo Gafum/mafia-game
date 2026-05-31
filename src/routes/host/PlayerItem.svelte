@@ -1,89 +1,92 @@
 <script>
 	import { bigDescriptionList } from '$lib/data';
-	import { CircleQuestionMark, Eye, EyeOff, GripVertical, Trash2 } from 'lucide-svelte';
 	import { allowToManipulate } from './hostStore.js';
+
+	import {
+		CircleQuestionMark,
+		Eye,
+		EyeOff,
+		GripVertical,
+		Trash2,
+		ChevronDown
+	} from 'lucide-svelte';
 
 	export let person;
 	export let index;
 
-	export let toggleAlive = () => {};
-	export let openRole = () => {};
-	export let onDelete = () => {};
-	export let onRoleChange = (tag) => {};
+	export let onDelete;
+	export let onToggleAlive;
+	export let onOpenRole;
+	export let onChangeRole;
 
-	$: roleTag = person.tag;
-	$: roleData = bigDescriptionList[roleTag];
-
-	const allRoles = Object.keys(bigDescriptionList);
+	$: role = bigDescriptionList[person.tag];
 </script>
 
-<div
-	class="player"
-	class:even={index % 2 === 0}
-	class:dead={!person.alive}
-	class:manipulate={$allowToManipulate}
->
+<div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>
 	<div class="left">
-		<div class="index">{index + 1}</div>
+		<div class="index">
+			{index + 1}
+		</div>
 
-		<svelte:component this={roleData?.icon} size={20} color="#fff" class="mobile-hidden-icon" />
+		<div class="role">
+			<svelte:component this={role.icon} size={18} class="mobile-hidden-icon" />
 
-		<select
-			value={person.tag}
-			on:change={(e) => onRoleChange(e.target.value)}
-			class="role-select ignore-drag"
-		>
-			{#each allRoles as roleKey}
-				<option value={roleKey}>
-					{bigDescriptionList[roleKey]?.name || roleKey}
-				</option>
-			{/each}
-		</select>
-
-		<span class="role-name">{roleData?.name}</span>
+			<button
+				class="role-name"
+				disabled={!Boolean($allowToManipulate)}
+				on:click={() => onChangeRole(index)}
+			>
+				{role.name}
+				{#if $allowToManipulate}
+					<ChevronDown size="17" />
+				{/if}
+			</button>
+		</div>
 	</div>
 
 	<div class="actions">
 		{#if $allowToManipulate}
-			<button class="delete-btn" on:click|stopPropagation={() => onDelete(index)}>
-				<Trash2 size={21} color="#ff4a4a" />
+			<button class="delete-btn" on:click={() => onDelete(index)}>
+				<Trash2 size={20} style="stroke: #ff4a4a;" />
 			</button>
 		{/if}
 
-		<button on:click|stopPropagation={() => openRole(roleTag)}>
-			<CircleQuestionMark size={21} color="#fff" />
+		<button on:click={() => onOpenRole(person.tag)}>
+			<CircleQuestionMark size={20} />
 		</button>
 
-		<button on:click|stopPropagation={() => toggleAlive(index)}>
+		<button on:click={() => onToggleAlive(index)}>
 			{#if person.alive}
-				<Eye size={21} color="#fff" />
+				<Eye size={20} />
 			{:else}
-				<EyeOff size={21} color="#fff" />
+				<EyeOff size={20} />
 			{/if}
 		</button>
 
-		<div class="drag handle">
-			<GripVertical size={20} color="#888" />
+		<div class="handle">
+			<GripVertical size={20} />
 		</div>
 	</div>
 </div>
 
 <style>
 	.player {
-		background: #1b1b1baa;
 		border-radius: 12px;
 		padding: 12px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: 12px;
-		box-shadow: 4px 4px 5px #0d0d0d60;
-		will-change: transform, opacity;
-	}
 
-	.player.even {
+		will-change: transform, opacity;
+
 		background: #1c1c1c;
 		box-shadow: 4px 4px 5px #0e0e0e60;
+	}
+
+	.player:nth-child(even) {
+		background: #1b1b1baa;
+		box-shadow: 4px 4px 5px #0d0d0d60;
 	}
 
 	.player.dead {
@@ -103,8 +106,20 @@
 		min-width: 15px;
 	}
 
-	.role-select {
-		display: none;
+	.role {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.role-name {
+		display: inline;
+		color: white;
+		font-size: 17px;
+		cursor: initial;
+	}
+
+	.player.manipulate .role-name {
 		background: #242424;
 		color: white;
 		border: 1px solid #333;
@@ -114,33 +129,11 @@
 		cursor: pointer;
 		outline: none;
 		max-width: 180px;
-	}
-
-	.role-name {
-		display: inline;
-		color: white;
-		font-size: 17px;
-	}
-
-	.player.manipulate .role-select {
-		display: inline-block;
-	}
-
-	.player.manipulate .role-name {
-		display: none;
-	}
-
-	:global(.sortable-drag .role-select) {
-		display: none !important;
-	}
-
-	:global(.sortable-drag .role-name) {
-		display: inline !important;
-	}
-
-	.role-select > option {
-		color: white;
-		font-size: 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 5px;
+		width: 130px;
 	}
 
 	.actions {
@@ -149,7 +142,7 @@
 		gap: 8px;
 	}
 
-	button {
+	.actions button {
 		background: #242424;
 		border: none;
 		width: 38px;
@@ -163,7 +156,7 @@
 		transition: transform 0.1s ease-out;
 	}
 
-	.delete-btn {
+	.actions .delete-btn {
 		background: #2a1a1a;
 	}
 

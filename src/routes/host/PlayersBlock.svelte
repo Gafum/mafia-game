@@ -1,167 +1,139 @@
 <script>
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+
 	import PlayerItem from './PlayerItem.svelte';
+
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
-	import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
-	import { Play, Plus } from 'lucide-svelte';
-	import { allowToManipulate } from './hostStore.js';
-	import { slide, fade } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
+	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
+
+	import { allowToManipulate } from './hostStore.js';
+	import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
+
+	import { Plus, Play } from 'lucide-svelte';
 
 	export let peopleList = [];
 
-	let visibleCount = 0;
 	let listElement;
 
-	let modalHeroTag = 'mans';
-	let isModalOpen = false;
+	let roleModalOpen = false;
+	let roleModalTag = 'mans';
+
+	let rolePickerOpen = false;
+	let selectedPlayerIndex = -1;
 
 	function openRole(tag) {
-		modalHeroTag = tag;
-		isModalOpen = true;
+		roleModalTag = tag;
+		roleModalOpen = true;
+	}
+
+	function openRolePicker(index) {
+		selectedPlayerIndex = index;
+		rolePickerOpen = true;
+	}
+
+	function handleRoleSelect(event) {
+		const tag = event.detail;
+
+		peopleList[selectedPlayerIndex].tag = tag;
+		peopleList = peopleList;
+
+		rolePickerOpen = false;
 	}
 
 	function toggleAlive(index) {
 		peopleList[index].alive = !peopleList[index].alive;
-		peopleList = [...peopleList];
-	}
-
-	function handleRoleChange(index, newTag) {
-		peopleList[index].tag = newTag;
-		peopleList = [...peopleList];
-	}
-
-	function addPlayer() {
-		const newPlayer = {
-			tag: 'mans',
-			alive: true,
-			myIndex: `new_${Date.now()}_${Math.random()}`
-		};
-		peopleList = [...peopleList, newPlayer];
-		visibleCount += 1;
+		peopleList = peopleList;
 	}
 
 	function deletePlayer(index) {
 		if (peopleList.length <= 1) return;
+
 		peopleList.splice(index, 1);
-		peopleList = [...peopleList];
-		if (visibleCount > peopleList.length) {
-			visibleCount = peopleList.length;
-		}
+		peopleList = peopleList;
 	}
 
-	function startLazyRender(chunkSize = 4) {
-		visibleCount = 0;
-
-		function nextChunk() {
-			if (visibleCount >= peopleList.length) {
-				visibleCount = peopleList.length;
-				return;
+	function addPlayer() {
+		peopleList = [
+			...peopleList,
+			{
+				tag: 'mans',
+				alive: true,
+				myIndex: crypto.randomUUID()
 			}
-			visibleCount += chunkSize;
-			requestAnimationFrame(nextChunk);
-		}
-
-		nextChunk();
+		];
 	}
-
-	onMount(async () => {
-		if (peopleList.length === 0) {
-			goto('/');
-			return;
-		}
-
-		startLazyRender();
-
-		await tick();
-
-		const Sortable = (await import('sortablejs')).default;
-
-		Sortable.create(listElement, {
-			touchStartThreshold: 3,
-			delay: 200,
-			delayOnTouchOnly: true,
-			handle: '.handle',
-			animation: 200,
-			filter: '.ignore-drag',
-			preventOnFilter: false,
-			ghostClass: 'sortable-ghost',
-			forceFallback: true,
-			fallbackClass: 'sortable-drag',
-			fallbackOnBody: true,
-			onEnd: (evt) => {
-				if (evt.oldIndex === evt.newIndex) return;
-
-				const reordered = [...peopleList];
-				const [movedItem] = reordered.splice(evt.oldIndex, 1);
-				reordered.splice(evt.newIndex, 0, movedItem);
-
-				peopleList = reordered;
-			}
-		});
-	});
 
 	const goToModifiedPlay = () => {
 		goto('/play', {
 			state: {
-				peopleList: addKeyToObjects(peopleList.reverse(), 'myIndex')
+				peopleList: addKeyToObjects([...peopleList].reverse(), 'myIndex')
 			}
 		});
 	};
+
+	onMount(async () => {
+		const Sortable = (await import('sortablejs')).default;
+
+		Sortable.create(listElement, {
+			handle: '.handle',
+			delay: 150,
+			delayOnTouchOnly: true,
+			animation: 120,
+
+			onEnd(evt) {
+				if (evt.oldIndex === evt.newIndex) return;
+
+				const item = peopleList[evt.oldIndex];
+
+				peopleList.splice(evt.oldIndex, 1);
+				peopleList.splice(evt.newIndex, 0, item);
+
+				peopleList = peopleList;
+			}
+		});
+	});
 </script>
 
-{#if peopleList.length > 0}
-	<div class="players-container">
-		<div class="players" bind:this={listElement}>
-			{#each peopleList.slice(0, visibleCount) as person, index (person.myIndex)}
-				<div
-					class="sort-item"
-					animate:flip={{ duration: 200 }}
-					in:fade={{ duration: 200 }}
-					out:slide={{ duration: 200 }}
-				>
-					<PlayerItem
-						{person}
-						{index}
-						{toggleAlive}
-						{openRole}
-						onDelete={deletePlayer}
-						onRoleChange={(newTag) => handleRoleChange(index, newTag)}
-					/>
-				</div>
-			{/each}
-		</div>
+<div class="players" bind:this={listElement}>
+	{#each peopleList as person, index (person.myIndex)}
+		<PlayerItem
+			{person}
+			{index}
+			onDelete={deletePlayer}
+			onToggleAlive={toggleAlive}
+			onOpenRole={openRole}
+			onChangeRole={openRolePicker}
+		/>
+	{/each}
+</div>
 
-		{#if $allowToManipulate}
-			<button class="add-player-btn" on:click={addPlayer}>
-				<Plus size={20} color="#fff" />
-				<span> Новий герой </span>
-			</button>
-		{/if}
-	</div>
+{#if $allowToManipulate}
+	<button class="add-player-btn" on:click={addPlayer}>
+		<Plus size={20} />
+		<span>Новий герой</span>
+	</button>
 
-	{#if $allowToManipulate}
-		<SimpleLink href="/play" actionCallback={goToModifiedPlay}>
-			<Play size={20} color="#fff" class="mobile-hidden-icon" />Почати гру
-		</SimpleLink>
-	{/if}
+	<SimpleLink href="/play" actionCallback={goToModifiedPlay}>
+		<Play size={20} />
+		Почати гру
+	</SimpleLink>
 {/if}
 
 <RoleDetailsModal
-	open={isModalOpen}
-	heroTag={modalHeroTag}
-	on:close={() => (isModalOpen = false)}
+	open={roleModalOpen}
+	heroTag={roleModalTag}
+	on:close={() => (roleModalOpen = false)}
+/>
+
+<RolePickerModal
+	open={rolePickerOpen}
+	on:close={() => (rolePickerOpen = false)}
+	on:select={handleRoleSelect}
 />
 
 <style>
-	.players-container {
-		display: flex;
-		flex-direction: column;
-		gap: 15px;
-	}
-
 	.players {
 		display: flex;
 		flex-direction: column;
