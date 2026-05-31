@@ -118,6 +118,12 @@
 					{/if}
 
 					{#key additionData.myImg}
+						{#if !showFallbackIcon}
+							<div
+								class="image-placeholder"
+								class:hidden={imgLoaded || loadedImagesCache.has(additionData.myImg)}
+							/>
+						{/if}
 						<img
 							src="/assets/cards/{additionData.myImg}.png"
 							class="my-img"
@@ -233,13 +239,25 @@
 		position: relative;
 		background-color: white;
 		opacity: 0;
-		transform: scale(0.98);
-		transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+		transition: opacity 0.3s ease-out;
 	}
 
 	.my-img.loaded {
 		opacity: 1;
-		transform: scale(1);
+	}
+
+	.image-placeholder {
+		width: 0;
+		height: 0;
+		height: 40vmax;
+		height: clamp(220px, 40vmax, 450px);
+
+		opacity: 1;
+		transition: opacity 0.3s ease 0.15s;
+	}
+
+	.image-placeholder.hidden {
+		opacity: 0;
 	}
 
 	.my-img.cached {
@@ -384,19 +402,25 @@
 		:global(.front > .role-icon) {
 			display: none;
 		}
+
+		.image-placeholder {
+			height: 0;
+			height: 90vw;
+			height: calc(
+				100vw - 62px
+			); /* (16+14+1) *2 because there paddings and border right and left  */
+		}
 	}
 
 	@keyframes showIcon {
 		0% {
 			opacity: 0;
-			scale: 0;
 		}
 		70% {
 			opacity: 0;
 		}
 		100% {
 			opacity: 1;
-			scale: 1;
 		}
 	}
 </style>

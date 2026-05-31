@@ -47,18 +47,22 @@
 		padding: 0;
 		cursor: pointer;
 		box-shadow: 4px 4px 5px #0e0e0e30;
-		transition: background 0.2s ease, transform 0.15s ease;
 		overflow: hidden;
 	}
 
-	.dropdown-block.active {
-		background: #181818;
+	@media (hover: hover) {
+		.dropdown-block {
+			transition: background 0.3s;
+		}
+
+		.dropdown-block:hover {
+			background: #181818;
+		}
 	}
 
-	@media (hover: hover) {
-		.dropdown-block:not(.active):hover {
-			background: #1c1c1c;
-		}
+	.dropdown-block.active {
+		transition: none;
+		background: #181818;
 	}
 
 	.top {
