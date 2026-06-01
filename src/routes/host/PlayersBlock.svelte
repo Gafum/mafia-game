@@ -98,14 +98,19 @@
 
 <div class="players" bind:this={listElement}>
 	{#each peopleList as person, index (person.myIndex)}
-		<PlayerItem
-			{person}
-			{index}
-			onDelete={deletePlayer}
-			onToggleAlive={toggleAlive}
-			onOpenRole={openRole}
-			onChangeRole={openRolePicker}
-		/>
+		<div>
+			{index} -
+			{person.tag}
+
+			<!-- <PlayerItem
+				{person}
+				{index}
+				onDelete={deletePlayer}
+				onToggleAlive={toggleAlive}
+				onOpenRole={openRole}
+				onChangeRole={openRolePicker}
+			/> -->
+		</div>
 	{/each}
 </div>
 

@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import DropdownBlock from '$lib/UI/DropdownBlock.svelte';
@@ -29,6 +30,11 @@
 	];
 
 	onMount(() => {
+		if (peopleList.length === 0) {
+			goto('/');
+			return;
+		}
+
 		allowToManipulate.set(false);
 	});
 </script>
