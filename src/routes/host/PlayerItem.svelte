@@ -2,21 +2,21 @@
 	import { bigDescriptionList } from '$lib/data';
 	import { allowToManipulate } from './hostStore.js';
 
-	import {
-		CircleQuestionMark,
-		Eye,
-		EyeOff,
-		GripVertical,
-		Trash2,
-		ChevronDown
-	} from 'lucide-svelte';
+	// import {
+	// 	CircleQuestionMark,
+	// 	Eye,
+	// 	EyeOff,
+	// 	Trash2,
+	// 	GripVertical,
+	// 	ChevronDown
+	// } from 'lucide-svelte';
 
 	export let person;
 	export let index;
 
-	export let onDelete;
-	export let onToggleAlive;
-	export let onOpenRole;
+	// export let onDelete;
+	// export let onToggleAlive;
+	// export let onOpenRole;
 	export let onChangeRole;
 
 	$: role = bigDescriptionList[person.tag];
@@ -29,7 +29,7 @@
 		</div>
 
 		<div class="role">
-			<svelte:component this={role.icon} size={18} class="mobile-hidden-icon" />
+			<!-- <svelte:component this={role.icon} size={18} class="mobile-hidden-icon" /> -->
 
 			<button
 				class="role-name"
@@ -37,15 +37,15 @@
 				on:click={() => onChangeRole(index)}
 			>
 				{role.name}
-				{#if $allowToManipulate}
+				<!-- {#if $allowToManipulate}
 					<ChevronDown size="17" />
-				{/if}
+				{/if} -->
 			</button>
 		</div>
 	</div>
 
 	<div class="actions">
-		{#if $allowToManipulate}
+		<!-- {#if $allowToManipulate}
 			<button class="delete-btn" on:click={() => onDelete(index)}>
 				<Trash2 size={20} style="stroke: #ff4a4a;" />
 			</button>
@@ -61,10 +61,11 @@
 			{:else}
 				<EyeOff size={20} />
 			{/if}
-		</button>
+		</button> -->
 
 		<div class="handle">
-			<GripVertical size={20} />
+			<!-- <GripVertical size={20} /> -->
+			ползунок
 		</div>
 	</div>
 </div>
