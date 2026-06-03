@@ -76,27 +76,27 @@
 		});
 	};
 
-	onMount(async () => {
-		const Sortable = (await import('sortablejs')).default;
+	// onMount(async () => {
+	// 	const Sortable = (await import('sortablejs')).default;
 
-		Sortable.create(listElement, {
-			handle: '.handle',
-			delay: 150,
-			delayOnTouchOnly: true,
-			animation: 120,
+	// 	Sortable.create(listElement, {
+	// 		handle: '.handle',
+	// 		delay: 150,
+	// 		delayOnTouchOnly: true,
+	// 		animation: 120,
 
-			onEnd(evt) {
-				if (evt.oldIndex === evt.newIndex) return;
+	// 		onEnd(evt) {
+	// 			if (evt.oldIndex === evt.newIndex) return;
 
-				const item = peopleList[evt.oldIndex];
+	// 			const item = peopleList[evt.oldIndex];
 
-				peopleList.splice(evt.oldIndex, 1);
-				peopleList.splice(evt.newIndex, 0, item);
+	// 			peopleList.splice(evt.oldIndex, 1);
+	// 			peopleList.splice(evt.newIndex, 0, item);
 
-				peopleList = peopleList;
-			}
-		});
-	});
+	// 			peopleList = peopleList;
+	// 		}
+	// 	});
+	// });
 </script>
 
 <div class="players" bind:this={listElement}>
@@ -148,7 +148,7 @@
 	.add-player-btn {
 		background: #242424;
 		border: 2px dashed #444;
-		border-radius: 12px;
+		border-radius: 10px;
 		padding: 14px;
 		display: flex;
 		align-items: center;
@@ -157,6 +157,8 @@
 		cursor: pointer;
 		-webkit-tap-highlight-color: transparent;
 		transition: transform 0.1s ease-out, background 0.2s;
+		width: 100%;
+		margin-top: 20px;
 	}
 
 	.add-player-btn > span {
