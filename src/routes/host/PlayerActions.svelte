@@ -76,4 +76,10 @@
 	.handle:active {
 		opacity: 0.4;
 	}
+
+	@media (max-width: 420px) {
+		.actions {
+			justify-content: flex-end;
+		}
+	}
 </style>

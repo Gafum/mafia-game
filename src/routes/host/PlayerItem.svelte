@@ -1,21 +1,21 @@
 <script>
-	import { bigDescriptionList } from '$lib/data';
-	import { allowToManipulate } from './hostStore.js';
-	import PlayerActions from './PlayerActions.svelte';
-	import { ChevronDown } from 'lucide-svelte';
+	// import { bigDescriptionList } from '$lib/data';
+	// import { allowToManipulate } from './hostStore.js';
+	// import PlayerActions from './PlayerActions.svelte';
+	// import { ChevronDown } from 'lucide-svelte';
 
 	export let person;
 	export let index;
 
-	export let onDelete;
-	export let onToggleAlive;
-	export let onOpenRole;
-	export let onChangeRole;
+	// export let onDelete;
+	// export let onToggleAlive;
+	// export let onOpenRole;
+	// export let onChangeRole;
 
-	$: role = bigDescriptionList[person.tag];
+	// $: role = bigDescriptionList[person.tag];
 </script>
 
-<div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>
+<!-- <div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>
 	<div class="left">
 		<div class="index">
 			{index + 1}
@@ -38,6 +38,10 @@
 	</div>
 
 	<PlayerActions {person} {index} {onDelete} {onToggleAlive} {onOpenRole} />
+</div> -->
+
+<div class="player">
+	{index} => {person.tag}
 </div>
 
 <style>

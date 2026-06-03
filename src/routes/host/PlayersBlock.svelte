@@ -13,9 +13,6 @@
 
 	import { Plus, Play } from 'lucide-svelte';
 
-	import { slide, fade } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
-
 	export let peopleList = [];
 
 	let listElement;
@@ -101,16 +98,14 @@
 
 <div class="players" bind:this={listElement}>
 	{#each peopleList as person, index (person.myIndex)}
-		<div animate:flip={{ duration: 200 }} in:fade={{ duration: 200 }} out:slide={{ duration: 200 }}>
-			<PlayerItem
-				{person}
-				{index}
-				onDelete={deletePlayer}
-				onToggleAlive={toggleAlive}
-				onOpenRole={openRole}
-				onChangeRole={openRolePicker}
-			/>
-		</div>
+		<PlayerItem
+			{person}
+			{index}
+			onDelete={deletePlayer}
+			onToggleAlive={toggleAlive}
+			onOpenRole={openRole}
+			onChangeRole={openRolePicker}
+		/>
 	{/each}
 </div>
 
