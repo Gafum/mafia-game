@@ -1,7 +1,7 @@
 <script>
 	import { allowToManipulate } from './hostStore.js';
 
-	import { CircleQuestionMark, Eye, EyeOff, Trash2, GripVertical } from 'lucide-svelte';
+	import { Eye, EyeOff, Trash2 } from 'lucide-svelte';
 
 	export let person;
 
@@ -18,9 +18,7 @@
 		</button>
 	{/if}
 
-	<button on:click={() => onOpenRole(person.tag)}>
-		<CircleQuestionMark size={20} />
-	</button>
+	<button on:click={() => onOpenRole(person.tag)} class="text-btn"> ? </button>
 
 	<button on:click={() => onToggleAlive(index)}>
 		{#if person.alive}
@@ -30,9 +28,7 @@
 		{/if}
 	</button>
 
-	<div class="handle">
-		<GripVertical size={20} />
-	</div>
+	<div class="handle text-btn">≡</div>
 </div>
 
 <style>
@@ -65,6 +61,12 @@
 		padding: 10px;
 		display: flex;
 		align-items: center;
+		font-weight: 100;
+	}
+
+	.text-btn {
+		color: white;
+		font-size: 20px;
 	}
 
 	@media (hover: hover) {

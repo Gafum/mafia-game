@@ -1,27 +1,53 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	import PlayerItem from './PlayerItem.svelte';
-
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
 
 	import { allowToManipulate } from './hostStore.js';
 	import { addKeyToObjects } from '$lib/functions/addKeyToObjects';
-
 	import { Plus, Play } from 'lucide-svelte';
+
+	import { slide, fade } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
 
 	export let peopleList = [];
 
 	let listElement;
+	let sortableInstance;
+	let displayedPeople = [];
 
 	let roleModalOpen = false;
 	let roleModalTag = 'mans';
 
 	let rolePickerOpen = false;
 	let selectedPlayerIndex = -1;
+
+	function loadPeopleThrottled() {
+		if (peopleList.length <= 12) {
+			displayedPeople = peopleList;
+			return;
+		}
+
+		displayedPeople = peopleList.slice(0, 12);
+
+		requestAnimationFrame(() => {
+			setTimeout(() => {
+				displayedPeople = peopleList;
+			}, 40);
+		});
+	}
+
+	$: if (peopleList) {
+		if (displayedPeople.length === peopleList.length) {
+			displayedPeople = peopleList;
+		} else {
+			loadPeopleThrottled();
+		}
+	}
 
 	function openRole(tag) {
 		roleModalTag = tag;
@@ -35,10 +61,8 @@
 
 	function handleRoleSelect(event) {
 		const tag = event.detail;
-
 		peopleList[selectedPlayerIndex].tag = tag;
 		peopleList = peopleList;
-
 		rolePickerOpen = false;
 	}
 
@@ -49,7 +73,6 @@
 
 	function deletePlayer(index) {
 		if (peopleList.length <= 1) return;
-
 		peopleList.splice(index, 1);
 		peopleList = peopleList;
 	}
@@ -73,39 +96,48 @@
 		});
 	};
 
-	// onMount(async () => {
-	// 	const Sortable = (await import('sortablejs')).default;
+	onMount(async () => {
+		loadPeopleThrottled();
 
-	// 	Sortable.create(listElement, {
-	// 		handle: '.handle',
-	// 		delay: 150,
-	// 		delayOnTouchOnly: true,
-	// 		animation: 120,
+		const Sortable = (await import('sortablejs')).default;
 
-	// 		onEnd(evt) {
-	// 			if (evt.oldIndex === evt.newIndex) return;
+		sortableInstance = Sortable.create(listElement, {
+			handle: '.handle',
+			delay: 150,
+			delayOnTouchOnly: true,
+			touchStartThreshold: 3,
+			animation: 150,
 
-	// 			const item = peopleList[evt.oldIndex];
+			async onEnd(evt) {
+				if (evt.oldIndex === evt.newIndex) return;
 
-	// 			peopleList.splice(evt.oldIndex, 1);
-	// 			peopleList.splice(evt.newIndex, 0, item);
+				const item = peopleList[evt.oldIndex];
 
-	// 			peopleList = peopleList;
-	// 		}
-	// 	});
-	// });
+				peopleList.splice(evt.oldIndex, 1);
+				peopleList.splice(evt.newIndex, 0, item);
+
+				peopleList = peopleList;
+			}
+		});
+
+		return () => {
+			if (sortableInstance) sortableInstance.destroy();
+		};
+	});
 </script>
 
-<div class="players" bind:this={listElement}>
-	{#each peopleList as person, index (person.myIndex)}
-		<PlayerItem
-			{person}
-			{index}
-			onDelete={deletePlayer}
-			onToggleAlive={toggleAlive}
-			onOpenRole={openRole}
-			onChangeRole={openRolePicker}
-		/>
+<div class="players" bind:this={listElement} autocomplete="off" data-lpignore="true">
+	{#each displayedPeople as person, index (person.myIndex)}
+		<div animate:flip={{ duration: 200 }} in:fade={{ duration: 200 }} out:slide={{ duration: 200 }}>
+			<PlayerItem
+				{person}
+				{index}
+				onDelete={deletePlayer}
+				onToggleAlive={toggleAlive}
+				onOpenRole={openRole}
+				onChangeRole={openRolePicker}
+			/>
+		</div>
 	{/each}
 </div>
 
