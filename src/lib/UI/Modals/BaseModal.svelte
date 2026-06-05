@@ -38,7 +38,7 @@
 		aria-label="Close modal"
 	>
 		<div class="panel" on:click|stopPropagation role="dialog" aria-modal="true">
-			<button class="close" on:click={close} aria-label="Close modal">
+			<button class="close" on:click|stopPropagation={close} aria-label="Close modal">
 				<X size="26" />
 			</button>
 

@@ -55,8 +55,14 @@
 		box-shadow: 4px 4px 5px #0e0e0e60;
 	}
 
-	.player:nth-child(even) {
-		background: #1b1b1baa;
+	:global(.player) {
+		content-visibility: auto;
+
+		contain-intrinsic-size: 77px;
+	}
+
+	:global(.playerAnimation:nth-child(even) .player) {
+		background: #1b1b1b88;
 		box-shadow: 4px 4px 5px #0d0d0d60;
 	}
 
@@ -111,6 +117,10 @@
 		.player.manipulate {
 			flex-direction: column;
 			align-items: stretch;
+		}
+
+		:global(.player) {
+			contain-intrinsic-size: 123px;
 		}
 	}
 

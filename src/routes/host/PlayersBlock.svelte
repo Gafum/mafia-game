@@ -27,12 +27,12 @@
 	let selectedPlayerIndex = -1;
 
 	function loadPeopleThrottled() {
-		if (peopleList.length <= 12) {
+		if (peopleList.length <= 9) {
 			displayedPeople = peopleList;
 			return;
 		}
 
-		displayedPeople = peopleList.slice(0, 12);
+		displayedPeople = peopleList.slice(0, 9);
 
 		requestAnimationFrame(() => {
 			setTimeout(() => {
@@ -128,7 +128,12 @@
 
 <div class="players" bind:this={listElement} autocomplete="off" data-lpignore="true">
 	{#each displayedPeople as person, index (person.myIndex)}
-		<div animate:flip={{ duration: 200 }} in:fade={{ duration: 200 }} out:slide={{ duration: 200 }}>
+		<div
+			animate:flip={{ duration: 200 }}
+			in:fade={{ duration: 200 }}
+			out:slide={{ duration: 200 }}
+			class="playerAnimation"
+		>
 			<PlayerItem
 				{person}
 				{index}

@@ -21,6 +21,10 @@
 	let showFallbackIcon = false;
 	let fallbackTimeout = null;
 
+	let componentMounted = false;
+	let animateIn = false;
+	let isInitialMount = true;
+
 	function intersect(node) {
 		if (typeof IntersectionObserver === 'undefined') {
 			isVisible = true;
@@ -60,22 +64,39 @@
 		return sameRoleList[currentIndex];
 	}
 
+	function triggerAnimation() {
+		if (!componentMounted || !imgLoaded || animateIn) return;
+
+		requestAnimationFrame(() => {
+			setTimeout(() => {
+				animateIn = true;
+
+				setTimeout(() => {
+					isInitialMount = false;
+				}, 450);
+			}, 30);
+		});
+	}
+
 	function handleImgLoad(imgName) {
 		imgLoaded = true;
 		showFallbackIcon = false;
 		if (fallbackTimeout) clearTimeout(fallbackTimeout);
 		loadedImagesCache.add(imgName);
+
+		triggerAnimation();
 	}
 
 	function handleImgError() {
 		showFallbackIcon = true;
 		if (fallbackTimeout) clearTimeout(fallbackTimeout);
+		animateIn = true;
+		isInitialMount = false;
 	}
 
 	function flip() {
 		if (!flipped && tagMap[tag].length > 1) {
 			const nextData = findNextData();
-
 			const isImageChanging = additionData && nextData && additionData.myImg !== nextData.myImg;
 
 			setTimeout(() => {
@@ -103,6 +124,10 @@
 		if (additionData && loadedImagesCache.has(additionData.myImg)) {
 			imgLoaded = true;
 		}
+
+		componentMounted = true;
+
+		triggerAnimation();
 	});
 </script>
 
@@ -121,17 +146,20 @@
 						{#if !showFallbackIcon}
 							<div
 								class="image-placeholder"
-								class:hidden={imgLoaded || loadedImagesCache.has(additionData.myImg)}
+								class:hidden={animateIn ||
+									(loadedImagesCache.has(additionData.myImg) && !isInitialMount)}
 							/>
 						{/if}
 						<img
 							src="/assets/cards/{additionData.myImg}.png"
 							class="my-img"
-							class:loaded={imgLoaded}
-							class:cached={loadedImagesCache.has(additionData.myImg)}
+							class:loaded={animateIn}
+							class:cached={loadedImagesCache.has(additionData.myImg) && !isInitialMount}
 							alt={'⠀' + cartData.name + '⠀'}
 							on:load={() => handleImgLoad(additionData.myImg)}
 							on:error={handleImgError}
+							loading="eager"
+							decoding="sync"
 						/>
 					{/key}
 				</div>
@@ -259,7 +287,6 @@
 		height: 0;
 		height: 40vmax;
 		height: clamp(220px, 40vmax, 450px);
-
 		opacity: 1;
 		transition: opacity 0.3s ease 0.15s;
 	}

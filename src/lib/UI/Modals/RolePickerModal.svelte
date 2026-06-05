@@ -53,6 +53,7 @@
 		height: 45vh;
 		max-height: calc(45svh - 80px);
 		height: calc(45svh - 42px);
+		height: calc(45dvh - 42px);
 		overflow-y: auto;
 		padding: 0 6px 30px 0;
 	}
@@ -107,6 +108,7 @@
 			height: 80vh;
 			height: 80svh;
 			height: calc(80svh - 90px);
+			height: calc(80dvh - 90px);
 		}
 	}
 
@@ -117,6 +119,7 @@
 			height: 95vh;
 			height: 95svh;
 			height: calc(95svh - 90px);
+			height: calc(95dvh - 90px);
 		}
 
 		.role-name {
