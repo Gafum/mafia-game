@@ -1,6 +1,5 @@
 <script>
-	import { bigDescriptionList } from '$lib/data';
-	import { cardRules } from '$lib/stores';
+	import { bigDescriptions, cardRules } from '$lib/stores';
 	import { findSpecialKeys } from '$lib/functions/findSpecialKeys';
 	import NumberedList from '$lib/UI/NumberedList.svelte';
 
@@ -11,7 +10,7 @@
 	let hostScript = [
 		'Місто засинає',
 		'Мафія прокидається',
-		...findEnabledKeys().map((tag) => `${bigDescriptionList[tag].name} прокидається`),
+		...findEnabledKeys().map((tag) => `${$bigDescriptions[tag]?.name || tag} прокидається`),
 		'Місто прокидається'
 	];
 </script>

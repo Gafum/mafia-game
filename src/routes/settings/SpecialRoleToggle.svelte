@@ -1,10 +1,22 @@
 <script>
+	import { isCustomRule, setCustomRule } from '$lib/stores';
+
 	export let active;
 	export let roleData;
+	export let tag;
+
+	function handleChange(e) {
+		active = e.target.checked;
+
+		if (isCustomRule(tag)) {
+			setCustomRule(tag, active);
+		}
+	}
 </script>
 
 <label class="role-checkbox" class:active>
-	<input type="checkbox" bind:checked={active} />
+	<input type="checkbox" bind:checked={active} on:change={handleChange} />
+
 	<div class="role-box-content">
 		<svelte:component this={roleData.icon} size={25} color="#ffffff" />
 		<span>{roleData.name}</span>
@@ -35,6 +47,11 @@
 	.role-box-content span {
 		color: #fff;
 		font-size: 1.2rem;
+		max-width: 140px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		word-break: keep-all;
+		white-space: nowrap;
 	}
 
 	@media (hover: hover) {
@@ -48,5 +65,11 @@
 		border-style: solid;
 		border-color: #ff4444;
 		background: rgba(255, 68, 68, 0.1);
+	}
+
+	@media (max-width: 500px) {
+		.role-box-content span {
+			max-width: none;
+		}
 	}
 </style>

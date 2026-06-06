@@ -1,4 +1,5 @@
 import { cardList } from '$lib/data';
+import { cards } from '$lib/stores';
 
 export function createListByTags() {
 	const tagMap = {};
@@ -16,3 +17,21 @@ export function createListByTags() {
 }
 
 export let tagMap = createListByTags();
+
+// Keep tagMap in sync with the reactive cards store dynamically
+if (typeof window !== 'undefined') {
+	cards.subscribe(($cards) => {
+		const newTagMap = {};
+		for (const card of $cards) {
+			if (!newTagMap[card.tag]) {
+				newTagMap[card.tag] = [];
+			}
+			newTagMap[card.tag].push(card);
+		}
+		// Empty the map and copy everything from newTagMap
+		for (const key in tagMap) {
+			delete tagMap[key];
+		}
+		Object.assign(tagMap, newTagMap);
+	});
+}

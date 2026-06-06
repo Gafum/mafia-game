@@ -1,8 +1,8 @@
 <script>
-	import { bigDescriptionList } from '$lib/data';
+	import { bigDescriptions } from '$lib/stores';
 	import { allowToManipulate } from './hostStore.js';
 	import PlayerActions from './PlayerActions.svelte';
-	import { ChevronDown } from 'lucide-svelte';
+	import { ChevronDown, User } from 'lucide-svelte';
 
 	export let person;
 	export let index;
@@ -12,7 +12,7 @@
 	export let onOpenRole;
 	export let onChangeRole;
 
-	$: role = bigDescriptionList[person.tag];
+	$: role = $bigDescriptions[person.tag] || { name: person.tag, icon: User };
 </script>
 
 <div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>

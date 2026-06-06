@@ -6,6 +6,10 @@
 	--main-bg-color: #2c9182;
 }
 
+.transparent {
+	--main-bg-color: #161619;
+}
+
 .link-style {
 	background: var(--main-bg-color);
 	color: white;
@@ -29,10 +33,18 @@
 	-webkit-tap-highlight-color: transparent;
 }
 
+.link-style.transparent {
+	border: 1px solid #232326;
+}
+
 @media (hover: hover) {
 	.link-style:hover {
 		filter: brightness(1.15);
 		box-shadow: 0px 0px 8px var(--main-bg-color);
+	}
+
+	.link-style.transparent:hover {
+		box-shadow: 0px 0px 12px #1f1f1f;
 	}
 
 	.link-style:active {

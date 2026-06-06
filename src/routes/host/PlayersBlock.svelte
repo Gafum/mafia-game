@@ -42,7 +42,9 @@
 	}
 
 	$: if (peopleList) {
-		if (displayedPeople.length === peopleList.length) {
+		const diff = Math.abs(displayedPeople.length - peopleList.length);
+
+		if (displayedPeople.length === peopleList.length || diff === 1) {
 			displayedPeople = peopleList;
 		} else {
 			loadPeopleThrottled();
@@ -188,7 +190,9 @@
 		gap: 10px;
 		cursor: pointer;
 		-webkit-tap-highlight-color: transparent;
-		transition: transform 0.1s ease-out, background 0.2s;
+		transition:
+			transform 0.1s ease-out,
+			background 0.2s;
 		width: 100%;
 		margin-top: 20px;
 	}

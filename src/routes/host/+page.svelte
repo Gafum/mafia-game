@@ -24,8 +24,8 @@
 
 	let hostPageBlocks = [
 		{ name: 'Правила гри', component: RulesBlock, isOpen: false },
-		{ name: 'Нотатки', component: null, isOpen: true },
-		{ name: 'Гравці', component: null, isOpen: false },
+		{ name: 'Нотатки', component: NotesBlock, isOpen: true },
+		{ name: `Гравці (${peopleList.length})`, component: PlayersBlock, isOpen: false },
 		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false }
 	];
 
@@ -47,7 +47,7 @@
 			<h2 slot="title" class="host-headline">{blockData.name}</h2>
 			{#if blockData.name === 'Нотатки'}
 				<NotesBlock bind:text={notesText} />
-			{:else if blockData.name === 'Гравці'}
+			{:else if blockData.name.startsWith('Гравці')}
 				<PlayersBlock bind:peopleList />
 			{:else}
 				<svelte:component this={blockData.component} {...blockData.props} />
