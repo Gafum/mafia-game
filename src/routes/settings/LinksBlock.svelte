@@ -1,5 +1,5 @@
 <script>
-	import { Users } from 'lucide-svelte';
+	import { Users, FileUser } from 'lucide-svelte';
 	import { createArray } from '$lib/functions/createArray';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import { goto } from '$app/navigation';
@@ -15,7 +15,12 @@
 		});
 </script>
 
+<SimpleLink href="/custom-cards" type="green">
+	<FileUser size={18} color="#fff" class="mobile-hidden-icon" />Нові картки
+</SimpleLink>
+
 <SimpleLink href="/host" actionCallback={goToHost}>
 	<Users size={18} color="#fff" class="mobile-hidden-icon" /> Панель ведучого
 </SimpleLink>
+
 <StandardLinks />

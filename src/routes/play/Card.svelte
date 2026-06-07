@@ -1,7 +1,7 @@
 <script>
 	import { CircleQuestionMark } from 'lucide-svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
-	import { bigDescriptionList } from '$lib/data';
+	import { bigDescriptions } from '$lib/stores';
 	import { tagMap } from '$lib/functions/createListByTags';
 	import Randomizer from '$lib/Servises/Randomizer.servise';
 
@@ -12,9 +12,16 @@
 			console.log('hi');
 		};
 
-	const personData = tagMap[tag][Randomizer.randomInteger(0, tagMap[tag].length - 1)];
+	const personData = tagMap[tag] ? tagMap[tag][Randomizer.randomInteger(0, tagMap[tag].length - 1)] : { myImg: 'Custom', description: '' };
 
-	const typeData = bigDescriptionList[tag] ?? bigDescriptionList.mans;
+	let typeData;
+	bigDescriptions.subscribe(($desc) => {
+		typeData = $desc[tag] ?? $desc.mans;
+	});
+
+	$: imgSrc = personData.myImg?.startsWith('data:')
+		? personData.myImg
+		: `/assets/cards/${personData.myImg}.png`;
 
 	let flipped = false;
 	let isShown = false;
@@ -65,7 +72,7 @@
 			{/if}
 
 			<img
-				src="/assets/cards/{personData.myImg}.png"
+				src={imgSrc}
 				class="my-img"
 				alt={typeData.name}
 				on:load={handleImageLoad}

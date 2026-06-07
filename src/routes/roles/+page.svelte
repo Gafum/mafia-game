@@ -1,11 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
-	import { cardRulesConst } from '$lib/data';
+	import { cardRules } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import CardWithText from './CardWithText.svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 
-	let tagList = Object.keys(cardRulesConst);
+	let tagList = [];
+	cardRules.subscribe(($rules) => {
+		tagList = Object.keys($rules);
+	});
 	let mounted = false;
 
 	onMount(() => {

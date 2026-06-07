@@ -1,11 +1,11 @@
 <script>
 	import BaseModal from './BaseModal.svelte';
-	import { bigDescriptionList } from '$lib/data';
+	import { bigDescriptions } from '$lib/stores';
 
 	export let heroTag = 'mans';
 	export let open = false;
 
-	$: roleData = bigDescriptionList[heroTag] ?? bigDescriptionList.mans;
+	$: roleData = $bigDescriptions[heroTag] ?? $bigDescriptions.mans;
 </script>
 
 <BaseModal {open} on:close>

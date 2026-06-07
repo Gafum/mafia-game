@@ -1,13 +1,13 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { bigDescriptionList } from '$lib/data';
+	import { bigDescriptions } from '$lib/stores';
 	import BaseModal from './BaseModal.svelte';
 
 	export let open = false;
 
 	const dispatch = createEventDispatcher();
 
-	const roles = Object.entries(bigDescriptionList);
+	$: roles = Object.entries($bigDescriptions);
 
 	function selectRole(tag) {
 		dispatch('select', tag);

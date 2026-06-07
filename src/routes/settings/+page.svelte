@@ -2,10 +2,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
-	import { cardRules, setCookie } from '$lib/stores';
+	import { cardRules, setCookie, bigDescriptions } from '$lib/stores';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
-	import { cardRulesConst, bigDescriptionList } from '$lib/data';
+	import { cardRulesConst } from '$lib/data';
 	import { findSpecialKeys } from '$lib/functions/findSpecialKeys';
+	import { User } from 'lucide-svelte';
 
 	import RoleSlider from './RoleSlider.svelte';
 	import SpecialRoleToggle from './SpecialRoleToggle.svelte';
@@ -72,7 +73,7 @@
 
 					<div class="special-roles-grid">
 						{#each specialKeys as key}
-							<SpecialRoleToggle bind:active={state[key]} roleData={bigDescriptionList[key]} />
+							<SpecialRoleToggle bind:active={state[key]} roleData={$bigDescriptions[key] || { name: key, icon: User }} />
 						{/each}
 					</div>
 				</div>

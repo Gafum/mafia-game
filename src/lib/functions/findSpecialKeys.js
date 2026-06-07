@@ -1,9 +1,15 @@
 import { cardRulesConst } from '$lib/data';
-
+import { cardRules } from '$lib/stores';
 
 export function findSpecialKeys() {
-	return Object.keys(cardRulesConst).filter((k) => !['mans', 'mafias'].includes(k));
+	let currentRules = cardRulesConst;
+	if (typeof window !== 'undefined') {
+		cardRules.subscribe(($rules) => {
+			currentRules = $rules;
+		})();
+	}
+	return Object.keys(currentRules).filter((k) => !['mans', 'mafias'].includes(k));
 }
 
-export const maxPlayerAmount =
-	findSpecialKeys().length + cardRulesConst.mafias + cardRulesConst.mans;
+// Generous upper limit or dynamic calculation
+export const maxPlayerAmount = 100;

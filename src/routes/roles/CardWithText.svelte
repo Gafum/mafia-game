@@ -4,13 +4,21 @@
 
 <script>
 	import { onMount } from 'svelte';
-	import { bigDescriptionList } from '$lib/data';
+	import { bigDescriptions } from '$lib/stores';
 	import { tagMap } from '$lib/functions/createListByTags';
 	import Randomizer from '$lib/Servises/Randomizer.servise';
+	import { User } from 'lucide-svelte';
 
 	export let tag;
 
-	const cartData = bigDescriptionList[tag];
+	let cartData = { name: tag, description: '', icon: User };
+	bigDescriptions.subscribe(($desc) => {
+		cartData = $desc[tag] ?? { name: tag, description: '', icon: User };
+	});
+
+	$: imgSrc = additionData?.myImg?.startsWith('data:')
+		? additionData.myImg
+		: `/assets/cards/${additionData?.myImg}.png`;
 
 	let currentIndex = -1;
 	let additionData = null;
@@ -151,7 +159,7 @@
 							/>
 						{/if}
 						<img
-							src="/assets/cards/{additionData.myImg}.png"
+							src={imgSrc}
 							class="my-img"
 							class:loaded={animateIn}
 							class:cached={loadedImagesCache.has(additionData.myImg) && !isInitialMount}
