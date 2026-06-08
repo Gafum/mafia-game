@@ -5,7 +5,6 @@
 	import { cardRules, setCookie, bigDescriptions } from '$lib/stores';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
 	import { cardRulesConst } from '$lib/data';
-	import { findSpecialKeys } from '$lib/functions/findSpecialKeys';
 	import { User } from 'lucide-svelte';
 
 	import RoleSlider from './RoleSlider.svelte';
@@ -14,21 +13,21 @@
 	import SettingsHeader from './SettingsHeader.svelte';
 	import LinksBlock from './LinksBlock.svelte';
 
-	let state = { ...cardRulesConst };
+	let state = {};
 	let isMount = false;
 	let renderContent = false;
 
-	const specialKeys = findSpecialKeys();
+	$: specialKeys = Object.keys($cardRules).filter((k) => !['mans', 'mafias'].includes(k));
 
-	// total players
 	$: totalPlayers =
-		Number(state.mans) +
-		Number(state.mafias) +
+		Number(state.mans || 0) +
+		Number(state.mafias || 0) +
 		specialKeys.reduce((sum, key) => sum + (state[key] ? 1 : 0), 0);
 
-	// autosave
-	$: if (isMount) {
+	$: if (isMount && Object.keys(state).length > 0) {
 		cardRules.set(state);
+		console.log(state);
+
 		setCookie('gameSettings', state, 30);
 	}
 
@@ -36,13 +35,16 @@
 		if (!browser) return;
 
 		let data = $cardRules;
-		if (data) {
-			state = { ...cardRulesConst, ...data };
+
+		if (data && Object.keys(data).length > 0) {
+			state = { ...data };
+		} else {
+			state = { ...cardRulesConst };
 		}
 
-		isMount = true;
 		setTimeout(() => {
 			renderContent = true;
+			isMount = true;
 		}, 100);
 	});
 
@@ -68,12 +70,20 @@
 							min={1}
 						/>
 
-						<RoleSlider label="Мафія" bind:value={state.mafias} max={cardRulesConst.mafias} min={0} />
+						<RoleSlider
+							label="Мафія"
+							bind:value={state.mafias}
+							max={cardRulesConst.mafias}
+							min={0}
+						/>
 					</section>
 
 					<div class="special-roles-grid">
 						{#each specialKeys as key}
-							<SpecialRoleToggle bind:active={state[key]} roleData={$bigDescriptions[key] || { name: key, icon: User }} />
+							<SpecialRoleToggle
+								bind:active={state[key]}
+								roleData={$bigDescriptions[key] || { name: key, icon: User }}
+							/>
 						{/each}
 					</div>
 				</div>
@@ -112,7 +122,7 @@
 		margin-top: 20px;
 	}
 
-	@media (max-width: 400px) {
+	@media (max-width: 500px) {
 		.mafia-setup-screen {
 			padding: 0;
 		}

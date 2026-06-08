@@ -1,5 +1,5 @@
 <script>
-	import { maxPlayerAmount } from '$lib/functions/findSpecialKeys';
+	import { getMaxPlayerAmount } from '$lib/functions/findSpecialKeys';
 	import { Users, Annoyed } from 'lucide-svelte';
 	export let totalPlayers = 0;
 </script>
@@ -11,7 +11,7 @@
 		<span>
 			{totalPlayers}
 			/
-			{maxPlayerAmount}
+			{getMaxPlayerAmount()}
 		</span>
 	</div>
 </header>

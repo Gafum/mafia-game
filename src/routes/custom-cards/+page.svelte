@@ -1,6 +1,4 @@
-<!-- src/routes/custom-cards/+page.svelte -->
 <script>
-	import { onMount } from 'svelte';
 	import {
 		customCardsStore,
 		addCustomCard,
@@ -10,144 +8,86 @@
 		addCustomRule,
 		bigDescriptions
 	} from '$lib/stores';
-	import { writable } from 'svelte/store';
-	import {
-		Shield,
-		Crosshair,
-		HeartPulse,
-		UserCheck,
-		Briefcase,
-		Bomb,
-		HatGlasses,
-		User,
-		Drama,
-		Brain,
-		ArrowLeft,
-		Plus,
-		Trash2,
-		Edit2,
-		Upload
-	} from 'lucide-svelte';
+	import * as Icons from 'lucide-svelte';
+	import { iconMap } from '$lib/data';
+	import StandardLinks from '$lib/UI/StandardLinks.svelte';
+	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte'; // Твоя модалка селектора
+	import BaseModal from '$lib/UI/Modals/BaseModal.svelte'; // Твоя базова модалка
 
-	// Available icons mapping
-	const availableIcons = [
-		{ name: 'User', component: User, label: 'Громадянин' },
-		{ name: 'HatGlasses', component: HatGlasses, label: 'Окуляри/Капелюх' },
-		{ name: 'Shield', component: Shield, label: 'Шериф' },
-		{ name: 'HeartPulse', component: HeartPulse, label: 'Серце/Лікар' },
-		{ name: 'Bomb', component: Bomb, label: 'Бомба' },
-		{ name: 'Crosshair', component: Crosshair, label: 'Приціл' },
-		{ name: 'UserCheck', component: UserCheck, label: 'Захисник' },
-		{ name: 'Briefcase', component: Briefcase, label: 'Портфель' },
-		{ name: 'Drama', component: Drama, label: 'Маска/Агент' },
-		{ name: 'Brain', component: Brain, label: 'Мозок' }
-	];
+	const iconList = Object.keys(iconMap);
 
-	const builtInRoles = [
-		{ tag: 'mans', name: 'Мирний' },
-		{ tag: 'mafias', name: 'Мафія' },
-		{ tag: 'cop', name: 'Шериф' },
-		{ tag: 'doctor', name: 'Лікар' },
-		{ tag: 'kamikaze', name: 'Камікадзе' },
-		{ tag: 'maniac', name: 'Маньяк' },
-		{ tag: 'security', name: 'Охоронець' },
-		{ tag: 'lawyer', name: 'Адвокат' },
-		{ tag: 'agent', name: 'Агент' },
-		{ tag: 'idiot', name: 'Дурачок' }
-	];
-
-	// Combine built-in roles with dynamic ones
-	$: allRoles = [
-		...builtInRoles,
-		...Object.entries($bigDescriptions)
-			.filter(([tag]) => !builtInRoles.some((r) => r.tag === tag))
-			.map(([tag, desc]) => ({ tag, name: desc.name }))
-	];
-
-	// Form mode: 'assign' (existing role) or 'create' (new role)
-	let mode = 'assign';
-
-	// Form fields
+	let formMode = 'existing'; // 'existing' або 'new'
 	let cardDescription = '';
-	let selectedTag = 'mans';
 	let imageBase64 = '';
+	let selectedTag = 'mans';
 
-	// New role fields
+	// Поля для нової ролі
 	let newRoleName = '';
 	let newRoleTag = '';
 	let newRoleDescription = '';
 	let selectedIconName = 'User';
 
-	// Edit Mode state
 	let editIndex = null;
 
-	// Cards list
-	let cardsList = [];
-	customCardsStore.subscribe((val) => {
-		cardsList = val || [];
-	});
+	// Стейт для модалок
+	let rolePickerOpen = false;
+	let deleteModalOpen = false;
+	let cardToDeleteIndex = null;
 
-	// Handle Image upload and convert to base64
+	// Валідація тегу (лише англ)
+	$: if (newRoleTag) {
+		newRoleTag = newRoleTag.toLowerCase().replace(/[^a-z0-9_]/g, '');
+	}
+
+	// Отримання поточної назви ролі для відображення на кнопці селектора
+	$: selectedRoleName = $bigDescriptions[selectedTag]?.name || selectedTag;
+
+	function handleRoleSelect(event) {
+		selectedTag = event.detail.tag;
+		rolePickerOpen = false;
+	}
+
 	function handleImageChange(event) {
 		const file = event.target.files?.[0];
 		if (file) {
 			const reader = new FileReader();
-			reader.onload = () => {
-				imageBase64 = reader.result;
-			};
+			reader.onload = () => (imageBase64 = reader.result);
 			reader.readAsDataURL(file);
 		}
 	}
 
 	function resetForm() {
 		cardDescription = '';
-		selectedTag = 'mans';
 		imageBase64 = '';
+		selectedTag = 'mans';
 		newRoleName = '';
 		newRoleTag = '';
 		newRoleDescription = '';
 		selectedIconName = 'User';
-		mode = 'assign';
+		formMode = 'existing';
 		editIndex = null;
 	}
 
 	function handleSubmit() {
-		if (!cardDescription.trim()) {
-			alert('Будь ласка, введіть опис карти!');
-			return;
-		}
+		if (!cardDescription.trim()) return; // Можна замінити на тост, якщо є
 
 		let tagToUse = selectedTag;
 
-		if (mode === 'create') {
-			if (!newRoleName.trim()) {
-				alert('Будь ласка, введіть назву нової ролі!');
-				return;
-			}
-			if (!newRoleTag.trim()) {
-				alert('Будь ласка, введіть унікальний ідентифікатор ролі!');
-				return;
-			}
+		if (formMode === 'new' && editIndex === null) {
+			if (!newRoleName.trim() || !newRoleTag.trim()) return;
 
-			// Clean tag
-			tagToUse = newRoleTag
-				.trim()
-				.toLowerCase()
-				.replace(/[^a-z0-9_]/g, '');
+			tagToUse = newRoleTag;
 
-			// Register role metadata
 			addCustomDescription(tagToUse, {
-				name: newRoleName,
-				description: newRoleDescription || 'Спеціальна роль гри.',
+				name: newRoleName.trim(),
+				description: newRoleDescription.trim() || 'Персонаж із власними правилами.',
 				iconName: selectedIconName
 			});
-
-			// Register rule status toggle
 			addCustomRule(tagToUse, true);
 		}
 
 		const cardData = {
-			description: cardDescription,
+			description: cardDescription.trim(),
 			myImg: imageBase64 || 'Custom',
 			tag: tagToUse
 		};
@@ -162,198 +102,88 @@
 	}
 
 	function handleEdit(index) {
-		const card = cardsList[index];
-		cardDescription = card.description;
-		imageBase64 = card.myImg.startsWith('data:') ? card.myImg : '';
-		selectedTag = card.tag;
 		editIndex = index;
+		const card = $customCardsStore[index];
+		cardDescription = card.description;
+		selectedTag = card.tag;
+		imageBase64 = card.myImg.startsWith('data:') ? card.myImg : '';
 
-		// Check if it's a custom role description
-		const isBuiltIn = builtInRoles.some((r) => r.tag === card.tag);
+		const isBuiltIn = Object.keys($bigDescriptions).includes(card.tag);
+
+		// Якщо роль кастомна і ми її редагуємо
 		if (!isBuiltIn && $bigDescriptions[card.tag]) {
-			mode = 'create';
-			newRoleName = $bigDescriptions[card.tag].name || '';
+			formMode = 'new';
+			newRoleName = $bigDescriptions[card.tag].name;
 			newRoleTag = card.tag;
-			newRoleDescription = $bigDescriptions[card.tag].description || '';
-			// find icon
-			const matchedIcon = availableIcons.find(
-				(icon) => icon.component === $bigDescriptions[card.tag].icon
-			);
-			selectedIconName = matchedIcon ? matchedIcon.name : 'User';
+			newRoleDescription = $bigDescriptions[card.tag].description;
+			selectedIconName = $bigDescriptions[card.tag].iconName || 'User';
 		} else {
-			mode = 'assign';
+			formMode = 'existing';
 		}
 	}
 
-	function handleDelete(index) {
-		if (confirm('Ви впевнені, що хочете видалити цю карту?')) {
-			deleteCustomCard(index);
+	function confirmDelete(index) {
+		cardToDeleteIndex = index;
+		deleteModalOpen = true;
+	}
+
+	function executeDelete() {
+		if (cardToDeleteIndex !== null) {
+			deleteCustomCard(cardToDeleteIndex);
+			deleteModalOpen = false;
+			cardToDeleteIndex = null;
+			if (editIndex === cardToDeleteIndex) resetForm();
 		}
 	}
 </script>
 
-<div class="custom-cards-container">
-	<!-- HEADER -->
-	<header class="header">
-		<a href="/settings" class="back-btn">
-			<ArrowLeft size={20} />
-			<span>Назад до налаштувань</span>
-		</a>
-		<h1>Створення власних карт / ролей</h1>
-		<p class="subtitle">
-			Розширюйте можливості вашої мафії новими картами та унікальними правилами
-		</p>
+<div class="constructor-wrapper">
+	<header class="main-header">
+		<h1 class="text-white">Колода карт</h1>
 	</header>
 
-	<div class="main-grid">
-		<!-- FORM PANEL -->
-		<section class="panel form-panel">
-			<h2>{editIndex !== null ? 'Редагувати карту' : 'Створити нову карту'}</h2>
+	<div class="layout-grid">
+		<section class="cards-section">
+			<h2 class="section-title text-white">Створені карти ({$customCardsStore.length})</h2>
 
-			<div class="form-group">
-				<label for="desc">Фраза на карті (опис персонажа)</label>
-				<input
-					type="text"
-					id="desc"
-					placeholder="Наприклад: 'Ти забагато знаєш...'"
-					bind:value={cardDescription}
-				/>
-			</div>
-
-			<!-- Image Upload with Preview -->
-			<div class="form-group">
-				<label for="card-image">Зображення карти</label>
-				<div class="upload-wrapper">
-					{#if imageBase64}
-						<div class="image-preview">
-							<img src={imageBase64} alt="Preview" />
-							<button class="remove-img-btn" on:click={() => (imageBase64 = '')}>Видалити</button>
-						</div>
-					{:else}
-						<label class="upload-area">
-							<input type="file" accept="image/*" on:change={handleImageChange} />
-							<Upload size={24} />
-							<span>Завантажити фото</span>
-						</label>
-					{/if}
-				</div>
-			</div>
-
-			<!-- MODE SELECTOR -->
-			<div class="mode-selector">
-				<button type="button" class:active={mode === 'assign'} on:click={() => (mode = 'assign')}>
-					Прив'язати до існуючої ролі
-				</button>
-				<button type="button" class:active={mode === 'create'} on:click={() => (mode = 'create')}>
-					Створити абсолютно нову роль
-				</button>
-			</div>
-
-			{#if mode === 'assign'}
-				<div class="form-group animate-fade">
-					<label for="role-select">Оберіть роль для цієї карти</label>
-					<select id="role-select" bind:value={selectedTag}>
-						{#each allRoles as role}
-							<option value={role.tag}>{role.name}</option>
-						{/each}
-					</select>
-				</div>
-			{:else}
-				<div class="new-role-fields animate-fade">
-					<div class="form-group">
-						<label for="role-name">Назва ролі</label>
-						<input
-							type="text"
-							id="role-name"
-							placeholder="Наприклад: Кілер, Босс, Журналіст"
-							bind:value={newRoleName}
-						/>
-					</div>
-
-					<div class="form-group">
-						<label for="role-id">Унікальний ID ролі (англійською)</label>
-						<input
-							type="text"
-							id="role-id"
-							placeholder="Наприклад: killer, boss, journalist"
-							bind:value={newRoleTag}
-						/>
-					</div>
-
-					<div class="form-group">
-						<label for="role-desc">Опис здібностей ролі</label>
-						<textarea
-							id="role-desc"
-							rows="3"
-							placeholder="Опишіть правила або хід цієї ролі під час гри..."
-							bind:value={newRoleDescription}
-						/>
-					</div>
-
-					<div class="form-group">
-						<label for="role-icon">Оберіть іконку ролі</label>
-						<div class="icon-selector-grid">
-							{#each availableIcons as icon}
-								<button
-									id="role-icon"
-									type="button"
-									class="icon-btn"
-									class:selected={selectedIconName === icon.name}
-									on:click={() => (selectedIconName = icon.name)}
-									title={icon.label}
-								>
-									<svelte:component this={icon.component} size={20} />
-								</button>
-							{/each}
-						</div>
-					</div>
-				</div>
-			{/if}
-
-			<div class="action-buttons">
-				<button class="primary-btn" on:click={handleSubmit}>
-					<Plus size={18} />
-					<span>{editIndex !== null ? 'Зберегти зміни' : 'Додати карту'}</span>
-				</button>
-				{#if editIndex !== null}
-					<button class="cancel-btn" on:click={resetForm}>Скасувати</button>
-				{/if}
-			</div>
-		</section>
-
-		<!-- LIST PANEL -->
-		<section class="panel list-panel">
-			<h2>Ваші кастомні карти ({cardsList.length})</h2>
-
-			{#if cardsList.length === 0}
+			{#if $customCardsStore.length === 0}
 				<div class="empty-state">
-					<p>Ви ще не створили жодної карти.</p>
-					<p class="hint">Використовуйте форму ліворуч, щоб створити свій перший персонаж!</p>
+					<p>Колода порожня.</p>
+					<p class="hint">Створіть першу карту за допомогою форми праворуч.</p>
 				</div>
 			{:else}
-				<div class="cards-grid">
-					{#each cardsList as card, idx}
-						<div class="custom-card-item">
-							<div class="card-image-box">
+				<div class="cards-layout">
+					{#each $customCardsStore as card, idx}
+						<div class="game-card-item animate-fade">
+							<div class="real-game-card">
 								{#if card.myImg && card.myImg.startsWith('data:')}
-									<img src={card.myImg} alt="Card preview" />
+									<img src={card.myImg} alt="Card graphic" class="card-main-img" />
 								{:else}
-									<div class="card-image-fallback">
-										<User size={32} />
+									<div class="card-graphic-fallback">
+										<svelte:component
+											this={Icons[$bigDescriptions[card.tag]?.iconName || 'User']}
+											size={42}
+											color="#111"
+										/>
 									</div>
 								{/if}
-								<span class="role-badge">
-									{$bigDescriptions[card.tag]?.name || card.tag}
-								</span>
+								<div class="card-text-content">
+									<p class="game-phrase">"{card.description}"</p>
+								</div>
 							</div>
-							<div class="card-info">
-								<p class="card-phrase">"{card.description}"</p>
-								<div class="card-controls">
-									<button class="edit-btn" on:click={() => handleEdit(idx)} title="Редагувати">
-										<Edit2 size={16} />
+
+							<div class="card-meta-panel">
+								<div class="meta-info">
+									<span class="role-indicator-tag">
+										{$bigDescriptions[card.tag]?.name || card.tag}
+									</span>
+								</div>
+								<div class="meta-actions">
+									<button class="action-icon-btn edit" on:click={() => handleEdit(idx)}>
+										<svelte:component this={Icons.Edit2} size={15} />
 									</button>
-									<button class="delete-btn" on:click={() => handleDelete(idx)} title="Видалити">
-										<Trash2 size={16} />
+									<button class="action-icon-btn delete" on:click={() => confirmDelete(idx)}>
+										<svelte:component this={Icons.Trash2} size={15} />
 									</button>
 								</div>
 							</div>
@@ -362,8 +192,174 @@
 				</div>
 			{/if}
 		</section>
+
+		<section class="form-section">
+			<h2 class="section-title text-white">
+				{editIndex !== null ? 'Редагування карти' : 'Створення карти'}
+			</h2>
+
+			<div class="mode-selector">
+				<button
+					type="button"
+					class:active={formMode === 'existing'}
+					disabled={editIndex !== null}
+					on:click={() => (formMode = 'existing')}
+				>
+					Існуюча роль
+				</button>
+				<button
+					type="button"
+					class:active={formMode === 'new'}
+					disabled={editIndex !== null}
+					on:click={() => (formMode = 'new')}
+				>
+					Нова роль
+				</button>
+			</div>
+
+			{#if formMode === 'existing'}
+				<div class="form-group animate-fade">
+					<label class="text-gray">Клас гри (Роль)</label>
+					<button
+						type="button"
+						class="custom-select-trigger"
+						on:click={() => (rolePickerOpen = true)}
+					>
+						<svelte:component
+							this={Icons[$bigDescriptions[selectedTag]?.iconName || 'User']}
+							size={16}
+						/>
+						<span>{selectedRoleName}</span>
+						<svelte:component this={Icons.ChevronDown} size={16} class="ms-auto" />
+					</button>
+				</div>
+			{:else}
+				<div class="animate-fade">
+					<div class="form-group">
+						<label class="text-gray" for="role-name">Назва ролі</label>
+						<input
+							type="text"
+							id="role-name"
+							placeholder="Бос, Лікар..."
+							bind:value={newRoleName}
+						/>
+
+						<div class="form-group">
+							<label class="text-gray" for="role-id">ID ролі (англ)</label>
+							<input
+								type="text"
+								id="role-id"
+								placeholder="boss, doctor"
+								bind:value={newRoleTag}
+								disabled={editIndex !== null}
+							/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="text-gray" for="role-desc">Опис здібностей ролі</label>
+						<textarea
+							id="role-desc"
+							rows="3"
+							maxlength="300"
+							placeholder="Що робить цей гравець вночі..."
+							bind:value={newRoleDescription}
+						/>
+						<span class="char-counter">{newRoleDescription.length}/300</span>
+					</div>
+
+					<div class="form-group">
+						<label class="text-gray">Іконка для нової ролі</label>
+						<div class="icon-selector-grid">
+							{#each iconList as iconName}
+								<button
+									type="button"
+									class="icon-btn"
+									class:selected={selectedIconName === iconName}
+									on:click={() => (selectedIconName = iconName)}
+								>
+									<svelte:component this={Icons[iconName]} size={18} />
+								</button>
+							{/each}
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<div class="divider" />
+
+			<div class="form-group">
+				<label class="text-gray" for="desc">Цитата / Фраза на карті</label>
+				<input
+					type="text"
+					id="desc"
+					placeholder="«Я знаю, хто мафія...»"
+					bind:value={cardDescription}
+				/>
+			</div>
+
+			<div class="form-group">
+				<label class="text-gray">Зображення карти</label>
+				<div class="upload-wrapper">
+					{#if imageBase64}
+						<div class="image-preview">
+							<img src={imageBase64} alt="Preview" />
+							<button type="button" class="remove-img-btn" on:click={() => (imageBase64 = '')}>
+								Прибрати фото
+							</button>
+						</div>
+					{:else}
+						<label class="upload-area">
+							<input type="file" id="file" accept="image/*" on:change={handleImageChange} />
+							<svelte:component this={Icons.Upload} size={20} />
+							<span>Завантажити картинку</span>
+						</label>
+					{/if}
+				</div>
+			</div>
+
+			<div class="action-buttons">
+				<button type="button" class="link-style red submit-btn-override" on:click={handleSubmit}>
+					<svelte:component
+						this={editIndex !== null ? Icons.Check : Icons.Zap}
+						size={18}
+						color="#fff"
+					/>
+					<span>{editIndex !== null ? 'ЗБЕРЕГТИ ЗМІНИ' : 'ДОДАТИ В КОЛОДУ'}</span>
+				</button>
+
+				{#if editIndex !== null}
+					<button class="cancel-btn text-white" on:click={resetForm}>Скасувати</button>
+				{/if}
+			</div>
+		</section>
 	</div>
 </div>
+
+<StandardLinks />
+
+<BaseModal open={deleteModalOpen} on:close={() => (deleteModalOpen = false)}>
+	<div class="modal-header-slot" slot="header">
+		<svelte:component this={Icons.AlertTriangle} class="details-icon" color="#ef4444" />
+		<div>
+			<h3 class="text-white">Видалення карти</h3>
+			<p class="subtitle">Дія є незворотною</p>
+		</div>
+	</div>
+	<div class="modal-body-content">
+		<p class="description text-white">Ви впевнені, що хочете видалити цю карту з колоди?</p>
+		<div class="modal-actions-row">
+			<button class="modal-btn confirm" on:click={executeDelete}>Видалити</button>
+			<button class="modal-btn cancel" on:click={() => (deleteModalOpen = false)}>Скасувати</button>
+		</div>
+	</div>
+</BaseModal>
+
+<RolePickerModal
+	open={rolePickerOpen}
+	on:close={() => (rolePickerOpen = false)}
+	on:select={handleRoleSelect}
+/>
 
 <style>
 	:global(body) {
@@ -371,135 +367,308 @@
 		color: #ffffff !important;
 	}
 
-	.custom-cards-container {
+	.text-white {
+		color: #ffffff !important;
+	}
+	.text-gray {
+		color: #a1a1aa !important;
+	}
+
+	.constructor-wrapper {
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 24px 16px 60px;
-		font-family: 'Inter', system-ui, -apple-system, sans-serif;
-		color: #ffffff;
+		padding: 16px 12px 60px;
+		font-family: system-ui, -apple-system, sans-serif;
 	}
 
-	.header {
-		margin-bottom: 30px;
-		border-bottom: 1px solid rgba(255, 68, 68, 0.2);
-		padding-bottom: 20px;
+	.main-header {
+		margin-bottom: 24px;
+		border-bottom: 1px solid #232326;
+		padding-bottom: 12px;
 	}
 
-	.back-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		color: #ff4444;
-		text-decoration: none;
-		font-size: 0.95rem;
-		margin-bottom: 15px;
-		transition: color 0.2s ease;
-	}
-
-	.back-btn:hover {
-		color: #ff6666;
-	}
-
-	h1 {
-		font-size: 2.2rem;
+	.main-header h1 {
+		font-size: 1.8rem;
 		font-weight: 800;
-		color: #ffffff;
-		margin: 0 0 8px;
-		letter-spacing: -0.5px;
-	}
-
-	.subtitle {
-		color: #a0a0ab;
-		font-size: 1.1rem;
 		margin: 0;
 	}
 
-	.main-grid {
+	.layout-grid {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 30px;
+		grid-template-columns: 1fr 400px;
+		gap: 24px;
 		align-items: start;
 	}
 
-	@media (max-width: 900px) {
-		.main-grid {
+	@media (max-width: 950px) {
+		.layout-grid {
 			grid-template-columns: 1fr;
+		}
+		.form-section {
+			order: -1; /* Форма зверху на мобілках для зручності додавання */
 		}
 	}
 
-	.panel {
-		background: rgba(20, 20, 22, 0.95);
-		border: 1px solid #27272a;
-		border-top: 4px solid #ff4444;
+	.cards-section,
+	.form-section {
+		background: #111113;
 		border-radius: 12px;
-		padding: 25px;
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+		padding: 20px;
+		border: 1px solid #232326;
 	}
 
-	.panel h2 {
-		font-size: 1.5rem;
+	.cards-section {
+		border: none;
+		background: transparent;
+		padding: 0;
+	}
+
+	.section-title {
+		font-size: 1.25rem;
 		font-weight: 700;
-		color: #ffffff;
-		margin: 0 0 20px;
-		border-bottom: 1px solid #27272a;
-		padding-bottom: 10px;
+		margin: 0 0 16px;
 	}
 
+	/* СЕТКА СТВОРЕНИХ КАРТ */
+	.cards-layout {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 16px;
+	}
+
+	.game-card-item {
+		display: flex;
+		flex-direction: column;
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		border: 1px solid #232326;
+	}
+
+	/* Реальний вигляд карти (БІЛИЙ ФОН) */
+	.real-game-card {
+		background: #ffffff;
+		height: 260px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16px;
+		position: relative;
+	}
+
+	.card-main-img {
+		width: 100%;
+		height: 140px;
+		object-fit: contain;
+	}
+
+	.card-graphic-fallback {
+		height: 140px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.card-text-content {
+		width: 100%;
+		text-align: center;
+		margin-top: auto;
+	}
+
+	.game-phrase {
+		color: #111111 !important;
+		font-size: 0.9rem;
+		font-style: italic;
+		font-weight: 600;
+		margin: 0;
+		line-height: 1.3;
+		word-break: break-word;
+	}
+
+	/* Нижня темна панель карти з тегом та кнопками */
+	.card-meta-panel {
+		background: #161619;
+		padding: 10px 12px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-top: 1px solid #232326;
+	}
+
+	.role-indicator-tag {
+		background: #232326;
+		color: #e4e4e7;
+		padding: 3px 8px;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.meta-actions {
+		display: flex;
+		gap: 6px;
+	}
+
+	.action-icon-btn {
+		background: #232326;
+		border: none;
+		color: #a1a1aa;
+		width: 28px;
+		height: 28px;
+		border-radius: 6px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.15s;
+	}
+
+	.action-icon-btn.edit:hover {
+		background: #3f3f46;
+		color: #fff;
+	}
+	.action-icon-btn.delete:hover {
+		background: #ef4444;
+		color: #fff;
+	}
+
+	/* ФОРМА ТА СЕЛЕКТОРИ */
 	.form-group {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
-		margin-bottom: 20px;
+		gap: 6px;
+		margin-bottom: 16px;
+		position: relative;
 	}
 
 	.form-group label {
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 		font-weight: 600;
-		color: #d4d4d8;
 	}
 
 	input[type='text'],
-	select,
 	textarea {
-		background: #18181b;
-		border: 1px solid #3f3f46;
+		background: #161619;
+		border: 1px solid #232326;
 		border-radius: 8px;
-		padding: 12px;
-		color: #ffffff;
-		font-size: 0.95rem;
+		padding: 11px;
+		color: white !important;
+		font-size: 0.9rem;
 		outline: none;
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 
-	input[type='text']:focus,
-	select:focus,
+	input:focus,
 	textarea:focus {
 		border-color: #ff4444;
-		box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
 	}
 
-	/* Upload area */
-	.upload-wrapper {
-		border: 2px dashed #3f3f46;
+	textarea {
+		resize: vertical;
+		min-height: 70px;
+		max-height: 150px;
+	}
+
+	.char-counter {
+		position: absolute;
+		bottom: -16px;
+		right: 4px;
+		font-size: 0.7rem;
+		color: #52525b;
+	}
+
+	/* Кнопка-тригер замість дефолтного селектора */
+	.custom-select-trigger {
+		background: #161619;
+		border: 1px solid #232326;
 		border-radius: 8px;
-		background: #18181b;
-		overflow: hidden;
-		transition: border-color 0.2s ease;
+		padding: 11px;
+		color: white;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		cursor: pointer;
+		font-size: 0.9rem;
+		text-align: left;
+	}
+	.custom-select-trigger:focus {
+		border-color: #ff4444;
 	}
 
-	.upload-wrapper:hover {
+	.mode-selector {
+		display: flex;
+		background: #161619;
+		padding: 4px;
+		border-radius: 8px;
+		margin-bottom: 18px;
+		border: 1px solid #232326;
+	}
+
+	.mode-selector button {
+		flex: 1;
+		background: transparent;
+		border: none;
+		color: #a1a1aa;
+		padding: 8px;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+
+	.mode-selector button.active {
+		background: #ff4444;
+		color: white;
+	}
+
+	.icon-selector-grid {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 6px;
+		margin-top: 2px;
+	}
+
+	.icon-btn {
+		background: #161619;
+		border: 1px solid #232326;
+		color: #a1a1aa;
+		padding: 10px;
+		border-radius: 6px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.icon-btn.selected {
+		background: rgba(255, 68, 68, 0.12);
 		border-color: #ff4444;
+		color: #ff4444;
+	}
+
+	.divider {
+		height: 1px;
+		background: #232326;
+		margin: 20px 0;
+	}
+
+	/* ЗАВАНТАЖЕННЯ МЕДІА */
+	.upload-wrapper {
+		border: 2px dashed #232326;
+		border-radius: 8px;
+		background: #161619;
 	}
 
 	.upload-area {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
 		gap: 8px;
 		padding: 24px;
 		cursor: pointer;
-		color: #a1a1aa;
+		color: #71717a;
+		font-size: 0.85rem;
 	}
 
 	.upload-area input {
@@ -507,283 +676,125 @@
 	}
 
 	.image-preview {
-		position: relative;
+		padding: 12px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding: 16px;
 	}
 
 	.image-preview img {
-		max-width: 100%;
-		max-height: 180px;
-		border-radius: 6px;
+		max-height: 110px;
 		object-fit: contain;
-		margin-bottom: 10px;
-		border: 1px solid #3f3f46;
+		border-radius: 6px;
+		margin-bottom: 8px;
 	}
 
 	.remove-img-btn {
-		background: #ef4444;
-		color: #ffffff;
+		background: #232326;
 		border: none;
+		color: #f43f5e;
+		padding: 5px 12px;
+		font-size: 0.8rem;
 		border-radius: 6px;
-		padding: 6px 12px;
-		font-size: 0.85rem;
 		cursor: pointer;
-		transition: background 0.2s;
-	}
-
-	.remove-img-btn:hover {
-		background: #dc2626;
-	}
-
-	/* Mode Selector */
-	.mode-selector {
-		display: flex;
-		gap: 10px;
-		margin-bottom: 20px;
-		border-bottom: 1px solid #27272a;
-		padding-bottom: 15px;
-	}
-
-	.mode-selector button {
-		flex: 1;
-		background: #18181b;
-		border: 1px solid #3f3f46;
-		color: #a1a1aa;
-		padding: 10px;
-		border-radius: 8px;
-		cursor: pointer;
-		font-size: 0.85rem;
 		font-weight: 600;
-		transition: all 0.2s ease;
 	}
 
-	.mode-selector button.active {
-		background: rgba(255, 68, 68, 0.1);
-		border-color: #ff4444;
-		color: #ffffff;
-	}
-
-	/* Icon selector */
-	.icon-selector-grid {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 8px;
-	}
-
-	.icon-btn {
-		background: #18181b;
-		border: 1px solid #3f3f46;
-		color: #a1a1aa;
-		aspect-ratio: 1;
-		border-radius: 8px;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: all 0.2s ease;
-	}
-
-	.icon-btn:hover {
-		border-color: #ff4444;
-		color: #ffffff;
-	}
-
-	.icon-btn.selected {
-		background: #ff4444;
-		border-color: #ff4444;
-		color: #ffffff;
-		box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
-	}
-
-	/* Action Buttons */
+	/* КНОПКИ ДІЙ */
 	.action-buttons {
 		display: flex;
-		gap: 12px;
-		margin-top: 25px;
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 20px;
 	}
 
-	.primary-btn {
-		flex: 1;
-		background: #ff4444;
-		color: #ffffff;
-		border: none;
-		border-radius: 8px;
-		padding: 12px;
-		font-weight: 700;
+	.submit-btn-override {
+		width: 100% !important;
+		min-height: 42px !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		gap: 8px !important;
+		border-radius: 8px !important;
+		font-weight: 700 !important;
 		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		transition: background 0.2s ease, transform 0.1s ease;
-	}
-
-	.primary-btn:hover {
-		background: #ff6666;
-	}
-
-	.primary-btn:active {
-		transform: scale(0.98);
 	}
 
 	.cancel-btn {
 		background: transparent;
-		border: 1px solid #3f3f46;
-		color: #d4d4d8;
+		border: 1px solid #232326;
+		padding: 10px;
 		border-radius: 8px;
-		padding: 12px 20px;
 		cursor: pointer;
+		font-size: 0.9rem;
 		font-weight: 600;
-		transition: background 0.2s;
 	}
 
-	.cancel-btn:hover {
-		background: rgba(255, 255, 255, 0.05);
-	}
-
-	/* Empty state */
 	.empty-state {
 		text-align: center;
 		padding: 40px 20px;
+		color: #52525b;
+		font-size: 0.95rem;
+		border: 1px dashed #232326;
+		border-radius: 12px;
+	}
+
+	.hint {
+		font-size: 0.85rem;
+		color: #3f3f46;
+		margin-top: 4px;
+	}
+
+	/* ОФОРМЛЕННЯ МОДАЛКИ ВИДАНЕННЯ */
+	.modal-header-slot {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+	.modal-header-slot h3 {
+		margin: 0;
+		font-size: 1.2rem;
+	}
+	.subtitle {
+		margin: 0;
+		font-size: 0.8rem;
 		color: #71717a;
 	}
-
-	.empty-state p {
-		margin: 0 0 8px;
-		font-size: 1.1rem;
+	.modal-body-content {
+		padding: 10px 0 0;
 	}
-
-	.empty-state .hint {
-		font-size: 0.9rem;
-		color: #52525b;
-	}
-
-	/* Cards List Grid */
-	.cards-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 16px;
-		max-height: 70vh;
-		overflow-y: auto;
-		padding-right: 4px;
-		padding-top: 10px;
-	}
-
-	@media (max-width: 600px) {
-		.cards-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	.custom-card-item {
-		background: #18181b;
-		border: 1px solid #27272a;
-		border-radius: 10px;
-		overflow: hidden;
+	.modal-actions-row {
 		display: flex;
-		flex-direction: column;
-		transition: transform 0.2s ease, border-color 0.2s ease;
-	}
-
-	.custom-card-item:hover {
-		transform: translateY(-2px);
-		border-color: #ff4444;
-	}
-
-	.card-image-box {
-		height: 120px;
-		background: #09090b;
-		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-bottom: 1px solid #27272a;
-	}
-
-	.card-image-box img {
-		width: 100%;
-		height: 100%;
-		object-fit: contain;
-	}
-
-	.card-image-fallback {
-		color: #3f3f46;
-	}
-
-	.role-badge {
-		position: absolute;
-		bottom: 8px;
-		left: 8px;
-		background: rgba(255, 68, 68, 0.95);
-		color: #ffffff;
-		padding: 3px 8px;
-		border-radius: 4px;
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.5px;
-	}
-
-	.card-info {
-		padding: 12px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		flex-grow: 1;
 		gap: 10px;
+		margin-top: 20px;
 	}
-
-	.card-phrase {
-		margin: 0;
-		font-size: 0.95rem;
-		font-style: italic;
-		color: #e4e4e7;
-		line-height: 1.4;
-	}
-
-	.card-controls {
-		display: flex;
-		justify-content: flex-end;
-		gap: 8px;
-	}
-
-	.edit-btn,
-	.delete-btn {
-		background: #27272a;
-		border: 1px solid #3f3f46;
-		color: #d4d4d8;
-		width: 32px;
-		height: 32px;
+	.modal-btn {
+		flex: 1;
+		padding: 10px;
 		border-radius: 6px;
+		font-weight: 600;
 		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: all 0.2s ease;
+		font-size: 0.9rem;
 	}
-
-	.edit-btn:hover {
-		background: #ff4444;
-		border-color: #ff4444;
-		color: #ffffff;
-	}
-
-	.delete-btn:hover {
+	.modal-btn.confirm {
 		background: #ef4444;
-		border-color: #ef4444;
-		color: #ffffff;
+		border: none;
+		color: white;
+	}
+	.modal-btn.cancel {
+		background: #232326;
+		border: none;
+		color: #a1a1aa;
 	}
 
 	.animate-fade {
-		animation: fadeIn 0.25s ease-out;
+		animation: fadeIn 0.2s ease-out;
 	}
 
 	@keyframes fadeIn {
 		from {
 			opacity: 0;
-			transform: translateY(5px);
+			transform: translateY(4px);
 		}
 		to {
 			opacity: 1;

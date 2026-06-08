@@ -1,19 +1,36 @@
 <script>
 	import { handleNumericInput, normalize } from './inputHelpers';
 	import { Zap } from 'lucide-svelte';
-	import { maxPlayerAmount } from '$lib/functions/findSpecialKeys';
+	import { getMaxPlayerAmount } from '$lib/functions/findSpecialKeys';
+	import { afterUpdate } from 'svelte';
 	import '$lib/UI/Buttons/SimpleLink.css';
 
 	export let handleRandom = () => {};
 	export let totalPlayers = 0;
 
-	function handleTargetInput(e) {
-		const res = handleNumericInput(e, maxPlayerAmount);
-		if (res.success) targetTotal = res.value;
-		else e.target.value = targetTotal;
+	// Створюємо внутрішній локальний стан для інпута
+	let targetTotal = totalPlayers;
+	let oldTotalPlayers = totalPlayers;
+
+	// Синхронізуємо значення ТІЛЬКИ якщо батьківський компонент
+	// дійсно прислав нове значення totalPlayers
+	$: {
+		if (totalPlayers !== oldTotalPlayers) {
+			targetTotal = totalPlayers;
+			oldTotalPlayers = totalPlayers;
+		}
 	}
 
-	$: targetTotal = totalPlayers;
+	function handleTargetInput(e) {
+		const maxAmount = getMaxPlayerAmount();
+		const res = handleNumericInput(e, maxAmount);
+
+		if (res.success) {
+			targetTotal = res.value;
+		} else {
+			e.target.value = targetTotal;
+		}
+	}
 
 	function submitForm() {
 		handleRandom(targetTotal);
@@ -28,12 +45,12 @@
 			type="text"
 			value={targetTotal}
 			on:input={handleTargetInput}
-			on:blur={() => (targetTotal = normalize(targetTotal, 3, maxPlayerAmount))}
+			on:blur={() => (targetTotal = normalize(targetTotal, 3, getMaxPlayerAmount()))}
 			autocomplete="off"
 		/>
 	</div>
 	<button
-		on:click|preventDefault={submitForm}
+		type="submit"
 		class="link-style red"
 		style="font-size: 0.8rem; min-height: 33px; margin: 0; width: auto;"
 	>

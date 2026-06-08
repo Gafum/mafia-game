@@ -1,29 +1,28 @@
 import { cardRulesConst } from '$lib/data';
-import { findSpecialKeys, maxPlayerAmount } from '$lib/functions/findSpecialKeys';
+import { findSpecialKeys, getMaxPlayerAmount } from '$lib/functions/findSpecialKeys';
 
-function createSpecialRolesList() {
+function createSpecialRolesList(activeKeys) {
 	const start = 0.2;
-	const step = 0.05;
+	const step = 1 / (activeKeys.length * 2 || 1);
 	const max = 0.7;
 
-	return findSpecialKeys().map((key, i) => {
+	return activeKeys.map((key, i) => {
 		let chance = Math.min(max, start + Math.log(i + 1) * step);
-
 		if (chance > max) chance = max;
-
 		return { key, chance };
 	});
 }
 
-const specialRolesList = createSpecialRolesList();
-
 export function generateGame(targetTotal) {
-	let total = Math.min(maxPlayerAmount, Math.max(3, targetTotal));
+	const currentKeys = findSpecialKeys();
+	const specialRolesList = createSpecialRolesList(currentKeys);
+
+	let total = Math.min(getMaxPlayerAmount(), Math.max(3, targetTotal));
 
 	let roles = {};
 	specialRolesList.forEach((r) => (roles[r.key] = false));
 
-	// мафія
+	// Розрахунок мафії
 	let mafias = Math.min(
 		cardRulesConst.mafias,
 		Math.max(1, Math.floor(total / ((Math.random() - 0.5) * 2.4 + 3.5)))
@@ -31,7 +30,7 @@ export function generateGame(targetTotal) {
 
 	let remaining = total - mafias;
 
-	// якщо багато людей — включаємо всі ролі
+	// Якщо багато людей — включаємо всі ролі і кастомні також
 	if (total >= cardRulesConst.mans) {
 		specialRolesList.forEach((r) => {
 			roles[r.key] = true;
@@ -46,7 +45,7 @@ export function generateGame(targetTotal) {
 		}
 	}
 
-	// мирні
+	// Розрахунок мирних
 	let mans = Math.min(cardRulesConst.mans, Math.max(1, remaining));
 	remaining -= mans;
 

@@ -1,15 +1,20 @@
+import { get } from 'svelte/store';
 import { cardRulesConst } from '$lib/data';
 import { cardRules } from '$lib/stores';
 
 export function findSpecialKeys() {
-	let currentRules = cardRulesConst;
-	if (typeof window !== 'undefined') {
-		cardRules.subscribe(($rules) => {
-			currentRules = $rules;
-		})();
+	if (typeof window === 'undefined') {
+		return Object.keys(cardRulesConst).filter((k) => !['mans', 'mafias'].includes(k));
 	}
+
+	const currentRules = get(cardRules);
+
 	return Object.keys(currentRules).filter((k) => !['mans', 'mafias'].includes(k));
 }
 
-// Generous upper limit or dynamic calculation
-export const maxPlayerAmount = 100;
+export function getMaxPlayerAmount() {
+	const res = findSpecialKeys().length + cardRulesConst.mafias + cardRulesConst.mans;
+
+	console.log('РЕАЛЬНИЙ динамічний максимум гравців:', res);
+	return res;
+}
