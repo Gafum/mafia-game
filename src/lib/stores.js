@@ -51,10 +51,6 @@ function mergeInitialData() {
 	// Merge big descriptions (object spread)
 	const mergedDescriptions = { ...bigDescriptionList, ...mappedCustomDescriptions };
 	bigDescriptions.set(mergedDescriptions);
-
-	// Merge rule settings (object spread)
-	const mergedRules = { ...cardRulesConst, ...customRules };
-	cardRules.set(mergedRules);
 }
 
 // Validation helper
@@ -88,7 +84,7 @@ export function getData() {
 	const data = getCookie('gameSettings');
 	if (isValidBySchema(data, cardRulesConst)) {
 		// Merge cookie settings with custom rules
-		cardRules.set({ ...data, ...customRules });
+		cardRules.set({ ...customRules, ...data });
 	} else {
 		console.warn('Invalid gameSettings → reset');
 		setCookie('gameSettings', cardRulesConst, 30);
@@ -102,9 +98,9 @@ export function setCookie(name, value, days = 30) {
 	if (!browser) return;
 	const date = new Date();
 	date.setTime(date.getTime() + days * 86400000);
+
 	document.cookie =
-		`${name}=${encodeURIComponent(JSON.stringify(value))};` +
-		`expires=${date.toUTCString()}; path=/`;
+		`${name}=${encodeURIComponent(JSON.stringify(value))};` + `expires=${date.toUTCString()}`;
 }
 
 // ---- Custom Card CRUD API ----
@@ -137,7 +133,7 @@ export function deleteCustomCard(index) {
 
 	// Clean up any custom description/rules if no other card uses this tag
 	const tagUsed = customCards.some((c) => c.tag === removed.tag);
-	if (!tagUsed && removed.tag && !Object.key(cardRulesConst).includes(removed.tag)) {
+	if (!tagUsed && removed.tag && !Object.keys(cardRulesConst).includes(removed.tag)) {
 		deleteCustomDescription(removed.tag);
 		deleteCustomRule(removed.tag);
 	} else {

@@ -43,7 +43,7 @@
 	$: selectedRoleName = $bigDescriptions[selectedTag]?.name || selectedTag;
 
 	function handleRoleSelect(event) {
-		selectedTag = event.detail.tag;
+		selectedTag = event.detail;
 		rolePickerOpen = false;
 	}
 
@@ -168,7 +168,7 @@
 									</div>
 								{/if}
 								<div class="card-text-content">
-									<p class="game-phrase">"{card.description}"</p>
+									<p class="game-phrase">{card.description}</p>
 								</div>
 							</div>
 
@@ -219,7 +219,7 @@
 
 			{#if formMode === 'existing'}
 				<div class="form-group animate-fade">
-					<label class="text-gray">Клас гри (Роль)</label>
+					<label class="text-gray" for="custom-select-trigger">Клас гри (Роль)</label>
 					<button
 						type="button"
 						class="custom-select-trigger"
@@ -269,7 +269,7 @@
 					</div>
 
 					<div class="form-group">
-						<label class="text-gray">Іконка для нової ролі</label>
+						<label class="text-gray" for="icon-selector-grid">Іконка для нової ролі</label>
 						<div class="icon-selector-grid">
 							{#each iconList as iconName}
 								<button
@@ -299,7 +299,7 @@
 			</div>
 
 			<div class="form-group">
-				<label class="text-gray">Зображення карти</label>
+				<label class="text-gray" for="file">Зображення карти</label>
 				<div class="upload-wrapper">
 					{#if imageBase64}
 						<div class="image-preview">
@@ -362,11 +362,6 @@
 />
 
 <style>
-	:global(body) {
-		background-color: #0c0c0e !important;
-		color: #ffffff !important;
-	}
-
 	.text-white {
 		color: #ffffff !important;
 	}
@@ -429,7 +424,7 @@
 		margin: 0 0 16px;
 	}
 
-	/* СЕТКА СТВОРЕНИХ КАРТ */
+	/* СІТКА СТВОРЕНИХ КАРТ */
 	.cards-layout {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

@@ -1,12 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { cardRules } from '$lib/stores';
+	import { bigDescriptions } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import CardWithText from './CardWithText.svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 
 	let tagList = [];
-	cardRules.subscribe(($rules) => {
+	bigDescriptions.subscribe(($rules) => {
 		tagList = Object.keys($rules);
 	});
 	let mounted = false;

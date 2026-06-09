@@ -15,6 +15,5 @@ export function findSpecialKeys() {
 export function getMaxPlayerAmount() {
 	const res = findSpecialKeys().length + cardRulesConst.mafias + cardRulesConst.mans;
 
-	console.log('РЕАЛЬНИЙ динамічний максимум гравців:', res);
 	return res;
 }

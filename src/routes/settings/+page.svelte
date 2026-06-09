@@ -17,7 +17,7 @@
 	let isMount = false;
 	let renderContent = false;
 
-	$: specialKeys = Object.keys($cardRules).filter((k) => !['mans', 'mafias'].includes(k));
+	$: specialKeys = Object.keys($bigDescriptions).filter((k) => !['mans', 'mafias'].includes(k));
 
 	$: totalPlayers =
 		Number(state.mans || 0) +
@@ -26,7 +26,6 @@
 
 	$: if (isMount && Object.keys(state).length > 0) {
 		cardRules.set(state);
-		console.log(state);
 
 		setCookie('gameSettings', state, 30);
 	}
