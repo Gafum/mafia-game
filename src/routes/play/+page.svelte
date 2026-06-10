@@ -48,6 +48,8 @@
 			peopleList = createArray(data);
 		}
 
+		console.log(peopleList);
+
 		visiblePeople = peopleList.slice(peopleList.length - maxVisibleCards, peopleList.length);
 		showingElement = peopleList.length - 1; // index of last element
 	});

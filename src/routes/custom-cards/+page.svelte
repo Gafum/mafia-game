@@ -11,8 +11,9 @@
 	import * as Icons from 'lucide-svelte';
 	import { iconMap } from '$lib/data';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
-	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte'; // Твоя модалка селектора
-	import BaseModal from '$lib/UI/Modals/BaseModal.svelte'; // Твоя базова модалка
+	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
+	import BaseModal from '$lib/UI/Modals/BaseModal.svelte';
+	import '$lib/UI/Buttons/SimpleLink.css';
 
 	const iconList = Object.keys(iconMap);
 
@@ -157,7 +158,9 @@
 						<div class="game-card-item animate-fade">
 							<div class="real-game-card">
 								{#if card.myImg && card.myImg.startsWith('data:')}
-									<img src={card.myImg} alt="Card graphic" class="card-main-img" />
+									<div class="card-img-wrapper">
+										<img src={card.myImg} alt="Card graphic" class="card-main-img" />
+									</div>
 								{:else}
 									<div class="card-graphic-fallback">
 										<svelte:component
@@ -180,7 +183,7 @@
 								</div>
 								<div class="meta-actions">
 									<button class="action-icon-btn edit" on:click={() => handleEdit(idx)}>
-										<svelte:component this={Icons.Edit2} size={15} />
+										<svelte:component this={Icons.Pen} size={15} />
 									</button>
 									<button class="action-icon-btn delete" on:click={() => confirmDelete(idx)}>
 										<svelte:component this={Icons.Trash2} size={15} />
@@ -198,92 +201,96 @@
 				{editIndex !== null ? 'Редагування карти' : 'Створення карти'}
 			</h2>
 
-			<div class="mode-selector">
-				<button
-					type="button"
-					class:active={formMode === 'existing'}
-					disabled={editIndex !== null}
-					on:click={() => (formMode = 'existing')}
-				>
-					Існуюча роль
-				</button>
-				<button
-					type="button"
-					class:active={formMode === 'new'}
-					disabled={editIndex !== null}
-					on:click={() => (formMode = 'new')}
-				>
-					Нова роль
-				</button>
-			</div>
-
-			{#if formMode === 'existing'}
-				<div class="form-group animate-fade">
-					<label class="text-gray" for="custom-select-trigger">Клас гри (Роль)</label>
+			{#if editIndex == null}
+				<div class="mode-selector">
 					<button
 						type="button"
-						class="custom-select-trigger"
-						on:click={() => (rolePickerOpen = true)}
+						class:active={formMode === 'existing'}
+						disabled={editIndex !== null}
+						on:click={() => (formMode = 'existing')}
 					>
-						<svelte:component
-							this={Icons[$bigDescriptions[selectedTag]?.iconName || 'User']}
-							size={16}
-						/>
-						<span>{selectedRoleName}</span>
-						<svelte:component this={Icons.ChevronDown} size={16} class="ms-auto" />
+						Існуюча роль
+					</button>
+					<button
+						type="button"
+						class:active={formMode === 'new'}
+						disabled={editIndex !== null}
+						on:click={() => (formMode = 'new')}
+					>
+						Нова роль
 					</button>
 				</div>
-			{:else}
-				<div class="animate-fade">
-					<div class="form-group">
-						<label class="text-gray" for="role-name">Назва ролі</label>
-						<input
-							type="text"
-							id="role-name"
-							placeholder="Бос, Лікар..."
-							bind:value={newRoleName}
-						/>
+			{/if}
 
+			{#if editIndex == null}
+				{#if formMode === 'existing'}
+					<div class="form-group animate-fade">
+						<label class="text-gray" for="custom-select-trigger">Клас гри (Роль)</label>
+						<button
+							type="button"
+							class="custom-select-trigger"
+							on:click={() => (rolePickerOpen = true)}
+						>
+							<svelte:component
+								this={Icons[$bigDescriptions[selectedTag]?.iconName || 'User']}
+								size={16}
+							/>
+							<span class="text-white">{selectedRoleName}</span>
+							<svelte:component this={Icons.ChevronDown} size={16} class="ms-auto" />
+						</button>
+					</div>
+				{:else}
+					<div class="animate-fade">
 						<div class="form-group">
-							<label class="text-gray" for="role-id">ID ролі (англ)</label>
+							<label class="text-gray" for="role-name">Назва ролі</label>
 							<input
 								type="text"
-								id="role-id"
-								placeholder="boss, doctor"
-								bind:value={newRoleTag}
-								disabled={editIndex !== null}
+								id="role-name"
+								placeholder="Бос, Лікар..."
+								bind:value={newRoleName}
 							/>
+
+							<div class="form-group">
+								<label class="text-gray" for="role-id">ID ролі (англ)</label>
+								<input
+									type="text"
+									id="role-id"
+									placeholder="boss, doctor"
+									bind:value={newRoleTag}
+									disabled={editIndex !== null}
+								/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="text-gray" for="role-desc">Опис здібностей ролі</label>
+							<textarea
+								id="role-desc"
+								rows="3"
+								maxlength="300"
+								placeholder="Що робить цей гравець вночі..."
+								bind:value={newRoleDescription}
+							/>
+							<span class="char-counter">{newRoleDescription.length}/300</span>
+						</div>
+
+						<div class="form-group">
+							<label class="text-gray" for="icon-selector-grid">Іконка для нової ролі</label>
+							<div class="icon-selector-grid">
+								{#each iconList as iconName}
+									<button
+										type="button"
+										class="icon-btn"
+										class:selected={selectedIconName === iconName}
+										on:click={() => (selectedIconName = iconName)}
+									>
+										<svelte:component this={Icons[iconName]} size={18} />
+									</button>
+								{/each}
+							</div>
 						</div>
 					</div>
-
-					<div class="form-group">
-						<label class="text-gray" for="role-desc">Опис здібностей ролі</label>
-						<textarea
-							id="role-desc"
-							rows="3"
-							maxlength="300"
-							placeholder="Що робить цей гравець вночі..."
-							bind:value={newRoleDescription}
-						/>
-						<span class="char-counter">{newRoleDescription.length}/300</span>
-					</div>
-
-					<div class="form-group">
-						<label class="text-gray" for="icon-selector-grid">Іконка для нової ролі</label>
-						<div class="icon-selector-grid">
-							{#each iconList as iconName}
-								<button
-									type="button"
-									class="icon-btn"
-									class:selected={selectedIconName === iconName}
-									on:click={() => (selectedIconName = iconName)}
-								>
-									<svelte:component this={Icons[iconName]} size={18} />
-								</button>
-							{/each}
-						</div>
-					</div>
-				</div>
+				{/if}
 			{/if}
 
 			<div class="divider" />
@@ -312,7 +319,7 @@
 						<label class="upload-area">
 							<input type="file" id="file" accept="image/*" on:change={handleImageChange} />
 							<svelte:component this={Icons.Upload} size={20} />
-							<span>Завантажити картинку</span>
+							<span class="text-white">Завантажити картинку</span>
 						</label>
 					{/if}
 				</div>
@@ -321,11 +328,11 @@
 			<div class="action-buttons">
 				<button type="button" class="link-style red submit-btn-override" on:click={handleSubmit}>
 					<svelte:component
-						this={editIndex !== null ? Icons.Check : Icons.Zap}
+						this={editIndex !== null ? Icons.Check : Icons.Plus}
 						size={18}
 						color="#fff"
 					/>
-					<span>{editIndex !== null ? 'ЗБЕРЕГТИ ЗМІНИ' : 'ДОДАТИ В КОЛОДУ'}</span>
+					{editIndex !== null ? 'Зберегти зміни' : 'Додати в колоду'}
 				</button>
 
 				{#if editIndex !== null}
@@ -371,6 +378,7 @@
 
 	.constructor-wrapper {
 		max-width: 1200px;
+		min-height: 85svh;
 		margin: 0 auto;
 		padding: 16px 12px 60px;
 		font-family: system-ui, -apple-system, sans-serif;
@@ -443,7 +451,7 @@
 	/* Реальний вигляд карти (БІЛИЙ ФОН) */
 	.real-game-card {
 		background: #ffffff;
-		height: 260px;
+		height: 205px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -452,10 +460,18 @@
 		position: relative;
 	}
 
-	.card-main-img {
+	.card-img-wrapper {
 		width: 100%;
 		height: 140px;
-		object-fit: contain;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.card-main-img {
+		border-radius: 8px;
+		height: 100%;
+		width: auto;
 	}
 
 	.card-graphic-fallback {
@@ -493,11 +509,11 @@
 	}
 
 	.role-indicator-tag {
-		background: #232326;
+		background: #2f2f33;
 		color: #e4e4e7;
 		padding: 3px 8px;
 		border-radius: 4px;
-		font-size: 0.75rem;
+		font-size: 0.9rem;
 		font-weight: 600;
 	}
 
