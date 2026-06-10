@@ -31,13 +31,10 @@ if (typeof window !== 'undefined') {
 	customCardsStore.set(customCards);
 }
 
-// Merge custom data with defaults on start‑up
 function mergeInitialData() {
-	// Merge cards array
 	const mergedCards = [...cardList, ...customCards];
 	cards.set(mergedCards);
 
-	// Map custom description icon names (e.g. "Shield") to their actual Lucide components
 	const mappedCustomDescriptions = {};
 	for (const tag in customDescriptions) {
 		const desc = customDescriptions[tag];
@@ -48,9 +45,22 @@ function mergeInitialData() {
 		};
 	}
 
-	// Merge big descriptions (object spread)
 	const mergedDescriptions = { ...bigDescriptionList, ...mappedCustomDescriptions };
 	bigDescriptions.set(mergedDescriptions);
+
+	if (browser) {
+		const currentCookieData = getCookie('gameSettings') || { ...cardRulesConst };
+
+		let updatedRules = { ...cardRulesConst, ...currentCookieData };
+
+		Object.keys(updatedRules).forEach((key) => {
+			if (!Object.keys(cardRulesConst).includes(key) && customRules[key] === undefined) {
+				delete updatedRules[key];
+			}
+		});
+
+		cardRules.set(updatedRules);
+	}
 }
 
 // Validation helper
@@ -83,14 +93,12 @@ export function getData() {
 	if (!browser) return;
 	const data = getCookie('gameSettings');
 	if (isValidBySchema(data, cardRulesConst)) {
-		// Merge cookie settings with custom rules
 		cardRules.set({ ...customRules, ...data });
 	} else {
 		console.warn('Invalid gameSettings → reset');
 		setCookie('gameSettings', cardRulesConst, 30);
 		cardRules.set({ ...cardRulesConst, ...customRules });
 	}
-	// After loading cookie data, merge any custom data
 	mergeInitialData();
 }
 
@@ -105,12 +113,9 @@ export function setCookie(name, value, days = 30) {
 
 // ---- Custom Card CRUD API ----
 export function addCustomCard(card) {
-	// card: { description, myImg, tag, imageBase64? }
 	customCards = [...customCards, card];
 	setJSON(CUSTOM_CARDS_KEY, customCards);
 	customCardsStore.set(customCards);
-
-	// Re-merge data so all stores are updated immediately
 	mergeInitialData();
 }
 
@@ -119,8 +124,6 @@ export function updateCustomCard(index, newCard) {
 	customCards = customCards.map((c, i) => (i === index ? newCard : c));
 	setJSON(CUSTOM_CARDS_KEY, customCards);
 	customCardsStore.set(customCards);
-
-	// Re-merge data
 	mergeInitialData();
 }
 
@@ -131,20 +134,16 @@ export function deleteCustomCard(index) {
 	setJSON(CUSTOM_CARDS_KEY, customCards);
 	customCardsStore.set(customCards);
 
-	// Clean up any custom description/rules if no other card uses this tag
 	const tagUsed = customCards.some((c) => c.tag === removed.tag);
 	if (!tagUsed && removed.tag && !Object.keys(cardRulesConst).includes(removed.tag)) {
 		deleteCustomDescription(removed.tag);
 		deleteCustomRule(removed.tag);
 	} else {
-		// Re-merge data
 		mergeInitialData();
 	}
 }
 
-// Custom Description CRUD
 export function addCustomDescription(tag, descObj) {
-	// descObj: { name, description, iconName }
 	customDescriptions = { ...customDescriptions, [tag]: descObj };
 	setJSON(CUSTOM_DESCRIPTIONS_KEY, customDescriptions);
 	mergeInitialData();
@@ -159,12 +158,10 @@ export function deleteCustomDescription(tag) {
 	}
 }
 
-// Custom Rule CRUD – for new role toggles
 export function addCustomRule(key, value) {
 	customRules = { ...customRules, [key]: value };
 	setJSON(CUSTOM_RULES_KEY, customRules);
 
-	// Save to gameSettings cookie too so it keeps synced
 	if (browser) {
 		const data = getCookie('gameSettings') || { ...cardRulesConst };
 		setCookie('gameSettings', { ...data, ...customRules }, 30);
@@ -179,7 +176,6 @@ export function deleteCustomRule(key) {
 		customRules = rest;
 		setJSON(CUSTOM_RULES_KEY, customRules);
 
-		// Update gameSettings cookie
 		if (browser) {
 			const data = getCookie('gameSettings') || { ...cardRulesConst };
 			if (data[key] !== undefined) {
@@ -190,6 +186,15 @@ export function deleteCustomRule(key) {
 
 		mergeInitialData();
 	}
+}
+
+export function isCustomRule(key) {
+	return Object.prototype.hasOwnProperty.call(customRules, key);
+}
+
+export function setCustomRule(key, value) {
+	customRules = { ...customRules, [key]: value };
+	setJSON(CUSTOM_RULES_KEY, customRules);
 }
 
 // Initialise data on load

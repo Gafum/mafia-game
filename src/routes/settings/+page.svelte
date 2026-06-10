@@ -82,6 +82,7 @@
 							<SpecialRoleToggle
 								bind:active={state[key]}
 								roleData={$bigDescriptions[key] || { name: key, icon: User }}
+								tag={key}
 							/>
 						{/each}
 					</div>

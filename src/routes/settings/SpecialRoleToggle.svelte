@@ -1,10 +1,22 @@
 <script>
+	import { isCustomRule, setCustomRule } from '$lib/stores';
+
 	export let active;
 	export let roleData;
+	export let tag;
+
+	function handleChange(e) {
+		active = e.target.checked;
+
+		if (isCustomRule(tag)) {
+			setCustomRule(tag, active);
+		}
+	}
 </script>
 
 <label class="role-checkbox" class:active>
-	<input type="checkbox" bind:checked={active} />
+	<input type="checkbox" bind:checked={active} on:change={handleChange} />
+
 	<div class="role-box-content">
 		<svelte:component this={roleData.icon} size={25} color="#ffffff" />
 		<span>{roleData.name}</span>
