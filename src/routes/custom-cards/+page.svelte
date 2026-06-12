@@ -35,9 +35,12 @@
 	let deleteModalOpen = false;
 	let cardToDeleteIndex = null;
 
-	// Валідація тегу (лише англ)
+	// Валідація тегу
 	$: if (newRoleTag) {
-		newRoleTag = newRoleTag.toLowerCase().replace(/[^a-z0-9_]/g, '');
+		newRoleTag = newRoleTag
+			.toLowerCase()
+			.replace(/[^a-z0-9_]/g, '')
+			.substring(0, 20);
 	}
 
 	// Отримання поточної назви ролі для відображення на кнопці селектора
@@ -70,26 +73,28 @@
 	}
 
 	function handleSubmit() {
-		if (!cardDescription.trim()) return; // Можна замінити на тост, якщо є
+		if (!cardDescription.substring(0, 50).trim()) return;
+		if (!imageBase64 || imageBase64.length == 0) return;
 
 		let tagToUse = selectedTag;
 
 		if (formMode === 'new' && editIndex === null) {
-			if (!newRoleName.trim() || !newRoleTag.trim()) return;
+			if (!newRoleName.substring(0, 20).trim() || !newRoleTag.substring(0, 20).trim()) return;
 
 			tagToUse = newRoleTag;
 
 			addCustomDescription(tagToUse, {
-				name: newRoleName.trim(),
-				description: newRoleDescription.trim() || 'Персонаж із власними правилами.',
+				name: newRoleName.substring(0, 20).trim(),
+				description:
+					newRoleDescription.substring(0, 300).trim() || 'Персонаж із власними правилами.',
 				iconName: selectedIconName
 			});
 			addCustomRule(tagToUse, true);
 		}
 
 		const cardData = {
-			description: cardDescription.trim(),
-			myImg: imageBase64 || 'Custom',
+			description: cardDescription.substring(0, 50).trim(),
+			myImg: imageBase64 || 'Man1',
 			tag: tagToUse
 		};
 
@@ -145,7 +150,7 @@
 
 	<div class="layout-grid">
 		<section class="cards-section">
-			<h2 class="section-title text-white">Створені карти ({$customCardsStore.length})</h2>
+			<h2 class="section-title text-white">Мої карти ({$customCardsStore.length})</h2>
 
 			{#if $customCardsStore.length === 0}
 				<div class="empty-state">
@@ -248,18 +253,21 @@
 								id="role-name"
 								placeholder="Бос, Лікар..."
 								bind:value={newRoleName}
+								maxlength="20"
 							/>
-
-							<div class="form-group">
-								<label class="text-gray" for="role-id">ID ролі (англ)</label>
-								<input
-									type="text"
-									id="role-id"
-									placeholder="boss, doctor"
-									bind:value={newRoleTag}
-									disabled={editIndex !== null}
-								/>
-							</div>
+							<span class="char-counter">{newRoleName.length}/20</span>
+						</div>
+						<div class="form-group">
+							<label class="text-gray" for="role-id">ID ролі (англ)</label>
+							<input
+								type="text"
+								id="role-id"
+								placeholder="boss, doctor"
+								bind:value={newRoleTag}
+								disabled={editIndex !== null}
+								maxlength="20"
+							/>
+							<span class="char-counter">{newRoleTag.length}/20</span>
 						</div>
 
 						<div class="form-group">
@@ -302,7 +310,9 @@
 					id="desc"
 					placeholder="«Я знаю, хто мафія...»"
 					bind:value={cardDescription}
+					maxlength="50"
 				/>
+				<span class="char-counter">{cardDescription.length}/50</span>
 			</div>
 
 			<div class="form-group">
@@ -325,25 +335,23 @@
 				</div>
 			</div>
 
-			<div class="action-buttons">
-				<button type="button" class="link-style red submit-btn-override" on:click={handleSubmit}>
-					<svelte:component
-						this={editIndex !== null ? Icons.Check : Icons.Plus}
-						size={18}
-						color="#fff"
-					/>
-					{editIndex !== null ? 'Зберегти зміни' : 'Додати в колоду'}
-				</button>
+			<button type="button" class="link-style red submit-btn-override" on:click={handleSubmit}>
+				<svelte:component
+					this={editIndex !== null ? Icons.Check : Icons.Plus}
+					size={18}
+					color="#fff"
+				/>
+				{editIndex !== null ? 'Зберегти зміни' : 'Додати в колоду'}
+			</button>
 
-				{#if editIndex !== null}
-					<button class="cancel-btn text-white" on:click={resetForm}>Скасувати</button>
-				{/if}
-			</div>
+			{#if editIndex !== null}
+				<button class="link-style transparent text-white" on:click={resetForm}>Скасувати</button>
+			{/if}
 		</section>
 	</div>
-</div>
 
-<StandardLinks />
+	<StandardLinks />
+</div>
 
 <BaseModal open={deleteModalOpen} on:close={() => (deleteModalOpen = false)}>
 	<div class="modal-header-slot" slot="header">
@@ -378,10 +386,9 @@
 
 	.constructor-wrapper {
 		max-width: 1200px;
-		min-height: 85svh;
+
 		margin: 0 auto;
-		padding: 16px 12px 60px;
-		font-family: system-ui, -apple-system, sans-serif;
+		padding: 16px 16px 50px;
 	}
 
 	.main-header {
@@ -401,15 +408,8 @@
 		grid-template-columns: 1fr 400px;
 		gap: 24px;
 		align-items: start;
-	}
-
-	@media (max-width: 950px) {
-		.layout-grid {
-			grid-template-columns: 1fr;
-		}
-		.form-section {
-			order: -1; /* Форма зверху на мобілках для зручності додавання */
-		}
+		min-height: 70svh;
+		margin-bottom: 40px;
 	}
 
 	.cards-section,
@@ -448,7 +448,6 @@
 		border: 1px solid #232326;
 	}
 
-	/* Реальний вигляд карти (БІЛИЙ ФОН) */
 	.real-game-card {
 		background: #ffffff;
 		height: 205px;
@@ -472,6 +471,7 @@
 		border-radius: 8px;
 		height: 100%;
 		width: auto;
+		max-width: 100%;
 	}
 
 	.card-graphic-fallback {
@@ -614,6 +614,7 @@
 		border-radius: 8px;
 		margin-bottom: 18px;
 		border: 1px solid #232326;
+		gap: 5px;
 	}
 
 	.mode-selector button {
@@ -626,6 +627,8 @@
 		cursor: pointer;
 		font-size: 0.85rem;
 		font-weight: 600;
+		transition-property: color, background;
+		transition-duration: 0.2s;
 	}
 
 	.mode-selector button.active {
@@ -711,14 +714,6 @@
 		font-weight: 600;
 	}
 
-	/* КНОПКИ ДІЙ */
-	.action-buttons {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		margin-top: 20px;
-	}
-
 	.submit-btn-override {
 		width: 100% !important;
 		min-height: 42px !important;
@@ -729,16 +724,6 @@
 		border-radius: 8px !important;
 		font-weight: 700 !important;
 		cursor: pointer;
-	}
-
-	.cancel-btn {
-		background: transparent;
-		border: 1px solid #232326;
-		padding: 10px;
-		border-radius: 8px;
-		cursor: pointer;
-		font-size: 0.9rem;
-		font-weight: 600;
 	}
 
 	.empty-state {
@@ -756,7 +741,6 @@
 		margin-top: 4px;
 	}
 
-	/* ОФОРМЛЕННЯ МОДАЛКИ ВИДАНЕННЯ */
 	.modal-header-slot {
 		display: flex;
 		align-items: center;
@@ -800,6 +784,32 @@
 
 	.animate-fade {
 		animation: fadeIn 0.2s ease-out;
+	}
+
+	@media (max-width: 950px) {
+		.main-header {
+			margin-bottom: 10px;
+			border-bottom: none;
+		}
+
+		.main-header h1 {
+			width: 100%;
+			text-align: center;
+		}
+
+		.layout-grid {
+			grid-template-columns: 1fr;
+		}
+		.form-section {
+			order: -1; /* Форма зверху на мобілках для зручності додавання */
+		}
+	}
+
+	@media (max-width: 600px) {
+		.section-title {
+			width: 100%;
+			text-align: center;
+		}
 	}
 
 	@keyframes fadeIn {
