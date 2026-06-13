@@ -321,6 +321,7 @@
 	.back h2,
 	.front h2 {
 		font-size: 60px;
+		text-align: center;
 	}
 
 	.back p {

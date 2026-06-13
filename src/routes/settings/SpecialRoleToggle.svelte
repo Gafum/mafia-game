@@ -47,6 +47,11 @@
 	.role-box-content span {
 		color: #fff;
 		font-size: 1.2rem;
+		max-width: 140px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		word-break: keep-all;
+		white-space: nowrap;
 	}
 
 	@media (hover: hover) {
@@ -60,5 +65,11 @@
 		border-style: solid;
 		border-color: #ff4444;
 		background: rgba(255, 68, 68, 0.1);
+	}
+
+	@media (max-width: 500px) {
+		.role-box-content span {
+			max-width: none;
+		}
 	}
 </style>

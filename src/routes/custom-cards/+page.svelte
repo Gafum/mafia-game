@@ -22,9 +22,7 @@
 	let imageBase64 = '';
 	let selectedTag = 'mans';
 
-	// Поля для нової ролі
 	let newRoleName = '';
-	let newRoleTag = '';
 	let newRoleDescription = '';
 	let selectedIconName = 'User';
 
@@ -42,14 +40,84 @@
 	$: if (cardDescription) errors.cardDescription = '';
 	$: if (imageBase64) errors.imageBase64 = '';
 	$: if (newRoleName) errors.newRoleName = '';
-	$: if (newRoleTag) errors.newRoleTag = '';
+	$: if (newRoleDescription) errors.newRoleDescription = '';
 
-	// Валідація тегу на льоту (лише латиниця, цифри та підкреслення)
-	$: if (newRoleTag) {
-		newRoleTag = newRoleTag
+	function slugify(text) {
+		const backupWords = [
+			'hero',
+			'champion',
+			'phantom',
+			'ghost',
+			'shadow',
+			'mystic',
+			'bandit',
+			'beast',
+			'ninja',
+			'titan',
+			'agent',
+			'mutant',
+			'wizard',
+			'hacker',
+			'unknown'
+		];
+
+		const charMap = {
+			а: 'a',
+			б: 'b',
+			в: 'v',
+			г: 'g',
+			д: 'd',
+			е: 'e',
+			ж: 'zh',
+			з: 'z',
+			и: 'y',
+			і: 'i',
+			ї: 'yi',
+			й: 'y',
+			к: 'k',
+			л: 'l',
+			м: 'm',
+			н: 'n',
+			о: 'o',
+			п: 'p',
+			р: 'r',
+			с: 's',
+			т: 't',
+			у: 'u',
+			ф: 'f',
+			х: 'kh',
+			ц: 'ts',
+			ч: 'ch',
+			ш: 'sh',
+			щ: 'shch',
+			ь: '',
+			ю: 'yu',
+			я: 'ya',
+			ä: 'a',
+			ö: 'o',
+			ü: 'u',
+			ß: 'ss',
+			é: 'e',
+			è: 'e',
+			à: 'a',
+			ç: 'c'
+		};
+
+		let result = text
 			.toLowerCase()
-			.replace(/[^a-z0-9_]/g, '')
-			.substring(0, 20);
+			.split('')
+			.map((char) => (charMap[char] !== undefined ? charMap[char] : char))
+			.join('')
+			.split(' ')
+			.join('_')
+			.replace(/[^a-z0-9_]/g, '');
+
+		if (!result.trim()) {
+			const randomIndex = Math.floor(Math.random() * backupWords.length);
+			result = backupWords[randomIndex];
+		}
+
+		return result;
 	}
 
 	// Отримання поточної назви ролі для відображення на кнопці селектора
@@ -102,7 +170,6 @@
 		imageBase64 = '';
 		selectedTag = 'mans';
 		newRoleName = '';
-		newRoleTag = '';
 		newRoleDescription = '';
 		selectedIconName = 'User';
 		formMode = 'existing';
@@ -123,14 +190,12 @@
 			currentErrors.imageBase64 = 'Необхідно завантажити зображення для карти.';
 		}
 
-		if (formMode === 'new' && editIndex === null) {
+		if (formMode === 'new') {
 			if (!newRoleName.trim()) {
 				currentErrors.newRoleName = 'Вкажіть назву ролі.';
 			}
-			if (!newRoleTag.trim()) {
-				currentErrors.newRoleTag = 'Вкажіть англійський ID ролі.';
-			} else if (Object.keys($bigDescriptions).includes(newRoleTag)) {
-				currentErrors.newRoleTag = 'Цей ID ролі вже зайнятий.';
+			if (!newRoleDescription.trim()) {
+				currentErrors.newRoleDescription = 'Опис здібностей ролі не може бути порожнім.';
 			}
 		}
 
@@ -140,7 +205,6 @@
 
 	function handleSubmit() {
 		if (!validateForm()) {
-			// Прокрутка до першої помилки для зручності на маленьких девайсах
 			setTimeout(() => {
 				const firstError = document.querySelector('.error-text');
 				if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -150,18 +214,29 @@
 
 		let tagToUse = selectedTag;
 
-		if (formMode === 'new' && editIndex === null) {
-			if (!newRoleName.substring(0, 20).trim() || !newRoleTag.substring(0, 20).trim()) return;
+		if (formMode === 'new') {
+			const cleanedName = newRoleName.substring(0, 20).trim();
+			const cleanedDesc = newRoleDescription.substring(0, 300).trim();
 
-			tagToUse = newRoleTag;
+			if (editIndex === null) {
+				const prefix = slugify(cleanedName) || 'role';
+				const timestamp = Date.now().toString(36);
+				const randomHash = Math.random().toString(36).substring(2, 6);
+				tagToUse = `custom_${prefix}_${timestamp}_${randomHash}`;
 
-			addCustomDescription(tagToUse, {
-				name: newRoleName.substring(0, 20).trim(),
-				description:
-					newRoleDescription.substring(0, 300).trim() || 'Персонаж із власними правилами.',
-				iconName: selectedIconName
-			});
-			addCustomRule(tagToUse, true);
+				addCustomDescription(tagToUse, {
+					name: cleanedName,
+					description: cleanedDesc,
+					iconName: selectedIconName
+				});
+				addCustomRule(tagToUse, true);
+			} else {
+				addCustomDescription(tagToUse, {
+					name: cleanedName,
+					description: cleanedDesc,
+					iconName: selectedIconName
+				});
+			}
 		}
 
 		const cardData = {
@@ -187,12 +262,11 @@
 		selectedTag = card.tag;
 		imageBase64 = card.myImg.startsWith('data:') ? card.myImg : '';
 
-		const isBuiltIn = Object.keys($bigDescriptions).includes(card.tag);
+		const isCustomRole = card.tag.startsWith('custom_');
 
-		if (!isBuiltIn && $bigDescriptions[card.tag]) {
+		if (isCustomRole && $bigDescriptions[card.tag]) {
 			formMode = 'new';
 			newRoleName = $bigDescriptions[card.tag].name;
-			newRoleTag = card.tag;
 			newRoleDescription = $bigDescriptions[card.tag].description;
 			selectedIconName = $bigDescriptions[card.tag].iconName || 'User';
 		} else {
@@ -310,88 +384,76 @@
 				</div>
 			{/if}
 
-			{#if editIndex == null}
-				{#if formMode === 'existing'}
-					<div class="form-group animate-fade">
-						<label class="text-gray" for="custom-select-trigger">Клас гри (Роль)</label>
-						<button
-							id="custom-select-trigger"
-							type="button"
-							class="custom-select-trigger"
-							class:input-error={errors.selectedTag}
-							on:click={() => (rolePickerOpen = true)}
-						>
-							<svelte:component
-								this={Icons[$bigDescriptions[selectedTag]?.iconName || 'User']}
-								size={16}
-							/>
-							<span class="text-white truncate-text">{selectedRoleName}</span>
-							<svelte:component this={Icons.ChevronDown} size={16} class="ms-auto" />
-						</button>
+			{#if formMode === 'existing'}
+				<div class="form-group animate-fade">
+					<label class="text-gray" for="custom-select-trigger">Клас гри (Роль)</label>
+					<button
+						id="custom-select-trigger"
+						type="button"
+						class="custom-select-trigger"
+						class:input-error={errors.selectedTag}
+						on:click={() => (rolePickerOpen = true)}
+					>
+						<svelte:component
+							this={Icons[$bigDescriptions[selectedTag]?.iconName || 'User']}
+							size={16}
+						/>
+						<span class="text-white truncate-text">{selectedRoleName}</span>
+						<svelte:component this={Icons.ChevronDown} size={16} class="ms-auto" />
+					</button>
+				</div>
+			{:else}
+				<div class="animate-fade">
+					<div class="form-group">
+						<label class="text-gray" for="role-name">Назва ролі</label>
+						<input
+							type="text"
+							id="role-name"
+							placeholder="Бос, Лікар..."
+							class:input-error={errors.newRoleName}
+							bind:value={newRoleName}
+							maxlength="20"
+						/>
+						{#if errors.newRoleName}
+							<span class="error-text">{errors.newRoleName}</span>
+						{/if}
+						<span class="char-counter">{newRoleName.length}/20</span>
 					</div>
-				{:else}
-					<div class="animate-fade">
-						<div class="form-group">
-							<label class="text-gray" for="role-name">Назва ролі</label>
-							<input
-								type="text"
-								id="role-name"
-								placeholder="Бос, Лікар..."
-								class:input-error={errors.newRoleName}
-								bind:value={newRoleName}
-								maxlength="20"
-							/>
-							{#if errors.newRoleName}
-								<span class="error-text">{errors.newRoleName}</span>
-							{/if}
-							<span class="char-counter">{newRoleName.length}/20</span>
-						</div>
-						<div class="form-group">
-							<label class="text-gray" for="role-id">ID ролі (англ)</label>
-							<input
-								type="text"
-								id="role-id"
-								placeholder="boss, doctor"
-								class:input-error={errors.newRoleTag}
-								bind:value={newRoleTag}
-								disabled={editIndex !== null}
-								maxlength="20"
-							/>
-							{#if errors.newRoleTag}
-								<span class="error-text">{errors.newRoleTag}</span>
-							{/if}
-							<span class="char-counter">{newRoleTag.length}/20</span>
-						</div>
 
-						<div class="form-group">
-							<label class="text-gray" for="role-desc">Опис здібностей ролі</label>
-							<textarea
-								id="role-desc"
-								rows="3"
-								maxlength="300"
-								placeholder="Що робить цей гравець вночі..."
-								bind:value={newRoleDescription}
-							/>
-							<span class="char-counter">{newRoleDescription.length}/300</span>
-						</div>
+					<div class="form-group">
+						<label class="text-gray" for="role-desc">Опис здібностей ролі</label>
+						<textarea
+							id="role-desc"
+							rows="3"
+							maxlength="300"
+							spellcheck="false"
+							autocomplete="off"
+							placeholder="Що робить цей гравець вночі..."
+							class:input-error={errors.newRoleDescription}
+							bind:value={newRoleDescription}
+						/>
+						{#if errors.newRoleDescription}
+							<span class="error-text">{errors.newRoleDescription}</span>
+						{/if}
+						<span class="char-counter">{newRoleDescription.length}/300</span>
+					</div>
 
-						<div class="form-group">
-							<label class="text-gray" for="icon-selector-grid">Іконка для нової ролі</label>
-							<div class="icon-selector-grid">
-								{#each iconList as iconName}
-									<button
-										type="button"
-										class="icon-btn"
-										class:selected={selectedIconName === iconName}
-										on:click={() => (selectedIconName = iconName)}
-									>
-										<svelte:component this={Icons[iconName]} size={18} />
-									</button>
-								{/each}
-							</div>
+					<div class="form-group">
+						<label class="text-gray" for="icon-selector-grid">Іконка для ролі</label>
+						<div class="icon-selector-grid">
+							{#each iconList as iconName}
+								<button
+									type="button"
+									class="icon-btn"
+									class:selected={selectedIconName === iconName}
+									on:click={() => (selectedIconName = iconName)}
+								>
+									<svelte:component this={Icons[iconName]} size={18} />
+								</button>
+							{/each}
 						</div>
 					</div>
-				{/if}
+				</div>
 			{/if}
 
 			<div class="divider" />
@@ -597,8 +659,7 @@
 
 	.game-phrase {
 		color: #111111 !important;
-		font-size: 0.85rem;
-		font-style: italic;
+		font-size: 0.96rem;
 		font-weight: 600;
 		margin: 0;
 		line-height: 1.3;
@@ -686,6 +747,13 @@
 		outline: none;
 		width: 100%;
 		box-sizing: border-box;
+	}
+
+	textarea {
+		min-height: 37px;
+		overflow-y: auto;
+		display: block;
+		resize: vertical;
 	}
 
 	input:focus,
@@ -944,6 +1012,7 @@
 			text-align: center;
 		}
 	}
+
 	@media (max-width: 400px) {
 		.mode-selector {
 			flex-direction: column;
@@ -976,7 +1045,7 @@
 		}
 
 		.main-header h1 {
-			font-size: 1.3rem;
+			font-size: 1.45rem;
 		}
 	}
 
