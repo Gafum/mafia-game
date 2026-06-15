@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
-	import { cardRules, setCookie, bigDescriptions } from '$lib/stores';
+	import { cardRules, bigDescriptions } from '$lib/stores';
+	import { setJSON } from '$lib/utils/localStorage';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
 	import { cardRulesConst } from '$lib/data';
 	import { User } from 'lucide-svelte';
@@ -27,7 +28,7 @@
 	$: if (isMount && Object.keys(state).length > 0) {
 		cardRules.set(state);
 
-		setCookie('gameSettings', state, 30);
+		setJSON('gameSettings', state);
 	}
 
 	onMount(() => {

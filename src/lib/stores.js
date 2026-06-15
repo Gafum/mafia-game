@@ -49,9 +49,9 @@ function mergeInitialData() {
 	bigDescriptions.set(mergedDescriptions);
 
 	if (browser) {
-		const currentCookieData = getCookie('gameSettings') || { ...cardRulesConst };
+		const currentSettingsData = getJSON('gameSettings') || { ...cardRulesConst };
 
-		let updatedRules = { ...cardRulesConst, ...currentCookieData };
+		let updatedRules = { ...cardRulesConst, ...currentSettingsData };
 
 		Object.keys(updatedRules).forEach((key) => {
 			if (!Object.keys(cardRulesConst).includes(key) && customRules[key] === undefined) {
@@ -91,12 +91,12 @@ function getCookie(name) {
 
 export function getData() {
 	if (!browser) return;
-	const data = getCookie('gameSettings');
+	const data = getJSON('gameSettings');
 	if (isValidBySchema(data, cardRulesConst)) {
 		cardRules.set({ ...customRules, ...data });
 	} else {
 		console.warn('Invalid gameSettings → reset');
-		setCookie('gameSettings', cardRulesConst, 30);
+		setJSON('gameSettings', cardRulesConst);
 		cardRules.set({ ...cardRulesConst, ...customRules });
 	}
 	mergeInitialData();
@@ -163,8 +163,8 @@ export function addCustomRule(key, value) {
 	setJSON(CUSTOM_RULES_KEY, customRules);
 
 	if (browser) {
-		const data = getCookie('gameSettings') || { ...cardRulesConst };
-		setCookie('gameSettings', { ...data, ...customRules }, 30);
+		const data = getJSON('gameSettings') || { ...cardRulesConst };
+		setJSON('gameSettings', { ...data, ...customRules });
 	}
 
 	mergeInitialData();
@@ -177,10 +177,10 @@ export function deleteCustomRule(key) {
 		setJSON(CUSTOM_RULES_KEY, customRules);
 
 		if (browser) {
-			const data = getCookie('gameSettings') || { ...cardRulesConst };
+			const data = getJSON('gameSettings') || { ...cardRulesConst };
 			if (data[key] !== undefined) {
 				delete data[key];
-				setCookie('gameSettings', data, 30);
+				setJSON('gameSettings', data);
 			}
 		}
 
