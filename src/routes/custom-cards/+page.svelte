@@ -28,21 +28,26 @@
 
 	let editIndex = null;
 
-	// Стейт для модалок
+	// Modal states
 	let rolePickerOpen = false;
 	let deleteModalOpen = false;
 	let cardToDeleteIndex = null;
 
-	// Стейт помилок валідації
+	// Validation errors state
 	let errors = {};
 
-	// Скидання помилки конкретного поля при введенні даних
+	// Reset error for specific fields on input
 	$: if (cardDescription) errors.cardDescription = '';
 	$: if (imageBase64) errors.imageBase64 = '';
 	$: if (newRoleName) errors.newRoleName = '';
 	$: if (newRoleDescription) errors.newRoleDescription = '';
 
+	// Robust transliterating slugify function
 	function slugify(text) {
+		if (!text || typeof text !== 'string') {
+			return 'role_' + Math.random().toString(36).substring(2, 6);
+		}
+
 		const backupWords = [
 			'hero',
 			'champion',
@@ -100,7 +105,9 @@
 			é: 'e',
 			è: 'e',
 			à: 'a',
-			ç: 'c'
+			ç: 'c',
+			є: 'ye',
+			ґ: 'g'
 		};
 
 		let result = text
@@ -120,7 +127,7 @@
 		return result;
 	}
 
-	// Отримання поточної назви ролі для відображення на кнопці селектора
+	// Dynamic role name display
 	$: selectedRoleName = $bigDescriptions[selectedTag]?.name || selectedTag;
 
 	function handleRoleSelect(event) {
@@ -129,6 +136,7 @@
 		errors.selectedTag = '';
 	}
 
+	// Resize and compress image to keep localStorage efficient
 	function handleImageChange(event) {
 		const file = event.target.files?.[0];
 		if (!file) return;
@@ -158,7 +166,6 @@
 
 				const ctx = canvas.getContext('2d');
 				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
 				imageBase64 = canvas.toDataURL('image/jpeg', 0.7);
 			};
 		};
@@ -218,7 +225,8 @@
 			const cleanedName = newRoleName.substring(0, 20).trim();
 			const cleanedDesc = newRoleDescription.substring(0, 300).trim();
 
-			if (editIndex === null) {
+			// Generate a new unique custom tag if it wasn't a custom role already
+			if (editIndex === null || !tagToUse.startsWith('custom_')) {
 				const prefix = slugify(cleanedName) || 'role';
 				const timestamp = Date.now().toString(36);
 				const randomHash = Math.random().toString(36).substring(2, 6);
@@ -231,6 +239,7 @@
 				});
 				addCustomRule(tagToUse, true);
 			} else {
+				// Updating an existing custom role's metadata
 				addCustomDescription(tagToUse, {
 					name: cleanedName,
 					description: cleanedDesc,
@@ -255,6 +264,7 @@
 	}
 
 	function handleEdit(index) {
+		if (index < 0 || index >= $customCardsStore.length) return;
 		errors = {};
 		editIndex = index;
 		const card = $customCardsStore[index];
@@ -278,6 +288,7 @@
 	}
 
 	function confirmDelete(index) {
+		if (index < 0 || index >= $customCardsStore.length) return;
 		cardToDeleteIndex = index;
 		deleteModalOpen = true;
 	}
@@ -286,7 +297,13 @@
 		if (cardToDeleteIndex !== null) {
 			deleteCustomCard(cardToDeleteIndex);
 			deleteModalOpen = false;
-			if (editIndex === cardToDeleteIndex) resetForm();
+
+			// Adjust edit index to avoid misalignment
+			if (editIndex === cardToDeleteIndex) {
+				resetForm();
+			} else if (editIndex !== null && editIndex > cardToDeleteIndex) {
+				editIndex = editIndex - 1;
+			}
 			cardToDeleteIndex = null;
 		}
 	}
@@ -294,7 +311,7 @@
 
 <div class="constructor-wrapper">
 	<header class="main-header">
-		<h1 class="text-white">Колода карт</h1>
+		<h1 class="text-white font-premium">Колода кастомних карт</h1>
 	</header>
 
 	<div class="layout-grid">
@@ -302,7 +319,7 @@
 			<h2 class="section-title text-white">Мої карти ({$customCardsStore.length})</h2>
 
 			{#if $customCardsStore.length === 0}
-				<div class="empty-state">
+				<div class="empty-state animate-fade">
 					<p class="text-white">Колода порожня.</p>
 					<p class="hint">Створіть першу карту за допомогою форми.</p>
 				</div>
@@ -318,7 +335,7 @@
 								{:else}
 									<div class="card-graphic-fallback">
 										<svelte:component
-											this={Icons[$bigDescriptions[card.tag]?.iconName || 'User']}
+											this={$bigDescriptions[card.tag]?.icon || Icons.User}
 											size={42}
 											color="#111"
 										/>
@@ -341,14 +358,14 @@
 										on:click={() => handleEdit(idx)}
 										aria-label="Редагувати"
 									>
-										<svelte:component this={Icons.Pen} size={15} />
+										<svelte:component this={Icons.Pen} size={14} />
 									</button>
 									<button
 										class="action-icon-btn delete"
 										on:click={() => confirmDelete(idx)}
 										aria-label="Видалити"
 									>
-										<svelte:component this={Icons.Trash2} size={15} />
+										<svelte:component this={Icons.Trash2} size={14} />
 									</button>
 								</div>
 							</div>
@@ -394,10 +411,7 @@
 						class:input-error={errors.selectedTag}
 						on:click={() => (rolePickerOpen = true)}
 					>
-						<svelte:component
-							this={Icons[$bigDescriptions[selectedTag]?.iconName || 'User']}
-							size={16}
-						/>
+						<svelte:component this={$bigDescriptions[selectedTag]?.icon || Icons.User} size={16} />
 						<span class="text-white truncate-text">{selectedRoleName}</span>
 						<svelte:component this={Icons.ChevronDown} size={16} class="ms-auto" />
 					</button>

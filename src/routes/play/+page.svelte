@@ -7,6 +7,8 @@
 	import { cardRulesConst, cardList } from '$lib/data';
 	import EndScreen from './EndScreen.svelte';
 	import Card from './Card.svelte';
+	import { Home } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
 
 	let hostPeopleList = page.state?.peopleList ?? [];
 	let peopleList = [...cardList];
@@ -48,8 +50,6 @@
 			peopleList = createArray(data);
 		}
 
-		console.log(peopleList);
-
 		visiblePeople = peopleList.slice(peopleList.length - maxVisibleCards, peopleList.length);
 		showingElement = peopleList.length - 1; // index of last element
 	});
@@ -62,6 +62,10 @@
 			<Card {...person} {changeData} {showingElement} />
 		{/each}
 	</div>
+
+	<a href="/" class="smart-home-btn">
+		<Home size={20} color="white" />
+	</a>
 </div>
 
 <style>
@@ -78,8 +82,40 @@
 		background-position: center;
 		background-size: cover;
 		background-repeat: no-repeat;
+		position: relative;
 	}
 	.container-inner {
 		position: relative;
+	}
+
+	.smart-home-btn {
+		position: absolute;
+		right: calc(100% - 66px);
+		top: 20px;
+		transform: translate(0, 0);
+		width: 46px;
+		height: 46px;
+		border-radius: 50%;
+		background: rgba(20, 20, 20, 0.7);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		text-decoration: none;
+		cursor: pointer;
+		z-index: 101;
+		transition: left 1.5s cubic-bezier(0.25, 1, 0.5, 1), top 1.5s cubic-bezier(0.25, 1, 0.5, 1),
+			transform 1.5s cubic-bezier(0.25, 1, 0.5, 1), width 1.5s cubic-bezier(0.25, 1, 0.5, 1),
+			height 1.5s cubic-bezier(0.25, 1, 0.5, 1), border-radius 1.5s cubic-bezier(0.25, 1, 0.5, 1),
+			background-color 1.5s cubic-bezier(0.25, 1, 0.5, 1),
+			border-color 1.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	}
+
+	.smart-home-btn:hover {
+		background: rgba(255, 68, 68, 0.2);
+		border-color: rgba(255, 68, 68, 0.4);
 	}
 </style>

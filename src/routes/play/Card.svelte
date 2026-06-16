@@ -8,14 +8,11 @@
 	export let tag = '',
 		myIndex = 0,
 		showingElement = 0,
-		changeData = () => {
-			console.log('hi');
-		};
+		changeData = () => {};
 
 	const personData = tagMap[tag]
 		? tagMap[tag][Randomizer.randomInteger(0, tagMap[tag].length - 1)]
 		: { myImg: 'Man1', description: '' };
-	console.log(tag, personData);
 
 	let typeData;
 	bigDescriptions.subscribe(($desc) => {
