@@ -1,4 +1,8 @@
 <div class="home-conteiner main-conteiner">
+	<a href="/about" class="info-floating-btn" aria-label="Про гру">
+		<span> i </span>
+	</a>
+
 	<h1>Mafia</h1>
 	<a href="/play" class="menu_btn play-btn">Грати</a>
 	<a href="/settings" class="menu_btn settings">Налаштування</a>
@@ -8,6 +12,29 @@
 </div>
 
 <style>
+	.info-floating-btn {
+		position: fixed;
+		top: 20px;
+		left: 20px;
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		border: #721f1f 2px solid;
+		z-index: 100;
+	}
+
+	.info-floating-btn span {
+		font-size: 20px;
+		text-align: center;
+		color: white;
+		transform: translateY(-1px);
+	}
+
 	.home-conteiner {
 		display: flex;
 		flex-direction: column;
@@ -64,6 +91,12 @@
 	}
 
 	@media (hover: hover) {
+		.info-floating-btn:hover {
+			background: #ff4444;
+			border-color: #ff4444;
+			box-shadow: 0 0 10px rgba(255, 68, 68, 0.6);
+		}
+
 		.home-conteiner > h1:hover {
 			text-shadow: 0 0 7px rgb(185, 57, 57);
 			filter: brightness(1.1);
@@ -117,6 +150,18 @@
 			padding: 8px 20px;
 		}
 		.home-conteiner > a.menu_btn.rules-btn {
+			font-size: 20px;
+		}
+
+		.info-floating-btn {
+			position: fixed;
+			top: 15px;
+			left: 15px;
+			width: 32px;
+			height: 32px;
+		}
+
+		.info-floating-btn span {
 			font-size: 20px;
 		}
 	}
