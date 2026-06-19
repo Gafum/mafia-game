@@ -107,6 +107,7 @@
 		position: absolute;
 		width: 85vw;
 		min-width: 185px;
+		max-width: 1500px;
 		height: 80vh;
 		border-radius: 15px;
 		transform: rotateY(180deg) translate(-50%, -50%);

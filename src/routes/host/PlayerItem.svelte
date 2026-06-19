@@ -29,7 +29,7 @@
 				disabled={!Boolean($allowToManipulate)}
 				on:click={() => onChangeRole(index)}
 			>
-				{role.name}
+				<span class="role-name-text">{role.name}</span>
 				{#if $allowToManipulate}
 					<ChevronDown size="17" />
 				{/if}
@@ -91,26 +91,36 @@
 
 	.role-name {
 		display: inline;
+		cursor: initial;
+	}
+
+	.role-name-text {
 		color: white;
 		font-size: 17px;
-		cursor: initial;
+		text-align: left;
 	}
 
 	.player.manipulate .role-name {
 		background: #242424;
-		color: white;
 		border: 1px solid #333;
 		padding: 6px 10px;
 		border-radius: 8px;
-		font-size: 16px;
 		cursor: pointer;
 		outline: none;
-		max-width: 180px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: 5px;
 		width: 130px;
+	}
+
+	.player.manipulate .role-name-text {
+		font-size: 16px;
+		max-width: 110px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		word-break: keep-all;
+		white-space: nowrap;
 	}
 
 	@media (max-width: 420px) {

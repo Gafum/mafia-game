@@ -18,7 +18,7 @@
 	export let iconList = [];
 	export let bigDescriptions = {};
 
-	export let onRolePickerOpen;
+	export let onRoleSelect;
 	export let onImageChange;
 	export let onSubmit;
 	export let onCancel = null;
@@ -43,13 +43,7 @@
 {/if}
 
 {#if formMode === 'existing'}
-	<ExistingRoleFields
-		{selectedTag}
-		{selectedRoleName}
-		{bigDescriptions}
-		{errors}
-		{onRolePickerOpen}
-	/>
+	<ExistingRoleFields {selectedTag} {selectedRoleName} {bigDescriptions} {errors} {onRoleSelect} />
 {:else}
 	<NewRoleFields
 		bind:newRoleName
@@ -176,6 +170,9 @@
 	}
 	.upload-area input {
 		display: none;
+	}
+	.upload-area span {
+		text-align: center;
 	}
 	.image-preview {
 		padding: 10px;

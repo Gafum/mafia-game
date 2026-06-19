@@ -156,7 +156,7 @@
 
 	<SimpleLink href="/play" actionCallback={goToModifiedPlay}>
 		<Play size={20} />
-		Почати гру
+		<span class="link-text-span link-text-span-max-width">Почати гру</span>
 	</SimpleLink>
 {/if}
 
@@ -190,9 +190,7 @@
 		gap: 10px;
 		cursor: pointer;
 		-webkit-tap-highlight-color: transparent;
-		transition:
-			transform 0.1s ease-out,
-			background 0.2s;
+		transition: transform 0.1s ease-out, background 0.2s;
 		width: 100%;
 		margin-top: 20px;
 	}
@@ -200,6 +198,7 @@
 	.add-player-btn > span {
 		color: white;
 		font-size: 18px;
+		width: 120px;
 	}
 
 	@media (hover: hover) {

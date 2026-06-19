@@ -19,6 +19,7 @@
 	font-weight: bold;
 	cursor: pointer;
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	min-height: 33px;
 	transition-property: filter, box-shadow, transform, background;
@@ -27,7 +28,6 @@
 	font-size: 18px;
 	text-align: center;
 	width: 100%;
-	justify-content: center;
 	gap: 10px;
 	max-width: 500px;
 	-webkit-tap-highlight-color: transparent;
@@ -35,6 +35,16 @@
 
 .link-style.transparent {
 	border: 1px solid #232326;
+}
+
+.link-text-span {
+	color: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+.link-text-span-max-width {
+	width: 120px;
 }
 
 @media (hover: hover) {
@@ -63,5 +73,16 @@
 @media (max-width: 730px) {
 	.link-style {
 		max-width: 730px;
+	}
+
+	.link-text-span-max-width_mobile {
+		width: 120px;
+	}
+}
+
+@media (max-width: 280px) {
+	.link-text-span-max-width,
+	.link-text-span-max-width_mobile {
+		width: auto;
 	}
 }

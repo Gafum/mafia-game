@@ -4,6 +4,7 @@
 	import { fade } from 'svelte/transition';
 	import CardWithText from './CardWithText.svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
+	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 
 	let tagList = [];
 	bigDescriptions.subscribe(($rules) => {
@@ -24,6 +25,7 @@
 			{#each tagList as tag}
 				<CardWithText {tag} />
 			{/each}
+			<SimpleLink href="/custom-cards" props={{ style: '' }}>Нові картки</SimpleLink>
 			<StandardLinks size={75} blockStyles="max-width: 280px;" />
 		</div>
 	{/if}
@@ -41,5 +43,12 @@
 		justify-content: center;
 		align-items: center;
 		gap: 10px;
+	}
+	@media (min-width: 720px) {
+		:global(.cards-list-wrapper .link-style) {
+			width: 85vw;
+			max-width: none;
+			font-size: 25px;
+		}
 	}
 </style>

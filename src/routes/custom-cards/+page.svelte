@@ -9,12 +9,11 @@
 		addCustomRule,
 		bigDescriptions
 	} from '$lib/stores';
-	import { TriangleAlert } from 'lucide-svelte';
+
 	import { iconMap } from '$lib/data';
 	import { slugify, validateForm } from '$lib/utils/customCardsUtils';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
-	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
-	import BaseModal from '$lib/UI/Modals/BaseModal.svelte';
+
 	import CardList from './CardList.svelte';
 	import UnifiedCardForm from './UnifiedCardForm.svelte';
 	import '$lib/UI/Buttons/SimpleLink.css';
@@ -30,9 +29,6 @@
 	let selectedIconName = 'User';
 	let editIndex = null;
 
-	let rolePickerOpen = false;
-	let deleteModalOpen = false;
-	let cardToDeleteIndex = null;
 	let errors = {};
 
 	$: if (cardDescription) errors.cardDescription = '';
@@ -44,7 +40,6 @@
 
 	function handleRoleSelect(event) {
 		selectedTag = event.detail;
-		rolePickerOpen = false;
 		errors.selectedTag = '';
 	}
 
@@ -152,15 +147,9 @@
 		}
 	}
 
-	function confirmDelete(index) {
-		cardToDeleteIndex = index;
-		deleteModalOpen = true;
-	}
-
-	function executeDelete() {
+	function executeDelete(cardToDeleteIndex) {
 		if (cardToDeleteIndex !== null) {
 			deleteCustomCard(cardToDeleteIndex);
-			deleteModalOpen = false;
 			if (editIndex === cardToDeleteIndex) resetForm();
 			cardToDeleteIndex = null;
 		}
@@ -173,7 +162,7 @@
 	</header>
 
 	<div class="layout-grid">
-		<CardList onEdit={handleEdit} onDelete={confirmDelete} />
+		<CardList onEdit={handleEdit} deleteCard={executeDelete} />
 
 		<section class="form-section">
 			<h2 class="section-title text-white">
@@ -193,7 +182,7 @@
 				{errors}
 				{iconList}
 				{bigDescriptions}
-				onRolePickerOpen={() => (rolePickerOpen = true)}
+				onRoleSelect={handleRoleSelect}
 				onImageChange={handleImageChange}
 				onSubmit={handleSubmit}
 				onCancel={resetForm}
@@ -203,29 +192,6 @@
 
 	<StandardLinks />
 </div>
-
-<BaseModal open={deleteModalOpen} on:close={() => (deleteModalOpen = false)}>
-	<div class="modal-header-slot" slot="header">
-		<TriangleAlert class="details-icon" color="#ef4444" />
-		<div>
-			<h3 class="text-white">Видалення карти</h3>
-			<p class="subtitle">Дія є незворотною</p>
-		</div>
-	</div>
-	<div class="modal-body-content">
-		<p class="description text-white">Ви впевнені, що хочете видалити цю карту з колоди?</p>
-		<div class="modal-actions-row">
-			<button class="modal-btn confirm" on:click={executeDelete}>Видалити</button>
-			<button class="modal-btn cancel" on:click={() => (deleteModalOpen = false)}>Скасувати</button>
-		</div>
-	</div>
-</BaseModal>
-
-<RolePickerModal
-	open={rolePickerOpen}
-	on:close={() => (rolePickerOpen = false)}
-	on:select={handleRoleSelect}
-/>
 
 <style>
 	.text-white {
@@ -268,46 +234,7 @@
 		font-weight: 700;
 		margin: 0 0 16px;
 	}
-	.modal-header-slot {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-	.modal-header-slot h3 {
-		margin: 0;
-		font-size: 1.2rem;
-	}
-	.subtitle {
-		margin: 0;
-		font-size: 0.8rem;
-		color: #71717a;
-	}
-	.modal-body-content {
-		padding: 25px 0 0;
-	}
-	.modal-actions-row {
-		display: flex;
-		gap: 10px;
-		margin-top: 20px;
-	}
-	.modal-btn {
-		flex: 1;
-		padding: 8px;
-		border-radius: 6px;
-		font-weight: 600;
-		cursor: pointer;
-		font-size: 0.9rem;
-	}
-	.modal-btn.confirm {
-		background: #ef4444;
-		border: none;
-		color: white;
-	}
-	.modal-btn.cancel {
-		background: #232326;
-		border: none;
-		color: #a1a1aa;
-	}
+
 	@media (max-width: 950px) {
 		.main-header {
 			margin-bottom: 12px;

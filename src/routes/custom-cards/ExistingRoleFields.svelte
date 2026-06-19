@@ -1,11 +1,19 @@
 <script>
 	import { ChevronDown, User } from 'lucide-svelte';
+	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
 
 	export let selectedTag = 'mans';
 	export let selectedRoleName = '';
 	export let bigDescriptions = {};
 	export let errors = {};
-	export let onRolePickerOpen;
+	export let onRoleSelect;
+
+	let rolePickerOpen = false;
+
+	function handleRoleSelect(event) {
+		onRoleSelect(event);
+		rolePickerOpen = false;
+	}
 </script>
 
 <div class="form-group animate-fade">
@@ -15,13 +23,21 @@
 		type="button"
 		class="select-trigger"
 		class:input-error={errors.selectedTag}
-		on:click={onRolePickerOpen}
+		on:click={() => {
+			rolePickerOpen = true;
+		}}
 	>
 		<svelte:component this={bigDescriptions[selectedTag]?.icon || User} size={16} />
 		<span class="trigger-text">{selectedRoleName}</span>
 		<ChevronDown size={16} class="ms-auto" />
 	</button>
 </div>
+
+<RolePickerModal
+	open={rolePickerOpen}
+	on:close={() => (rolePickerOpen = false)}
+	on:select={handleRoleSelect}
+/>
 
 <style>
 	.label-text {
@@ -70,6 +86,14 @@
 		to {
 			opacity: 1;
 			transform: translateY(0);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.trigger-text {
+			max-width: 45vw;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 </style>

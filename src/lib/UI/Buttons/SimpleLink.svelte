@@ -3,7 +3,7 @@
 
 	export let props = {};
 
-	export let type = 'red';
+	export let type = 'red'; // red - green - transparent
 
 	export let href = '';
 
@@ -19,6 +19,6 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-missing-attribute -->
-<a {...props} {href} on:click={onClick} class={'link-style ' + type}>
+<a {...props} {href} on:click={onClick} class={'link-style ' + type} rel="noopener noreferrer">
 	<slot />
 </a>

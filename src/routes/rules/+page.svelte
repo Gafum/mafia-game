@@ -22,6 +22,7 @@
 	.rules-conteiner {
 		padding: 20px 25px 50px;
 		color: white;
+		max-width: 1000px;
 	}
 
 	.rules-conteiner > h3 {
