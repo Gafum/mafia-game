@@ -1,4 +1,3 @@
-<!-- src/routes/custom-cards/NewRoleFields.svelte -->
 <script>
 	import * as Icons from 'lucide-svelte';
 	import FormField from './FormField.svelte';

@@ -1,4 +1,3 @@
-<!-- src/routes/custom-cards/+page.svelte -->
 <script>
 	import {
 		customCardsStore,
@@ -11,148 +10,96 @@
 	} from '$lib/stores';
 
 	import { iconMap } from '$lib/data';
-	import { slugify, validateForm } from '$lib/utils/customCardsUtils';
+	import { validateForm } from '$lib/utils/customCardsUtils';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 
 	import CardList from './CardList.svelte';
 	import UnifiedCardForm from './UnifiedCardForm.svelte';
 	import '$lib/UI/Buttons/SimpleLink.css';
+	import {
+		buildCardSubmission,
+		getFormStateFromCard,
+		resizeImageFile
+	} from './customCardFormHelpers.js';
 
 	const iconList = Object.keys(iconMap);
+	const initialForm = {
+		formMode: 'existing',
+		cardDescription: '',
+		imageBase64: '',
+		selectedTag: 'mans',
+		newRoleName: '',
+		newRoleDescription: '',
+		selectedIconName: 'User'
+	};
 
-	let formMode = 'existing';
-	let cardDescription = '';
-	let imageBase64 = '';
-	let selectedTag = 'mans';
-	let newRoleName = '';
-	let newRoleDescription = '';
-	let selectedIconName = 'User';
+	let form = { ...initialForm };
 	let editIndex = null;
-
 	let errors = {};
 
-	$: if (cardDescription) errors.cardDescription = '';
-	$: if (imageBase64) errors.imageBase64 = '';
-	$: if (newRoleName) errors.newRoleName = '';
-	$: if (newRoleDescription) errors.newRoleDescription = '';
+	$: selectedRoleName = $bigDescriptions[form.selectedTag]?.name || form.selectedTag;
 
-	$: selectedRoleName = $bigDescriptions[selectedTag]?.name || selectedTag;
-
-	function handleRoleSelect(event) {
-		selectedTag = event.detail;
-		errors.selectedTag = '';
-	}
-
-	function handleImageChange(event) {
+	async function handleImageChange(event) {
 		const file = event.target.files?.[0];
 		if (!file) return;
-		if (!file.type.startsWith('image/')) {
-			errors.imageBase64 = 'Будь ласка, завантажте зображення.';
-			return;
+
+		try {
+			form.imageBase64 = await resizeImageFile(file);
+			errors = { ...errors, imageBase64: '' };
+		} catch {
+			errors = { ...errors, imageBase64: 'Будь ласка, завантажте зображення.' };
 		}
-		errors.imageBase64 = '';
-		const reader = new FileReader();
-		reader.onload = () => {
-			const img = new Image();
-			img.src = reader.result;
-			img.onload = () => {
-				const canvas = document.createElement('canvas');
-				const MAX_WIDTH = 400;
-				const scale = MAX_WIDTH / img.width;
-				canvas.width = img.width > MAX_WIDTH ? MAX_WIDTH : img.width;
-				canvas.height = img.width > MAX_WIDTH ? img.height * scale : img.height;
-				const ctx = canvas.getContext('2d');
-				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-				imageBase64 = canvas.toDataURL('image/jpeg', 0.7);
-			};
-		};
-		reader.readAsDataURL(file);
 	}
 
 	function resetForm() {
-		cardDescription = '';
-		imageBase64 = '';
-		selectedTag = 'mans';
-		newRoleName = '';
-		newRoleDescription = '';
-		selectedIconName = 'User';
-		formMode = 'existing';
+		form = { ...initialForm };
 		editIndex = null;
 		errors = {};
 	}
 
 	function handleSubmit() {
-		const state = { cardDescription, imageBase64, newRoleName, newRoleDescription };
-		const currentErrors = validateForm(state, formMode);
-		if (Object.keys(currentErrors).length > 0) {
+		const currentErrors = validateForm(form, form.formMode);
+		if (Object.keys(currentErrors).length) {
 			errors = currentErrors;
 			return;
 		}
 
-		let tagToUse = selectedTag;
-		if (formMode === 'new') {
-			const cleanedName = newRoleName.substring(0, 20).trim();
-			const cleanedDesc = newRoleDescription.substring(0, 300).trim();
+		const { cardData, customDescription, shouldAddRule } = buildCardSubmission({
+			...form,
+			editIndex
+		});
 
-			if (editIndex === null || !tagToUse.startsWith('custom_')) {
-				const prefix = slugify(cleanedName) || 'role';
-				const timestamp = Date.now().toString(36);
-				const randomHash = Math.random().toString(36).substring(2, 6);
-				tagToUse = `custom_${prefix}_${timestamp}_${randomHash}`;
-
-				addCustomDescription(tagToUse, {
-					name: cleanedName,
-					description: cleanedDesc,
-					iconName: selectedIconName
-				});
-				addCustomRule(tagToUse, true);
-			} else {
-				addCustomDescription(tagToUse, {
-					name: cleanedName,
-					description: cleanedDesc,
-					iconName: selectedIconName
-				});
+		if (form.formMode === 'new') {
+			addCustomDescription(cardData.tag, customDescription);
+			if (shouldAddRule) {
+				addCustomRule(cardData.tag, true);
 			}
 		}
 
-		const cardData = {
-			description: cardDescription.substring(0, 50).trim(),
-			myImg: imageBase64,
-			tag: tagToUse
-		};
 		if (editIndex !== null) {
 			updateCustomCard(editIndex, cardData);
 		} else {
 			addCustomCard(cardData);
 		}
+
 		resetForm();
+	}
+
+	function handleRoleSelect(event) {
+		form.selectedTag = event.detail;
+		errors = { ...errors, selectedTag: '' };
 	}
 
 	function handleEdit(index) {
 		errors = {};
 		editIndex = index;
-		const card = $customCardsStore[index];
-		cardDescription = card.description;
-		selectedTag = card.tag;
-		imageBase64 = card.myImg.startsWith('data:') ? card.myImg : '';
-
-		const isCustomRole = card.tag.startsWith('custom_');
-		if (isCustomRole && $bigDescriptions[card.tag]) {
-			formMode = 'new';
-			newRoleName = $bigDescriptions[card.tag].name;
-			newRoleDescription = $bigDescriptions[card.tag].description;
-			selectedIconName = $bigDescriptions[card.tag].iconName || 'User';
-		} else {
-			formMode = 'existing';
-		}
+		form = getFormStateFromCard($customCardsStore[index], $bigDescriptions);
 	}
 
 	function executeDelete(cardToDeleteIndex) {
-		if (cardToDeleteIndex !== null) {
-			deleteCustomCard(cardToDeleteIndex);
-			if (editIndex === cardToDeleteIndex) resetForm();
-			cardToDeleteIndex = null;
-		}
+		if (cardToDeleteIndex === null) return;
+		deleteCustomCard(cardToDeleteIndex);
+		if (editIndex === cardToDeleteIndex) resetForm();
 	}
 </script>
 
@@ -171,14 +118,8 @@
 
 			<UnifiedCardForm
 				isEditing={editIndex !== null}
-				bind:formMode
-				bind:cardDescription
-				bind:imageBase64
-				bind:selectedTag
+				bind:form
 				{selectedRoleName}
-				bind:newRoleName
-				bind:newRoleDescription
-				bind:selectedIconName
 				{errors}
 				{iconList}
 				{bigDescriptions}

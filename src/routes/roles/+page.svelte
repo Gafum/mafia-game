@@ -22,8 +22,8 @@
 <div class="main-conteiner roles-conteiner">
 	{#if mounted}
 		<div class="cards-list-wrapper" in:fade={{ duration: 200 }}>
-			{#each tagList as tag}
-				<CardWithText {tag} />
+			{#each tagList as tag, index}
+				<CardWithText {tag} isFirst={index === 0} />
 			{/each}
 			<SimpleLink href="/custom-cards" props={{ style: '' }}>Нові картки</SimpleLink>
 			<StandardLinks size={75} blockStyles="max-width: 280px;" />

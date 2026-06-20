@@ -2,6 +2,9 @@
 	import { BookOpen, Settings, UserCheck, Palette, Mail, Users, HatGlasses } from 'lucide-svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
+	import { goto } from '$app/navigation';
+	import { createArray } from '$lib/functions/createArray';
+	import { cardRules } from '$lib/stores';
 </script>
 
 <div class="about-container">
@@ -24,7 +27,7 @@
 			. Метою розробки була повна адаптація ігрового процесу під екрани смартфонів, дозволяючи компанії
 			друзів грати в будь-якому місці та в будь-який час. Вам більше не потрібна фізична колода карт
 			чи паперові блокноти для ведучого ви можете просто налаштувати гру під свою компанію і запустити
-			її прям тут.
+			її прямо тут.
 		</p>
 
 		<div class="atmosphere-box">
@@ -54,7 +57,7 @@
 
 		<div class="flow-steps">
 			<!-- 1. Play Screen -->
-			<div class="step-card">
+			<a class="step-card" href="/play">
 				<div class="step-icon-wrapper">
 					<BookOpen size={20} color="#ff4444" />
 				</div>
@@ -64,14 +67,13 @@
 						Основна сторінка, яка використовується перед початком гри. Тут гравці по черзі
 						відкривають свої картки, де можуть дізнатися про свою роль під час самої гри. Для
 						кожного персонажа відображається назва ролі, опис та зображення. Також можна швидко
-						ознайомитися із задачею ролі, якщо відкрити додаткову інформацію про карту, натиснувши
-						на кнопку зверху справа.
+						ознайомитися із задачею ролі, натиснувши на інформаційну кнопку зверху справа на карті.
 					</p>
 				</div>
-			</div>
+			</a>
 
 			<!-- 2. Settings -->
-			<div class="step-card">
+			<a class="step-card" href="settings">
 				<div class="step-icon-wrapper">
 					<Settings size={20} color="#ff4444" />
 				</div>
@@ -84,10 +86,10 @@
 						партії.
 					</p>
 				</div>
-			</div>
+			</a>
 
-			<!-- 3. Settings -->
-			<div class="step-card">
+			<!-- 3. Games Rules and Roles -->
+			<a class="step-card" href="roles">
 				<div class="step-icon-wrapper">
 					<Users size={20} color="#ff4444" />
 				</div>
@@ -97,14 +99,24 @@
 						На цій сторінці ви можете прочитати правила Мафії та переглянути ролі, які можна
 						використати під час гри. Натиснувши на картку героя, на задній стороні ви побачите опис
 						його здібностей та його задачі. Наступний натиск переверне карту і змінить фото героя,
-						де ви зможете переглянути різні форми однієї і тої самої ралі. Спочатку списку будуть
-						стандартні карти, а вже далі ті, які ви створите самотужки.
+						де ви зможете переглянути різні форми однієї і тої самої ралі. Спочатку в списку
+						знаходяться стандартні карти, а вже далі ті, які ви створите самотужки.
 					</p>
 				</div>
-			</div>
+			</a>
 
 			<!-- 4. Host Dashboard -->
-			<div class="step-card">
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<div
+				class="step-card"
+				on:click={() =>
+					goto('/host', {
+						state: {
+							peopleList: createArray($cardRules)
+						}
+					})}
+			>
 				<div class="step-icon-wrapper">
 					<UserCheck size={20} color="#ff4444" />
 				</div>
@@ -130,7 +142,7 @@
 			</div>
 
 			<!-- 5. Custom Cards -->
-			<div class="step-card">
+			<a class="step-card" href="custom-cards">
 				<div class="step-icon-wrapper">
 					<Palette size={20} color="#ff4444" />
 				</div>
@@ -145,7 +157,7 @@
 						можуть використовуватися разом зі стандартними ролями.
 					</p>
 				</div>
-			</div>
+			</a>
 		</div>
 	</section>
 
@@ -318,9 +330,12 @@
 		font-size: 1.15rem;
 		font-weight: 700;
 		color: #ffffff !important;
+		text-align: justify;
 	}
 
-	.step-content p {
+	.step-content p,
+	.step-content p br {
+		text-align: justify;
 		margin: 0;
 		font-size: 0.95rem;
 		color: #a1a1aa !important;

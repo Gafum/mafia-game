@@ -1,4 +1,3 @@
-<!-- src/routes/custom-cards/CardList.svelte -->
 <script>
 	import { customCardsStore } from '$lib/stores';
 	import CreatedCard from './CreatedCard.svelte';

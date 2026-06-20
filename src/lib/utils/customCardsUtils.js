@@ -1,11 +1,3 @@
-// src/lib/utils/customCardsUtils.js
-// Business logic helpers for custom cards management
-
-/**
- * Transliterates Ukrainian text to Latin slug format.
- * @param {string} text
- * @returns {string} Cleaned slug
- */
 export function slugify(text) {
 	if (!text || typeof text !== 'string') {
 		return 'role_' + Math.random().toString(36).substring(2, 6);

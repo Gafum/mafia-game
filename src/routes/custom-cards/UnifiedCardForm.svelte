@@ -1,4 +1,3 @@
-<!-- src/routes/custom-cards/UnifiedCardForm.svelte -->
 <script>
 	import { Upload, Plus, Check } from 'lucide-svelte';
 	import FormField from './FormField.svelte';
@@ -6,14 +5,16 @@
 	import NewRoleFields from './NewRoleFields.svelte';
 
 	export let isEditing = false;
-	export let formMode = 'existing';
-	export let cardDescription = '';
-	export let imageBase64 = '';
-	export let selectedTag = 'mans';
+	export let form = {
+		formMode: 'existing',
+		cardDescription: '',
+		imageBase64: '',
+		selectedTag: 'mans',
+		newRoleName: '',
+		newRoleDescription: '',
+		selectedIconName: 'User'
+	};
 	export let selectedRoleName = '';
-	export let newRoleName = '';
-	export let newRoleDescription = '';
-	export let selectedIconName = 'User';
 	export let errors = {};
 	export let iconList = [];
 	export let bigDescriptions = {};
@@ -23,7 +24,6 @@
 	export let onSubmit;
 	export let onCancel = null;
 
-	// Derive unique file input id to avoid DOM conflicts
 	$: fileInputId = isEditing ? 'file-edit' : 'file-create';
 </script>
 
@@ -31,24 +31,34 @@
 	<div class="mode-selector">
 		<button
 			type="button"
-			class:active={formMode === 'existing'}
-			on:click={() => (formMode = 'existing')}
+			class:active={form.formMode === 'existing'}
+			on:click={() => (form.formMode = 'existing')}
 		>
 			Існуюча роль
 		</button>
-		<button type="button" class:active={formMode === 'new'} on:click={() => (formMode = 'new')}>
+		<button
+			type="button"
+			class:active={form.formMode === 'new'}
+			on:click={() => (form.formMode = 'new')}
+		>
 			Нова роль
 		</button>
 	</div>
 {/if}
 
-{#if formMode === 'existing'}
-	<ExistingRoleFields {selectedTag} {selectedRoleName} {bigDescriptions} {errors} {onRoleSelect} />
+{#if form.formMode === 'existing'}
+	<ExistingRoleFields
+		selectedTag={form.selectedTag}
+		{selectedRoleName}
+		{bigDescriptions}
+		{errors}
+		{onRoleSelect}
+	/>
 {:else}
 	<NewRoleFields
-		bind:newRoleName
-		bind:newRoleDescription
-		bind:selectedIconName
+		bind:newRoleName={form.newRoleName}
+		bind:newRoleDescription={form.newRoleDescription}
+		bind:selectedIconName={form.selectedIconName}
 		{errors}
 		{iconList}
 	/>
@@ -60,19 +70,19 @@
 	label="Цитата / Фраза на карті"
 	placeholder="«Я знаю...»"
 	error={errors.cardDescription}
-	bind:value={cardDescription}
+	bind:value={form.cardDescription}
 	maxlength="50"
 />
 
 <div class="form-group">
 	<label class="label-text" for={fileInputId}>Зображення карти</label>
 	<div class="upload-wrapper" class:input-error={errors.imageBase64}>
-		{#if imageBase64}
+		{#if form.imageBase64}
 			<div class="image-preview">
-				<img src={imageBase64} alt="Preview" />
-				<button type="button" class="remove-btn" on:click={() => (imageBase64 = '')}
-					>Прибрати фото</button
-				>
+				<img src={form.imageBase64} alt="Preview" />
+				<button type="button" class="remove-btn" on:click={() => (form.imageBase64 = '')}>
+					Прибрати фото
+				</button>
 			</div>
 		{:else}
 			<label class="upload-area">

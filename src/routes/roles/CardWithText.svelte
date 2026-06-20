@@ -8,8 +8,10 @@
 	import { tagMap } from '$lib/functions/createListByTags';
 	import Randomizer from '$lib/Servises/Randomizer.servise';
 	import { User } from 'lucide-svelte';
+	import FlipHint from './FlipHint.svelte';
 
 	export let tag;
+	export let isFirst = false;
 
 	let cartData = { name: tag, description: '', icon: User };
 	bigDescriptions.subscribe(($desc) => {
@@ -24,6 +26,8 @@
 	let additionData = null;
 	let flipped = false;
 	let isVisible = false;
+
+	let isHintOpen = true;
 
 	let imgLoaded = false;
 	let showFallbackIcon = false;
@@ -103,6 +107,8 @@
 	}
 
 	function flip() {
+		isHintOpen = false;
+
 		if (!flipped && tagMap[tag].length > 1) {
 			const nextData = findNextData();
 			const isImageChanging = additionData && nextData && additionData.myImg !== nextData.myImg;
@@ -127,6 +133,11 @@
 		flipped = !flipped;
 	}
 
+	function closeHint(e) {
+		e.stopPropagation();
+		isHintOpen = false;
+	}
+
 	onMount(() => {
 		additionData = findNextData();
 		if (additionData && loadedImagesCache.has(additionData.myImg)) {
@@ -145,6 +156,10 @@
 	<div class="reveal-wrapper" use:intersect class:visible={isVisible}>
 		<div class={'card ' + tag} class:show={flipped} on:click={flip}>
 			<div class="back">
+				{#if isFirst && isHintOpen}
+					<FlipHint on:close={() => (isHintOpen = false)} />
+				{/if}
+
 				<div class="imgWrapper">
 					{#if showFallbackIcon}
 						<svelte:component this={cartData.icon} style="stroke: #000;" class="back-icon" />
@@ -176,6 +191,7 @@
 					<p>{additionData.description}</p>
 				</div>
 			</div>
+
 			<div class="front">
 				<svelte:component this={cartData.icon} style="stroke:#000;" class="role-icon" />
 				<h2>{cartData.name}</h2>
