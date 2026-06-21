@@ -1,6 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { bigDescriptions } from '$lib/stores';
+	import * as Icons from 'lucide-svelte';
 	import BaseModal from './BaseModal.svelte';
 
 	export let open = false;
@@ -25,7 +26,7 @@
 		{#each roles as [tag, role]}
 			<button class="role-card" on:click={() => selectRole(tag)}>
 				<div class="role-icon">
-					<svelte:component this={role.icon} size={22} />
+					<svelte:component this={Icons[role.icon] || Icons.User} size={22} />
 				</div>
 				<div class="role-name">{role.name}</div>
 			</button>

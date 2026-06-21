@@ -1,7 +1,9 @@
 // src/lib/stores.js
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
-import { cardRulesConst, cardList, bigDescriptionList, iconMap } from '$lib/data';
+import cardRulesConst from '$lib/data/cardRulesConst.json';
+import cardList from '$lib/data/cardList.json';
+import bigDescriptionList from '$lib/data/bigDescriptionList.json';
 import { getJSON, setJSON } from '$lib/utils/localStorage.js';
 
 // Keys for localStorage
@@ -38,10 +40,9 @@ function mergeInitialData() {
 	const mappedCustomDescriptions = {};
 	for (const tag in customDescriptions) {
 		const desc = customDescriptions[tag];
-		const iconName = desc.iconName || 'User';
 		mappedCustomDescriptions[tag] = {
 			...desc,
-			icon: iconMap[iconName] || iconMap.User
+			icon: desc.iconName || 'User'
 		};
 	}
 

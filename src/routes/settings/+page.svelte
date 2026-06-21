@@ -5,7 +5,7 @@
 	import { cardRules, bigDescriptions } from '$lib/stores';
 	import { setJSON } from '$lib/utils/localStorage';
 	import { generateGame } from '$lib/functions/settingsRandomizer';
-	import { cardRulesConst } from '$lib/data';
+	import cardRulesConst from '$lib/data/cardRulesConst.json';
 	import { User } from 'lucide-svelte';
 
 	import RoleSlider from './RoleSlider.svelte';

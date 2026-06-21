@@ -1,5 +1,5 @@
 <script>
-	import { gameRules } from '$lib/data';
+	import gameRules from '$lib/data/gameRules.json';
 	import NumberedList from '$lib/UI/NumberedList.svelte';
 	import { Annoyed } from 'lucide-svelte';
 	import '$lib/UI/Buttons/SimpleLink.css';

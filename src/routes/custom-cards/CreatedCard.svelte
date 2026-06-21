@@ -1,5 +1,6 @@
 <script>
-	import { Pen, Trash2, User } from 'lucide-svelte';
+	import { Pen, Trash2 } from 'lucide-svelte';
+	import * as Icons from 'lucide-svelte';
 	import { bigDescriptions } from '$lib/stores';
 
 	export let card;
@@ -18,7 +19,7 @@
 			</div>
 		{:else}
 			<div class="card-graphic-fallback">
-				<svelte:component this={currentRole.icon || User} size={42} color="#111" />
+				<svelte:component this={Icons[currentRole.icon] || Icons.User} size={42} color="#111" />
 			</div>
 		{/if}
 		<div class="card-text-content">

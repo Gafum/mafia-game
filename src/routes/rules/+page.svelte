@@ -1,6 +1,6 @@
 <script>
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
-	import { gameRules } from '$lib/data';
+	import gameRules from '$lib/data/gameRules.json';
 	import NumberedList from '$lib/UI/NumberedList.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 </script>

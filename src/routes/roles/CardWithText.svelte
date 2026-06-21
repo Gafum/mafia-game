@@ -7,15 +7,15 @@
 	import { bigDescriptions } from '$lib/stores';
 	import { tagMap } from '$lib/functions/createListByTags';
 	import Randomizer from '$lib/Servises/Randomizer.servise';
-	import { User } from 'lucide-svelte';
+	import * as Icons from 'lucide-svelte';
 	import FlipHint from './FlipHint.svelte';
 
 	export let tag;
 	export let isFirst = false;
 
-	let cartData = { name: tag, description: '', icon: User };
+	let cartData = { name: tag, description: '', icon: 'User' };
 	bigDescriptions.subscribe(($desc) => {
-		cartData = $desc[tag] ?? { name: tag, description: '', icon: User };
+		cartData = $desc[tag] ?? { name: tag, description: '', icon: 'User' };
 	});
 
 	$: imgSrc = additionData?.myImg?.startsWith('data:')
@@ -162,7 +162,7 @@
 
 				<div class="imgWrapper">
 					{#if showFallbackIcon}
-						<svelte:component this={cartData.icon} style="stroke: #000;" class="back-icon" />
+						<svelte:component this={Icons[cartData.icon] || Icons.User} style="stroke: #000;" class="back-icon" />
 					{/if}
 
 					{#key additionData.myImg}
@@ -193,7 +193,7 @@
 			</div>
 
 			<div class="front">
-				<svelte:component this={cartData.icon} style="stroke:#000;" class="role-icon" />
+				<svelte:component this={Icons[cartData.icon] || Icons.User} style="stroke:#000;" class="role-icon" />
 				<h2>{cartData.name}</h2>
 				<p>{cartData.description}</p>
 			</div>

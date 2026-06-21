@@ -1,6 +1,7 @@
 <script>
 	import BaseModal from './BaseModal.svelte';
 	import { bigDescriptions } from '$lib/stores';
+	import * as Icons from 'lucide-svelte';
 
 	export let heroTag = 'mans';
 	export let open = false;
@@ -10,7 +11,7 @@
 
 <BaseModal {open} on:close>
 	<div class="header" slot="header">
-		<svelte:component this={roleData.icon} class="details-icon" />
+		<svelte:component this={Icons[roleData.icon] || Icons.User} class="details-icon" />
 
 		<div>
 			<h3>{roleData.name}</h3>

@@ -1,5 +1,6 @@
 <script>
 	import { CircleQuestionMark } from 'lucide-svelte';
+	import * as Icons from 'lucide-svelte';
 	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 	import { bigDescriptions } from '$lib/stores';
 	import { tagMap } from '$lib/functions/createListByTags';
@@ -68,7 +69,7 @@
 	<div class="front">
 		<div class="imgWrapper">
 			{#if !imageLoaded || imageError}
-				<svelte:component this={typeData.icon} color="#000000" class="fallback-icon" />
+				<svelte:component this={Icons[typeData.icon] || Icons.User} color="#000000" class="fallback-icon" />
 			{/if}
 
 			<img

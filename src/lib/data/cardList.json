@@ -1,0 +1,87 @@
+[
+  {
+    "description": "Ти коли таким бандитом став?",
+    "myImg": "Man1",
+    "tag": "mans"
+  },
+  {
+    "description": "Квасний Сас",
+    "myImg": "Man2",
+    "tag": "mans"
+  },
+  {
+    "description": "Та я мирний мен",
+    "myImg": "Man3",
+    "tag": "mans"
+  },
+  {
+    "description": "Майнкрафт - топ!!!",
+    "myImg": "Man4",
+    "tag": "mans"
+  },
+  {
+    "description": "Вабшето це я Глеб!",
+    "myImg": "Man5",
+    "tag": "mans"
+  },
+  {
+    "description": "Якщо тобі не сподобається стрижка, то ...",
+    "myImg": "Mafia1",
+    "tag": "mafias"
+  },
+  {
+    "description": "Ільящер",
+    "myImg": "Mafia2",
+    "tag": "mafias"
+  },
+  {
+    "description": "Мото-мото в клубі",
+    "myImg": "Mafia3",
+    "tag": "mafias"
+  },
+  {
+    "description": "Sangre por sangre",
+    "myImg": "Mafia4",
+    "tag": "mafias"
+  },
+  {
+    "description": "Вам пора в дурку",
+    "myImg": "Doctor",
+    "tag": "doctor"
+  },
+  {
+    "description": "Чорний плащ! Чооорний плащ",
+    "myImg": "Commissar",
+    "tag": "cop"
+  },
+  {
+    "description": "Я йду за тобою!",
+    "myImg": "Maniac",
+    "tag": "maniac"
+  },
+  {
+    "description": "Завжди було цікаво - що якщо зʼїсти корсар 1",
+    "myImg": "Kamikaze",
+    "tag": "kamikaze"
+  },
+  {
+    "description": "Тобі потрібно більше тренуватися!",
+    "myImg": "Security",
+    "tag": "security"
+  },
+  {
+    "description": "Better call Saul",
+    "myImg": "Lawyer",
+    "tag": "lawyer"
+  },
+  {
+    "description": "Я Глєбік, чесно чесно!",
+    "myImg": "Agent",
+    "tag": "agent"
+  },
+  {
+    "description": "ЕЕЕЕЕЕ",
+    "myImg": "Idiot",
+    "tag": "idiot"
+  }
+]

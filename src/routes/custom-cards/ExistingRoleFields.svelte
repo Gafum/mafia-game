@@ -1,5 +1,6 @@
 <script>
-	import { ChevronDown, User } from 'lucide-svelte';
+	import { ChevronDown } from 'lucide-svelte';
+	import * as Icons from 'lucide-svelte';
 	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
 
 	export let selectedTag = 'mans';
@@ -27,7 +28,7 @@
 			rolePickerOpen = true;
 		}}
 	>
-		<svelte:component this={bigDescriptions[selectedTag]?.icon || User} size={16} />
+		<svelte:component this={Icons[bigDescriptions[selectedTag]?.icon] || Icons.User} size={16} />
 		<span class="trigger-text">{selectedRoleName}</span>
 		<ChevronDown size={16} class="ms-auto" />
 	</button>

@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { cardRulesConst } from '$lib/data';
+import cardRulesConst from '$lib/data/cardRulesConst.json';
 import { cardRules } from '$lib/stores';
 
 export function findSpecialKeys() {

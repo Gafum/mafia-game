@@ -2,7 +2,8 @@
 	import { bigDescriptions } from '$lib/stores';
 	import { allowToManipulate } from './hostStore.js';
 	import PlayerActions from './PlayerActions.svelte';
-	import { ChevronDown, User } from 'lucide-svelte';
+	import { ChevronDown } from 'lucide-svelte';
+	import * as Icons from 'lucide-svelte';
 
 	export let person;
 	export let index;
@@ -12,7 +13,7 @@
 	export let onOpenRole;
 	export let onChangeRole;
 
-	$: role = $bigDescriptions[person.tag] || { name: person.tag, icon: User };
+	$: role = $bigDescriptions[person.tag] || { name: person.tag, icon: 'User' };
 </script>
 
 <div class="player" class:dead={!person.alive} class:manipulate={$allowToManipulate}>
@@ -22,7 +23,7 @@
 		</div>
 
 		<div class="role">
-			<svelte:component this={role.icon} size={18} class="mobile-hidden-icon" />
+			<svelte:component this={Icons[role.icon] || Icons.User} size={18} class="mobile-hidden-icon" />
 
 			<button
 				class="role-name"

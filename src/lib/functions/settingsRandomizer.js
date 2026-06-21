@@ -1,4 +1,4 @@
-import { cardRulesConst } from '$lib/data';
+import cardRulesConst from '$lib/data/cardRulesConst.json';
 import { findSpecialKeys, getMaxPlayerAmount } from '$lib/functions/findSpecialKeys';
 
 function createSpecialRolesList(activeKeys) {

@@ -4,7 +4,8 @@
 	import { onMount } from 'svelte';
 	import { createArray } from '$lib/functions/createArray';
 	import { cardRules } from '$lib/stores';
-	import { cardRulesConst, cardList } from '$lib/data';
+	import cardRulesConst from '$lib/data/cardRulesConst.json';
+	import cardList from '$lib/data/cardList.json';
 	import EndScreen from './EndScreen.svelte';
 	import Card from './Card.svelte';
 

@@ -9,12 +9,14 @@
 		bigDescriptions
 	} from '$lib/stores';
 
-	import { iconMap } from '$lib/data';
+	import { onMount } from 'svelte';
+	import * as Icons from 'lucide-svelte';
 	import { validateForm } from '$lib/utils/customCardsUtils';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 
 	import CardList from './CardList.svelte';
 	import UnifiedCardForm from './UnifiedCardForm.svelte';
+	import AdminPanel from './AdminPanel.svelte';
 	import '$lib/UI/Buttons/SimpleLink.css';
 	import {
 		buildCardSubmission,
@@ -22,7 +24,7 @@
 		resizeImageFile
 	} from './customCardFormHelpers.js';
 
-	const iconList = Object.keys(iconMap);
+	const iconList = Object.keys(Icons);
 	const initialForm = {
 		formMode: 'existing',
 		cardDescription: '',
@@ -36,6 +38,16 @@
 	let form = { ...initialForm };
 	let editIndex = null;
 	let errors = {};
+	let isAdmin = false;
+
+	onMount(() => {
+		if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+			const urlParams = new URLSearchParams(window.location.search);
+			if (urlParams.get('admin') === 'true' || urlParams.get('mode') === 'admin') {
+				isAdmin = true;
+			}
+		}
+	});
 
 	$: selectedRoleName = $bigDescriptions[form.selectedTag]?.name || form.selectedTag;
 
@@ -109,8 +121,13 @@
 	</header>
 
 	<div class="layout-grid">
-		<CardList onEdit={handleEdit} deleteCard={executeDelete} />
+		{#if isAdmin}
+			<AdminPanel />
+		{:else}
+			<CardList onEdit={handleEdit} deleteCard={executeDelete} />
+		{/if}
 
+		{#if !isAdmin}
 		<section class="form-section">
 			<h2 class="section-title text-white">
 				{editIndex !== null ? 'Редагування карти' : 'Створення карти'}
@@ -129,6 +146,7 @@
 				onCancel={resetForm}
 			/>
 		</section>
+		{/if}
 	</div>
 
 	<StandardLinks />

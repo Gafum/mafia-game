@@ -1,5 +1,6 @@
 <script>
 	import { isCustomRule, setCustomRule } from '$lib/stores';
+	import * as Icons from 'lucide-svelte';
 
 	export let active;
 	export let roleData;
@@ -18,7 +19,7 @@
 	<input type="checkbox" bind:checked={active} on:change={handleChange} />
 
 	<div class="role-box-content">
-		<svelte:component this={roleData.icon} size={25} color="#ffffff" />
+		<svelte:component this={Icons[roleData.icon]} size={25} color="#ffffff" />
 		<span>{roleData.name}</span>
 	</div>
 </label>

@@ -1,4 +1,4 @@
-import { cardList } from '$lib/data';
+import cardList from '$lib/data/cardList.json';
 import { cards } from '$lib/stores';
 
 export function createListByTags() {
