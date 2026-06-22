@@ -24,7 +24,18 @@
 		resizeImageFile
 	} from './customCardFormHelpers.js';
 
-	const iconList = Object.keys(Icons);
+	const iconList = [
+		'Shield',
+		'Crosshair',
+		'HeartPulse',
+		'UserCheck',
+		'Briefcase',
+		'Bomb',
+		'HatGlasses',
+		'User',
+		'Drama',
+		'Brain'
+	];
 	const initialForm = {
 		formMode: 'existing',
 		cardDescription: '',
@@ -39,13 +50,14 @@
 	let editIndex = null;
 	let errors = {};
 	let isAdmin = false;
+	let isLocal = false;
 
 	onMount(() => {
-		if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-			const urlParams = new URLSearchParams(window.location.search);
-			if (urlParams.get('admin') === 'true' || urlParams.get('mode') === 'admin') {
-				isAdmin = true;
-			}
+		if (
+			Boolean(window) &&
+			(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+		) {
+			isLocal = true;
 		}
 	});
 
@@ -119,35 +131,41 @@
 	<header class="main-header">
 		<h1 class="text-white">Колода карт</h1>
 	</header>
-
-	<div class="layout-grid">
-		{#if isAdmin}
-			<AdminPanel />
-		{:else}
+	{#if isLocal}
+		<div class="mode-selector">
+			<button type="button" class:active={!isAdmin} on:click={() => (isAdmin = false)}>
+				Юзер
+			</button>
+			<button type="button" class:active={isAdmin} on:click={() => (isAdmin = true)}>
+				Адмін
+			</button>
+		</div>
+	{/if}
+	{#if isLocal && isAdmin}
+		<AdminPanel />
+	{:else}
+		<div class="layout-grid">
 			<CardList onEdit={handleEdit} deleteCard={executeDelete} />
-		{/if}
+			<section class="form-section">
+				<h2 class="section-title text-white">
+					{editIndex !== null ? 'Редагування карти' : 'Створення карти'}
+				</h2>
 
-		{#if !isAdmin}
-		<section class="form-section">
-			<h2 class="section-title text-white">
-				{editIndex !== null ? 'Редагування карти' : 'Створення карти'}
-			</h2>
-
-			<UnifiedCardForm
-				isEditing={editIndex !== null}
-				bind:form
-				{selectedRoleName}
-				{errors}
-				{iconList}
-				{bigDescriptions}
-				onRoleSelect={handleRoleSelect}
-				onImageChange={handleImageChange}
-				onSubmit={handleSubmit}
-				onCancel={resetForm}
-			/>
-		</section>
-		{/if}
-	</div>
+				<UnifiedCardForm
+					isEditing={editIndex !== null}
+					bind:form
+					{selectedRoleName}
+					{errors}
+					{iconList}
+					{bigDescriptions}
+					onRoleSelect={handleRoleSelect}
+					onImageChange={handleImageChange}
+					onSubmit={handleSubmit}
+					onCancel={resetForm}
+				/>
+			</section>
+		</div>
+	{/if}
 
 	<StandardLinks />
 </div>
@@ -192,6 +210,31 @@
 		font-size: 1.2rem;
 		font-weight: 700;
 		margin: 0 0 16px;
+	}
+
+	.mode-selector {
+		display: flex;
+		background: #161619;
+		padding: 4px;
+		border-radius: 8px;
+		margin-bottom: 18px;
+		border: 1px solid #232326;
+		gap: 4px;
+	}
+	.mode-selector button {
+		flex: 1;
+		background: transparent;
+		border: none;
+		color: #a1a1aa;
+		padding: 8px 4px;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+	.mode-selector button.active {
+		background: #ff4444;
+		color: white;
 	}
 
 	@media (max-width: 950px) {
