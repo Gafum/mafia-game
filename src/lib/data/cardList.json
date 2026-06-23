@@ -46,42 +46,42 @@
   },
   {
     "description": "Вам пора в дурку",
-    "myImg": "Doctor",
+    "myImg": "Doctor1",
     "tag": "doctor"
   },
   {
     "description": "Чорний плащ! Чооорний плащ",
-    "myImg": "Commissar",
+    "myImg": "Commissar1",
     "tag": "cop"
   },
   {
     "description": "Я йду за тобою!",
-    "myImg": "Maniac",
+    "myImg": "Maniac1",
     "tag": "maniac"
   },
   {
     "description": "Завжди було цікаво - що якщо зʼїсти корсар 1",
-    "myImg": "Kamikaze",
+    "myImg": "Kamikaze1",
     "tag": "kamikaze"
   },
   {
     "description": "Тобі потрібно більше тренуватися!",
-    "myImg": "Security",
+    "myImg": "Security1",
     "tag": "security"
   },
   {
     "description": "Better call Saul",
-    "myImg": "Lawyer",
+    "myImg": "Lawyer1",
     "tag": "lawyer"
   },
   {
     "description": "Я Глєбік, чесно чесно!",
-    "myImg": "Agent",
+    "myImg": "Agent1",
     "tag": "agent"
   },
   {
     "description": "ЕЕЕЕЕЕ",
-    "myImg": "Idiot",
+    "myImg": "Idiot1",
     "tag": "idiot"
   }
 ]
