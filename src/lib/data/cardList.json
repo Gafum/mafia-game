@@ -45,24 +45,24 @@
     "tag": "mafias"
   },
   {
+    "description": "Чорний плащ! Чооорний плащ",
+    "myImg": "Cop1",
+    "tag": "cop"
+  },
+  {
     "description": "Вам пора в дурку",
     "myImg": "Doctor1",
     "tag": "doctor"
   },
   {
-    "description": "Чорний плащ! Чооорний плащ",
-    "myImg": "Commissar1",
-    "tag": "cop"
+    "description": "Завжди було цікаво - що якщо зʼїсти корсар 1",
+    "myImg": "Kamikaze1",
+    "tag": "kamikaze"
   },
   {
     "description": "Я йду за тобою!",
     "myImg": "Maniac1",
     "tag": "maniac"
-  },
-  {
-    "description": "Завжди було цікаво - що якщо зʼїсти корсар 1",
-    "myImg": "Kamikaze1",
-    "tag": "kamikaze"
   },
   {
     "description": "Тобі потрібно більше тренуватися!",

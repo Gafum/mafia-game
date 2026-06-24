@@ -1,12 +1,12 @@
 {
-	"mans": 24,
-	"mafias": 20,
-	"cop": true,
-	"doctor": true,
-	"kamikaze": false,
-	"maniac": false,
-	"security": false,
-	"lawyer": false,
-	"agent": false,
-	"idiot": false
+  "mans": 24,
+  "mafias": 20,
+  "cop": true,
+  "doctor": true,
+  "kamikaze": false,
+  "maniac": false,
+  "security": false,
+  "lawyer": false,
+  "agent": false,
+  "idiot": false
 }

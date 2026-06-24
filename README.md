@@ -1,8 +1,8 @@
 # Mafia Game
 
-## **Link** - [Mafia Game](https://mafia-game-murex.vercel.app/)
+## Link - [Mafia Game](https://mafia-game-murex.vercel.app/)
 
-This is a lightweight web-based **Mafia game**, built with **Svelte v4**, created for the sole purpose of having fun with friends. It allows you to recreate the classic party game, remember the rules, and laugh at some custom characters.
+This is a lightweight web-based **Mafia game**, built with Svelte v4, created for the sole purpose of having fun with friends. It allows you to recreate the classic party game, remember the rules, and laugh at some custom characters.
 
 ## Purpose
 
@@ -11,21 +11,6 @@ The project was made to enjoy the Mafia game in a digital format with friends. I
 ## Language
 
 Currently, the game is available only in **Ukrainian**.
-
-## Features
-
-- **Enhanced Settings Page**:
-  - Visual info block showing total number of players
-  - Manual input field for total players (synced with sliders)
-  - Random role generation with one-click setup
-  - Editable role distribution with save/cancel functionality
-- Automatic game generation with random role assignment.
-- Each participant sees their role card before passing to the next.
-- Rules and detailed descriptions of all characters, including special ones like the **Lawyer**.
-- Each character comes with an image to add a humorous touch.
-- Supports up to **50 players** (expanded from 21).
-- Easy customization by editing a single data file.
-- Mafia-themed UI with consistent styling and Lucide icons.
 
 ## Getting Started
 
@@ -40,20 +25,48 @@ Then open `http://localhost:5173` in your browser.
 
 > Requirements: Node.js and Yarn installed on your system.
 
+## Tech Stack
+
+- Frontend: Vite, Svelte v4 / SvelteKit, Vanilla CSS, Lucide Svelte.
+- Backend: Node.js (SvelteKit server routes for file handling).
+- Storage: Local JSON configurations and local device storage.
+
+## Project Structure and Pages
+
+The application is fully optimized for mobile screens, allowing a company of friends to pass a single smartphone around in a circle during the setup phase, keeping their drawn roles completely secret.
+
+- Play Screen: The primary pre-game screen where players take turns opening their digital cards to secretly discover their assigned role, its description, and artwork. An information button on the card reveals the specific goals of that character.
+- Settings: A dedicated configuration page to adjust player counts. Users can set the exact number of townspeople and mafia members, as well as toggle optional special roles such as the Sheriff, Doctor, or others. All configurations save automatically for the next matches.
+- Rules and Characters: A section to read classic game rules and browse all integrated roles. Tapping a character card flips it to show their abilities and objectives, while subsequent taps cycle through different image variations of the same role. Standard cards are displayed first, followed by custom creations.
+- Host Dashboard: A complete workspace for the game master to run matches smoothly. It lists all active characters, allows the host to take notes, change card order, edit the live lineup, and mark eliminated players. The panel automatically generates night-phase prompts, showing exactly who to wake up and in what order. It also includes an experimental mode to manually alter role distributions and create custom chaotic scenarios.
+- Custom Cards: An interface where players can expand the default deck by creating entirely new cards. Users can enter a custom role name, write a humorous description, assign a base faction, and upload a custom image from their device gallery. These cards are saved locally within the browser.
+
+## Local Admin Panel
+
+When running the project locally, you can access a built-in Admin Dashboard in the custom cards page: `/custom-cards`.
+
+Unlike the standard setup that only saves changes inside your current browser session, this dashboard permanently overwrites the project's master JSON files on your disk. This panel allows the project owner to modify the master data structures globally and permanently sync them directly with the project codebase. It provides a simple way to configure the game data without touching the code:
+
+- Manage Roles: Easily create new character roles or modify existing ones. The system automatically handles validation to keep your data stable.
+- Upload Card Assets: Directly upload PNG images for characters. The panel takes care of background asset naming and automatically deletes old, unused images from your physical folders to keep the repository light.
+- Custom Sorting and Order: You don't have to worry about manual file ordering. The panel automatically reorders and groups all game cards to match the exact sequence of your main role configuration, keeping the files beautifully structured and easy to read.
+
 ## Customization
 
-You can modify the roles, descriptions, and images to fit your group by editing:
+The game logic is entirely data-driven. You can configure roles, rules, limits, and images by using the local Admin Constructor or by manually editing the JSON files located in the `src/lib/data/` directory. No external database or complex backend setup is required.
 
-```
-src/lib/data.js
-```
+### Saving Changes (For Developers)
 
-No other configuration is needed.
+After using the Admin Panel to update your roles, configurations, or images, the changes are saved directly to your local project files. To commit these updates and push them to your GitHub repository, simply run:
+
+```bash
+git add .
+git commit -m "new role/card - CardName"
+git push
+```
 
 ## License
 
-This is a hobby project. Feel free to fork, modify, and adapt it for your own use.
-
----
+This is an open-source hobby project. Feel free to fork, modify, and adapt it for your own use.
 
 Have fun and enjoy the game with your friends!

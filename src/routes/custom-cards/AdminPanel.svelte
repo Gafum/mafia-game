@@ -121,11 +121,23 @@
 
 	async function handleSaveData() {
 		isSaving = true;
-		saveStatus = 'Збереження конфігурації та синхронізація медіа...';
+		saveStatus = 'Збереження конфігурації та синхронізація ...';
+
+		const roleOrder = Object.keys(cardRulesConst);
+
+		const sortedCardList = [...cardList].sort((a, b) => {
+			let indexA = roleOrder.indexOf(a.tag);
+			let indexB = roleOrder.indexOf(b.tag);
+			if (indexA === -1) indexA = 999;
+			if (indexB === -1) indexB = 999;
+			return indexA - indexB;
+		});
+
+		const cleanCardList = sortedCardList.map(({ isNew, ...rest }) => rest);
 
 		const payload = new FormData();
 		payload.append('cardRulesConst', JSON.stringify(cardRulesConst));
-		payload.append('cardList', JSON.stringify(cardList));
+		payload.append('cardList', JSON.stringify(cleanCardList));
 		payload.append('bigDescriptionList', JSON.stringify(bigDescriptionList));
 
 		Object.keys(filesToUploadMap).forEach((idx) => {
@@ -144,10 +156,9 @@
 			if (res.ok) {
 				saveStatus = 'Зміни успішно синхронізовано з диском!';
 				filesToUploadMap = {};
-				cardList = cardList.map((c) => {
-					delete c.isNew;
-					return c;
-				});
+				localPreviewsMap = {};
+
+				cardList = sortedCardList.map(({ isNew, ...rest }) => rest);
 			} else {
 				const errData = await res.json();
 				saveStatus = `Помилка: ${errData.error || 'Провал збереження'}`;
@@ -381,7 +392,7 @@
 			<button class="save-master-btn" on:click={handleSaveData} disabled={isSaving}>
 				<Save size={20} />
 				{#if isSaving}
-					'Запис...'
+					Запис...
 				{:else}
 					<span class="inherit-text">
 						Зберегти <span class="inherit-text mobile-hidden-icon">зміни у файли</span>
