@@ -1,6 +1,6 @@
 <script>
 	import { isCustomRule, setCustomRule } from '$lib/stores';
-	import * as Icons from 'lucide-svelte';
+	import { Icons } from '$lib/components/icons.js';
 
 	export let active;
 	export let roleData;

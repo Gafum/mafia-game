@@ -2,9 +2,12 @@
 	import cardRulesConstData from '$lib/data/cardRulesConst.json';
 	import cardListData from '$lib/data/cardList.json';
 	import bigDescriptionListData from '$lib/data/bigDescriptionList.json';
-	import { Plus, Trash2, Upload, Save, HelpCircle } from 'lucide-svelte';
-	import * as Icons from 'lucide-svelte';
+	import { Plus, Trash2, Upload, Save, CircleQuestionMark } from 'lucide-svelte';
+	import * as LucideIcons from 'lucide-svelte';
+	import { Icons as CustomIcons } from '$lib/components/icons.js';
 	import { tick } from 'svelte';
+
+	const Icons = { ...LucideIcons, ...CustomIcons };
 
 	let cardRulesConst = { ...cardRulesConstData };
 	let cardList = [...cardListData];
@@ -224,7 +227,7 @@
 									/>
 									<div class="inline-icon-preview-box">
 										<svelte:component
-											this={Icons[bigDescriptionList[roleKey].icon] || HelpCircle}
+											this={Icons[bigDescriptionList[roleKey].icon] || CircleQuestionMark}
 											size={18}
 											style="stroke: #fff;"
 											strokeWidth={2.5}
@@ -253,7 +256,7 @@
 											<div class="real-game-card">
 												<div class="card-icon-overlay">
 													<svelte:component
-														this={Icons[bigDescriptionList[roleKey].icon] || HelpCircle}
+														this={Icons[bigDescriptionList[roleKey].icon] || CircleQuestionMark}
 														size={18}
 														style="stroke: #000;"
 														strokeWidth={2.5}

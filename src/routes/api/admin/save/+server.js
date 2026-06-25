@@ -2,6 +2,96 @@ import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import path from 'path';
 
+// Get all existing Lucide Icon
+import * as AllLucideIcons from 'lucide-svelte';
+
+function updateIconRegistry(iconFilePath, bigDescriptionList) {
+	let customImportLines = [];
+	let customIconKeys = [];
+
+	// Get all existing Lucide Icon names
+	const validLucideNames = new Set(Object.keys(AllLucideIcons));
+
+	// Read existing file and extract only valid custom imports
+	if (fs.existsSync(iconFilePath)) {
+		const currentContent = fs.readFileSync(iconFilePath, 'utf-8');
+		const lines = currentContent.split('\n');
+
+		for (const line of lines) {
+			const trimmed = line.trim();
+
+			// Check if it's a valid import statement
+			if (
+				trimmed.startsWith('import ') &&
+				trimmed.includes('from') &&
+				!trimmed.includes("from 'lucide-svelte'") &&
+				!trimmed.includes('from "lucide-svelte"')
+			) {
+				customImportLines.push(line);
+
+				const defaultMatch = trimmed.match(/^import\s+(\w+)\s+from\s+/);
+				if (defaultMatch) {
+					customIconKeys.push(defaultMatch[1]);
+				}
+			}
+		}
+	}
+
+	// Collect icons from bigDescriptionList
+	const iconNamesFromData = new Set();
+
+	for (const roleKey of Object.keys(bigDescriptionList)) {
+		const icon = bigDescriptionList[roleKey]?.icon;
+		if (icon && typeof icon === 'string' && icon.trim()) {
+			iconNamesFromData.add(icon.trim());
+		}
+	}
+
+	if (iconNamesFromData.size > 0) {
+		iconNamesFromData.add('CircleQuestionMark');
+	}
+
+	// PROTECT: Lucide block includes:
+	// - NOT custom components
+	// - Icons that EXIST in lucide-svelte (protection from non-existent cards)
+	const lucideIconNames = [...iconNamesFromData]
+		.filter(name => !customIconKeys.includes(name) && validLucideNames.has(name))
+		.sort((a, b) => a.localeCompare(b));
+
+	// Log in server console if admin entered non-existent icon
+	const invalidIcons = [...iconNamesFromData].filter(name => !customIconKeys.includes(name) && !validLucideNames.has(name));
+	if (invalidIcons.length > 0) {
+		console.warn(`[Admin Server] Warning! These icons do not exist in Lucide and were ignored:`, invalidIcons);
+	}
+
+	// Generate file content from scratch
+	const header = [
+		'// src/lib/components/icons.js',
+		'// ─────────────────────────────────────────────────────────────────────────────',
+		'// CENTRALIZED ICON REGISTRY — auto-updated by the admin save endpoint.',
+		'// ─────────────────────────────────────────────────────────────────────────────\n'
+	].join('\n');
+
+	const lucideImport = lucideIconNames.length > 0
+		? `import {\n${lucideIconNames.map(name => `\t${name == 'CircleQuestionMark' ? name + ', //Default import - ID' : name.toString()}`).join(',\n')}\n} from 'lucide-svelte';\n`
+		: `// No Lucide icons used currently\n`;
+
+	const customImportsBlock = customImportLines.length > 0
+		? '\n// ── Custom SVG icon components ──────────────────────────────────────────────\n' + customImportLines.join('\n') + '\n'
+		: '\n// ── No custom SVG icons registered ──────────────────────────────────────────\n';
+
+	const allExportKeys = Array.from(new Set([...lucideIconNames, ...customIconKeys])).sort((a, b) => a.localeCompare(b));
+
+	const exportBlock = `\nexport const Icons = {\n${allExportKeys.map(name => `\t${name},`).join('\n')}\n};`;
+
+	const newContent = header + lucideImport + customImportsBlock + exportBlock;
+
+	fs.writeFileSync(iconFilePath, newContent, 'utf-8');
+	console.log(
+		`[Admin Server] Icon registry updated. Lucide: ${lucideIconNames.length}, Custom: ${customIconKeys.length}`
+	);
+}
+
 export async function POST({ request, url }) {
 	const isDevelopment = process.env.NODE_ENV === 'development' || import.meta.env?.DEV;
 	const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
@@ -20,6 +110,7 @@ export async function POST({ request, url }) {
 		// Dynamic absolute paths calculated relative to the runtime project execution root
 		const dataDir = path.resolve(process.cwd(), 'src/lib/data');
 		const assetsDir = path.resolve(process.cwd(), 'static/assets/cards');
+		const iconFilePath = path.resolve(process.cwd(), 'src/lib/components/icons.js');
 
 		// Create directory if it does not exist
 		if (!fs.existsSync(assetsDir)) {
@@ -70,10 +161,21 @@ export async function POST({ request, url }) {
 		}
 
 		if (bigDescriptionListStr) {
+			const parsedBigDescriptionList = JSON.parse(bigDescriptionListStr);
+
+			// 4. Save the JSON data
 			fs.writeFileSync(
 				path.join(dataDir, 'bigDescriptionList.json'),
-				JSON.stringify(JSON.parse(bigDescriptionListStr), null, 2)
+				JSON.stringify(parsedBigDescriptionList, null, 2)
 			);
+
+			// 5. Auto-update the icon registry to include all role icons
+			try {
+				updateIconRegistry(iconFilePath, parsedBigDescriptionList);
+			} catch (iconErr) {
+				// Non-fatal: log the error but don't fail the whole save operation
+				console.error('[Admin Server] Failed to update icon registry:', iconErr);
+			}
 		}
 
 		return json({ success: true, message: 'Конфігурацію збережено, застарілі фото видалено.' });

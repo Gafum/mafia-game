@@ -1,12 +1,12 @@
 <script>
-	import * as Icons from 'lucide-svelte';
+	import { Icons } from '$lib/components/icons.js';
 	import FormField from './FormField.svelte';
 
 	export let newRoleName = '';
 	export let newRoleDescription = '';
 	export let selectedIconName = 'User';
 	export let errors = {};
-	export let iconList = [];
+	let iconList = Object.keys(Icons);
 </script>
 
 <div class="animate-fade">

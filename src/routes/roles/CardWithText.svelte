@@ -7,7 +7,7 @@
 	import { bigDescriptions } from '$lib/stores';
 	import { tagMap } from '$lib/functions/createListByTags';
 	import Randomizer from '$lib/Servises/Randomizer.servise';
-	import * as Icons from 'lucide-svelte';
+	import { Icons } from '$lib/components/icons.js';
 	import FlipHint from './FlipHint.svelte';
 
 	export let tag;

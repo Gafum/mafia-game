@@ -1,7 +1,7 @@
 <script>
 	import BaseModal from './BaseModal.svelte';
 	import { bigDescriptions } from '$lib/stores';
-	import * as Icons from 'lucide-svelte';
+	import { Icons } from '$lib/components/icons.js';
 
 	export let heroTag = 'mans';
 	export let open = false;

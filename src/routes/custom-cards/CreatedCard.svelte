@@ -1,6 +1,6 @@
 <script>
+	import { Icons } from '$lib/components/icons.js';
 	import { Pen, Trash2 } from 'lucide-svelte';
-	import * as Icons from 'lucide-svelte';
 	import { bigDescriptions } from '$lib/stores';
 
 	export let card;

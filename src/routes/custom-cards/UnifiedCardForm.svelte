@@ -16,7 +16,6 @@
 	};
 	export let selectedRoleName = '';
 	export let errors = {};
-	export let iconList = [];
 	export let bigDescriptions = {};
 
 	export let onRoleSelect;
@@ -60,7 +59,6 @@
 		bind:newRoleDescription={form.newRoleDescription}
 		bind:selectedIconName={form.selectedIconName}
 		{errors}
-		{iconList}
 	/>
 {/if}
 

@@ -10,7 +10,6 @@
 	} from '$lib/stores';
 
 	import { onMount } from 'svelte';
-	import * as Icons from 'lucide-svelte';
 	import { validateForm } from '$lib/utils/customCardsUtils';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 
@@ -24,18 +23,6 @@
 		resizeImageFile
 	} from './customCardFormHelpers.js';
 
-	const iconList = [
-		'Shield',
-		'Crosshair',
-		'HeartPulse',
-		'UserCheck',
-		'Briefcase',
-		'Bomb',
-		'HatGlasses',
-		'User',
-		'Drama',
-		'Brain'
-	];
 	const initialForm = {
 		formMode: 'existing',
 		cardDescription: '',
@@ -156,7 +143,6 @@
 					bind:form
 					{selectedRoleName}
 					{errors}
-					{iconList}
 					{bigDescriptions}
 					onRoleSelect={handleRoleSelect}
 					onImageChange={handleImageChange}

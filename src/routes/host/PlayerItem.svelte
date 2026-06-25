@@ -2,8 +2,8 @@
 	import { bigDescriptions } from '$lib/stores';
 	import { allowToManipulate } from './hostStore.js';
 	import PlayerActions from './PlayerActions.svelte';
+	import { Icons } from '$lib/components/icons.js';
 	import { ChevronDown } from 'lucide-svelte';
-	import * as Icons from 'lucide-svelte';
 
 	export let person;
 	export let index;
@@ -23,7 +23,11 @@
 		</div>
 
 		<div class="role">
-			<svelte:component this={Icons[role.icon] || Icons.User} size={18} class="mobile-hidden-icon" />
+			<svelte:component
+				this={Icons[role.icon] || Icons.User}
+				size={18}
+				class="mobile-hidden-icon"
+			/>
 
 			<button
 				class="role-name"

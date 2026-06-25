@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { bigDescriptions } from '$lib/stores';
-	import * as Icons from 'lucide-svelte';
+	import { Icons } from '$lib/components/icons.js';
 	import BaseModal from './BaseModal.svelte';
 
 	export let open = false;

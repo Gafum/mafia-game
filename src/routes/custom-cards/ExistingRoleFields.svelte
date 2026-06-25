@@ -1,6 +1,6 @@
 <script>
+	import { Icons } from '$lib/components/icons.js';
 	import { ChevronDown } from 'lucide-svelte';
-	import * as Icons from 'lucide-svelte';
 	import RolePickerModal from '$lib/UI/Modals/RolePickerModal.svelte';
 
 	export let selectedTag = 'mans';
