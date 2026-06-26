@@ -162,7 +162,12 @@
 
 				<div class="imgWrapper">
 					{#if showFallbackIcon}
-						<svelte:component this={Icons[cartData.icon] || Icons.User} style="stroke: #000;" class="back-icon" />
+						<svelte:component
+							this={Icons[cartData.icon] || Icons.User}
+							style="stroke: #000;"
+							color="#000"
+							class="back-icon"
+						/>
 					{/if}
 
 					{#key additionData.myImg}
@@ -193,7 +198,12 @@
 			</div>
 
 			<div class="front">
-				<svelte:component this={Icons[cartData.icon] || Icons.User} style="stroke:#000;" class="role-icon" />
+				<svelte:component
+					this={Icons[cartData.icon] || Icons.User}
+					style="stroke:#000;"
+					color="#000"
+					class="role-icon"
+				/>
 				<h2>{cartData.name}</h2>
 				<p>{cartData.description}</p>
 			</div>

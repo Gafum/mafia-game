@@ -230,6 +230,7 @@
 											this={Icons[bigDescriptionList[roleKey].icon] || CircleQuestionMark}
 											size={18}
 											style="stroke: #fff;"
+											color="#fff"
 											strokeWidth={2.5}
 										/>
 									</div>
@@ -259,6 +260,7 @@
 														this={Icons[bigDescriptionList[roleKey].icon] || CircleQuestionMark}
 														size={18}
 														style="stroke: #000;"
+														color="#000"
 														strokeWidth={2.5}
 													/>
 												</div>
