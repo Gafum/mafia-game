@@ -15,7 +15,7 @@
     "tag": "mans"
   },
   {
-    "description": "Майнкрафт - топ!!!",
+    "description": "Реально РевеРбеРатоР",
     "myImg": "Man4",
     "tag": "mans"
   },
@@ -83,5 +83,10 @@
     "description": "ЕЕЕЕЕЕ",
     "myImg": "Idiot1",
     "tag": "idiot"
+  },
+  {
+    "description": "Чорнобильські ніндзя",
+    "myImg": "Ninja1",
+    "tag": "ninja"
   }
 ]
