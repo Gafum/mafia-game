@@ -85,6 +85,11 @@
     "tag": "idiot"
   },
   {
+    "description": "Альо! Патріот слухає!",
+    "myImg": "Leader1",
+    "tag": "leader"
+  },
+  {
     "description": "Чорнобильські ніндзя",
     "myImg": "Ninja1",
     "tag": "ninja"
