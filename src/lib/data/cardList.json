@@ -93,5 +93,10 @@
     "description": "Чорнобильські ніндзя",
     "myImg": "Ninja1",
     "tag": "ninja"
+  },
+  {
+    "description": "Він майже все знає",
+    "myImg": "Snoop1",
+    "tag": "snoop"
   }
 ]

@@ -10,5 +10,6 @@
   "agent": false,
   "idiot": false,
   "leader": false,
-  "ninja": false
+  "ninja": false,
+  "snoop": false
 }
