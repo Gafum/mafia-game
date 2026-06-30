@@ -19,6 +19,7 @@ import {
 
 // ── Custom SVG icon components ──────────────────────────────────────────────
 import Ninja from './icons/Ninja.svelte';
+import Spy from './icons/Spy.svelte';
 
 export const Icons = {
 	Bomb,
@@ -32,6 +33,7 @@ export const Icons = {
 	HeartPulse,
 	Ninja,
 	Shield,
+	Spy,
 	User,
 	UserCheck,
 };
