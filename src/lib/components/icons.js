@@ -13,6 +13,7 @@ import {
 	HatGlasses,
 	HeartPulse,
 	Shield,
+	Snowflake,
 	User,
 	UserCheck
 } from 'lucide-svelte';
@@ -33,6 +34,7 @@ export const Icons = {
 	HeartPulse,
 	Ninja,
 	Shield,
+	Snowflake,
 	Spy,
 	User,
 	UserCheck,

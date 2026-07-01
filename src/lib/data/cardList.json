@@ -95,8 +95,13 @@
     "tag": "ninja"
   },
   {
-    "description": "Він майже все знає",
+    "description": "Коли вовк близько, вівці не сплять",
     "myImg": "Spy1",
     "tag": "spy"
+  },
+  {
+    "description": "Куда я жмав?",
+    "myImg": "Snowman1",
+    "tag": "snowman"
   }
 ]
