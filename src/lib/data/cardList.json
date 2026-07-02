@@ -103,5 +103,10 @@
     "description": "Куда я жмав?",
     "myImg": "Snowman1",
     "tag": "snowman"
+  },
+  {
+    "description": "Хтось вкрав телевізор вночі",
+    "myImg": "Thief1",
+    "tag": "thief"
   }
 ]
