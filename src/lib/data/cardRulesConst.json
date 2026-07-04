@@ -13,5 +13,6 @@
   "ninja": false,
   "spy": false,
   "snowman": false,
-  "thief": false
+  "thief": false,
+  "second_cop": false
 }

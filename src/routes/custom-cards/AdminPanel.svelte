@@ -355,7 +355,7 @@
 						placeholder="lawyer, maniac, agent"
 						bind:value={newRoleKeyEnglish}
 						on:input={() =>
-							(newRoleKeyEnglish = newRoleKeyEnglish.replace(/[^a-zA-Z]/g, '').toLowerCase())}
+							(newRoleKeyEnglish = newRoleKeyEnglish.replace(/[^a-zA-Z_]/g, '').toLowerCase())}
 						on:keydown={(e) => e.key === 'Enter' && handleCreateRole()}
 					/>
 					<span class="hint">Валідатор автоматично вирізає пробіли, цифри та кирилицю.</span>

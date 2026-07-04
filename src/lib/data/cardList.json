@@ -108,5 +108,10 @@
     "description": "Хтось вкрав телевізор вночі",
     "myImg": "Thief1",
     "tag": "thief"
+  },
+  {
+    "description": "Я в раю!",
+    "myImg": "Second_cop1",
+    "tag": "second_cop"
   }
 ]
