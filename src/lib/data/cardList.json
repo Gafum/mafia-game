@@ -100,6 +100,11 @@
     "tag": "spy"
   },
   {
+    "description": "Я в раю!",
+    "myImg": "Second_cop1",
+    "tag": "second_cop"
+  },
+  {
     "description": "Куда я жмав?",
     "myImg": "Snowman1",
     "tag": "snowman"
@@ -108,10 +113,5 @@
     "description": "Хтось вкрав телевізор вночі",
     "myImg": "Thief1",
     "tag": "thief"
-  },
-  {
-    "description": "Я в раю!",
-    "myImg": "Second_cop1",
-    "tag": "second_cop"
   }
 ]

@@ -171,7 +171,8 @@
 			локально, змінити наявні функції або використати код як основу для власної версії гри.
 		</p>
 
-		<p class="author-label">Автор проєкту: Dmytro Marchuk</p>
+		<p class="author-label">Автор розробки: Дмитро Марчук</p>
+		<p class="author-help-label">Допомагали: Гліб Шумафов, Влад Коханевич</p>
 
 		<div class="social-links-grid">
 			<!-- 2. YouTube Link -->
@@ -217,8 +218,6 @@
 	.about-header {
 		text-align: center;
 		margin-bottom: 30px;
-		border-bottom: 1px solid rgba(255, 68, 68, 0.2);
-		padding-bottom: 20px;
 	}
 
 	.about-header h1 {
@@ -343,8 +342,13 @@
 	}
 
 	.author-label {
-		font-size: 1.2rem;
+		font-size: 18px;
 		margin: 16px 0 0;
+	}
+
+	.author-help-label {
+		font-size: 16px;
+		margin: 5px 0 0;
 	}
 
 	.social-links-grid {

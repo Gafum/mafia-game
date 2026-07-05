@@ -12,7 +12,7 @@
   "leader": false,
   "ninja": false,
   "spy": false,
+  "second_cop": false,
   "snowman": false,
-  "thief": false,
-  "second_cop": false
+  "thief": false
 }

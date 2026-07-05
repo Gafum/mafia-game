@@ -110,7 +110,7 @@
 		border: 1px solid #333;
 		border-top: 3px solid #ff4444;
 		width: 100%;
-		max-width: 500px;
+		max-width: 700px;
 		border-radius: 12px;
 		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 		padding: 25px;
