@@ -5,24 +5,29 @@
 	import CardWithText from './CardWithText.svelte';
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
+	import BaseModal from '$lib/UI/Modals/BaseModal.svelte';
+	import { Search, SlidersVertical, X, ArrowDownAZ, ArrowUpAZ } from 'lucide-svelte';
 
-	// --- State ---
 	let mounted = false;
 	let searchQuery = '';
-	let sortField = 'name';    // 'name' | 'description'
-	let sortDir = 'asc';       // 'asc' | 'desc'
+	let isModalOpen = false;
 
-	// Full flat list of roles: [{ id, name, description, team }]
+	// Teams: 'all' | 'peaceful' | 'mafia' | 'neutral' | 'custom'
+	let activeTab = 'all';
+
+	// Sorting
+	let sortField = 'default';
+	let sortDir = 'asc';
+
 	let allRoles = [];
 
-	// Subscribe to bigDescriptions and build the flat role list
 	bigDescriptions.subscribe(($desc) => {
-		allRoles = Object.entries($desc).map(([id, data]) => ({
+		allRoles = Object.entries($desc).map(([id, data], index) => ({
 			id,
 			name: data.name || id,
 			description: data.description || '',
-			// Determine team: custom_ prefix always overrides to 'custom'
-			team: id.startsWith('custom_') ? 'custom' : (data.team || 'peaceful')
+			team: id.startsWith('custom_') ? 'custom' : data.team || 'peaceful',
+			originalIndex: index
 		}));
 	});
 
@@ -32,39 +37,47 @@
 		}, 100);
 	});
 
-	// --- Reactive: filter by search query (name or description) ---
-	$: filtered = allRoles.filter((role) => {
-		if (!searchQuery.trim()) return true;
-		const q = searchQuery.toLowerCase();
-		return (
-			role.name.toLowerCase().includes(q) ||
-			role.description.toLowerCase().includes(q)
-		);
-	});
+	// Check if there are any custom roles
+	$: hasCustomRoles = allRoles.some((r) => r.team === 'custom');
 
-	// --- Reactive: sort the filtered list ---
-	$: sorted = [...filtered].sort((a, b) => {
-		const valA = (a[sortField] || '').toLowerCase();
-		const valB = (b[sortField] || '').toLowerCase();
-		const cmp = valA.localeCompare(valB, 'uk');
-		return sortDir === 'asc' ? cmp : -cmp;
-	});
+	// Reset the 'custom' tab if there are no custom cards
+	$: if (!hasCustomRoles && activeTab === 'custom') {
+		activeTab = 'all';
+	}
 
-	// --- Group definitions (order matters for rendering) ---
-	const GROUPS = [
-		{ key: 'peaceful', label: 'Команда мирних', color: '#4ade80', bg: 'rgba(74,222,128,0.08)' },
-		{ key: 'mafia',    label: 'Команда мафії',  color: '#ef4444', bg: 'rgba(239,68,68,0.08)'  },
-		{ key: 'neutral',  label: 'Самі за себе',   color: '#fbbf24', bg: 'rgba(251,191,36,0.08)' },
-		{ key: 'custom',   label: 'Свої створені ролі', color: '#a855f7', bg: 'rgba(168,85,247,0.08)' }
-	];
+	// Visibility map (to not remove from DOM)
+	$: visibilityMap = allRoles.reduce((acc, role) => {
+		const matchesTeam = activeTab === 'all' || role.team === activeTab;
+		const q = searchQuery.toLowerCase().trim();
+		const matchesSearch =
+			!q || role.name.toLowerCase().includes(q) || role.description.toLowerCase().includes(q);
 
-	// --- Reactive: bucket roles into groups, keeping sort order within each group ---
-	$: groups = GROUPS.map((g) => ({
-		...g,
-		roles: sorted.filter((r) => r.team === g.key)
-	})).filter((g) => g.roles.length > 0); // hide empty groups
+		acc[role.id] = matchesTeam && matchesSearch;
+		return acc;
+	}, {});
 
-	// --- Helper to toggle sort direction or switch field ---
+	// Count of visible elements for "Empty state"
+	$: visibleCount = Object.values(visibilityMap).filter(Boolean).length;
+
+	// Order map
+	$: orderMap = [...allRoles]
+		.sort((a, b) => {
+			let cmp = 0;
+			if (sortField === 'default') {
+				cmp = a.originalIndex - b.originalIndex;
+			} else {
+				const valA = (a[sortField] || '').toLowerCase();
+				const valB = (b[sortField] || '').toLowerCase();
+				cmp = valA.localeCompare(valB, 'uk');
+			}
+			return sortDir === 'asc' ? cmp : -cmp;
+		})
+		.reduce((acc, role, index) => {
+			acc[role.id] = index;
+			return acc;
+		}, {});
+
+	// Helper for sorting in modal
 	function setSort(field) {
 		if (sortField === field) {
 			sortDir = sortDir === 'asc' ? 'desc' : 'asc';
@@ -74,7 +87,6 @@
 		}
 	}
 
-	// --- Helper to clear the search input ---
 	function clearSearch() {
 		searchQuery = '';
 	}
@@ -83,85 +95,140 @@
 <div class="main-conteiner roles-conteiner">
 	{#if mounted}
 		<div class="controls-bar" in:fade={{ duration: 200 }}>
-			<!-- Search input -->
-			<div class="search-wrapper">
-				<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-				</svg>
-				<input
-					id="roles-search"
-					type="search"
-					class="search-input"
-					placeholder="Пошук за назвою або описом..."
-					bind:value={searchQuery}
-				/>
-				{#if searchQuery}
-					<button class="clear-btn" on:click={clearSearch} aria-label="Очистити пошук">✕</button>
-				{/if}
-			</div>
+			<!-- Search + Filters Button -->
+			<div class="search-row">
+				<div class="search-wrapper">
+					<Search class="search-icon" size={16} stroke-width={2} />
+					<input
+						id="roles-search"
+						type="search"
+						class="search-input"
+						placeholder="Пошук..."
+						bind:value={searchQuery}
+					/>
+					{#if searchQuery}
+						<button class="clear-btn" on:click={clearSearch} aria-label="Очистити пошук">
+							<X class="clear-icon" />
+						</button>
+					{/if}
+				</div>
 
-			<!-- Sort controls -->
-			<div class="sort-group">
-				<span class="sort-label">Сортування:</span>
-				<button
-					id="sort-name-btn"
-					class="sort-btn"
-					class:active={sortField === 'name'}
-					on:click={() => setSort('name')}
-				>
-					Назва
-					<span class="sort-arrow" class:visible={sortField === 'name'}>
-						{sortDir === 'asc' ? '↑' : '↓'}
-					</span>
-				</button>
-				<button
-					id="sort-desc-btn"
-					class="sort-btn"
-					class:active={sortField === 'description'}
-					on:click={() => setSort('description')}
-				>
-					Опис
-					<span class="sort-arrow" class:visible={sortField === 'description'}>
-						{sortDir === 'asc' ? '↑' : '↓'}
-					</span>
+				<button class="filter-trigger-btn" on:click={() => (isModalOpen = true)}>
+					<SlidersVertical class="filter-icon" />
 				</button>
 			</div>
 		</div>
 
 		<div class="cards-list-wrapper" in:fade={{ duration: 200 }}>
-			{#if groups.length === 0}
-				<!-- Empty state when search returns nothing -->
+			{#if visibleCount === 0}
+				<!-- Empty state without emoji -->
 				<div class="empty-state" in:fade={{ duration: 150 }}>
-					<span class="empty-icon">🔍</span>
-					<p>Нічого не знайдено за запитом <strong>«{searchQuery}»</strong></p>
+					<p>
+						Нічого не знайдено {#if searchQuery}за запитом <strong>{searchQuery}</strong>{/if}
+					</p>
 				</div>
-			{:else}
-				{#each groups as group (group.key)}
-					<!-- Group section with colored header -->
-					<section
-						class="role-group"
-						style="--group-color: {group.color}; --group-bg: {group.bg};"
-						in:fade={{ duration: 200 }}
-					>
-						<div class="group-header">
-							<span class="group-dot"></span>
-							<h2 class="group-title">{group.label}</h2>
-							<span class="group-count">{group.roles.length}</span>
-						</div>
-
-						<!-- Cards for this group; isFirst only applies to the very first card across all groups -->
-						{#each group.roles as role, idx (role.id)}
-							<CardWithText tag={role.id} isFirst={groups[0].roles[0]?.id === role.id} />
-						{/each}
-					</section>
-				{/each}
 			{/if}
 
-			<SimpleLink href="/custom-cards" props={{ style: '' }}>Нові картки</SimpleLink>
-			<StandardLinks size={75} blockStyles="max-width: 280px;" />
+			<!-- Render ALL cards, but control visibility via CSS to preserve state -->
+			{#each allRoles as role (role.id)}
+				<div
+					class="role-item-wrapper"
+					style="display: {visibilityMap[role.id] ? 'flex' : 'none'}; order: {orderMap[role.id]};"
+				>
+					<CardWithText tag={role.id} isFirst={orderMap[role.id] === 0} />
+				</div>
+			{/each}
+
+			<div
+				style="order: 9999; display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px;"
+			>
+				<SimpleLink href="/custom-cards" props={{ style: 'margin-bottom: 20px;' }}
+					>Нові картки</SimpleLink
+				>
+				<StandardLinks size={75} blockStyles="max-width: 280px;" />
+			</div>
 		</div>
 	{/if}
 </div>
+
+<!-- Modal with Filters and Sorting -->
+<BaseModal bind:open={isModalOpen} on:close={() => (isModalOpen = false)}>
+	<h3 slot="header" class="modal-title">Фільтри</h3>
+
+	<div class="modal-content-blocks">
+		<!-- Teams Block -->
+		<div class="modal-section">
+			<span class="section-label">Показати ролі:</span>
+			<div class="filter-chips">
+				<button class="chip" class:active={activeTab === 'all'} on:click={() => (activeTab = 'all')}
+					>Всі</button
+				>
+				<button
+					class="chip"
+					class:active={activeTab === 'peaceful'}
+					on:click={() => (activeTab = 'peaceful')}>Мирні</button
+				>
+				<button
+					class="chip"
+					class:active={activeTab === 'mafia'}
+					on:click={() => (activeTab = 'mafia')}>Мафія</button
+				>
+				<button
+					class="chip"
+					class:active={activeTab === 'neutral'}
+					on:click={() => (activeTab = 'neutral')}>Нейтральні</button
+				>
+				{#if hasCustomRoles}
+					<button
+						class="chip"
+						class:active={activeTab === 'custom'}
+						on:click={() => (activeTab = 'custom')}>Мої ролі</button
+					>
+				{/if}
+			</div>
+		</div>
+
+		<!-- Sorting Block -->
+		<div class="modal-section">
+			<span class="section-label">Сортування:</span>
+			<div class="sort-list">
+				<button
+					class="sort-row-btn"
+					class:active={sortField === 'default'}
+					on:click={() => setSort('default')}
+				>
+					За важливістю (дефолт)
+					<span class="sort-arrow" class:visible={sortField === 'default'}>
+						{#if sortDir === 'asc'}<ArrowDownAZ />
+						{:else}<ArrowUpAZ />{/if}
+					</span>
+				</button>
+				<button
+					class="sort-row-btn"
+					class:active={sortField === 'name'}
+					on:click={() => setSort('name')}
+				>
+					За назвою
+					<span class="sort-arrow" class:visible={sortField === 'name'}>
+						{#if sortDir === 'asc'}<ArrowDownAZ />
+						{:else}<ArrowUpAZ />{/if}
+					</span>
+				</button>
+				<button
+					class="sort-row-btn"
+					class:active={sortField === 'description'}
+					on:click={() => setSort('description')}
+				>
+					За описом
+					<span class="sort-arrow" class:visible={sortField === 'description'}>
+						{#if sortDir === 'asc'}<ArrowDownAZ />
+						{:else}<ArrowUpAZ />{/if}
+					</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</BaseModal>
 
 <style>
 	.roles-conteiner {
@@ -169,216 +236,210 @@
 		height: auto;
 	}
 
-	/* ─── Controls bar ─────────────────────────────────────── */
 	.controls-bar {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		margin-bottom: 20px;
-		width: 100%;
-		max-width: 700px;
+		margin-bottom: 24px;
+		width: 85vw;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.search-row {
+		display: flex;
+		gap: 12px;
+		align-items: center;
 	}
 
 	.search-wrapper {
 		position: relative;
 		display: flex;
 		align-items: center;
+		flex-grow: 1;
 	}
 
-	.search-icon {
+	:global(.search-icon) {
 		position: absolute;
 		left: 12px;
 		color: #71717a;
 		pointer-events: none;
-		flex-shrink: 0;
 	}
 
 	.search-input {
 		width: 100%;
 		background: #111113;
-		border: 1px solid #232326;
-		border-radius: 10px;
-		padding: 10px 36px 10px 38px;
+		border: 1px solid #343434;
+		border-radius: 12px;
+		padding: 12px 36px 12px 40px;
 		color: #ffffff;
-		font-size: 0.95rem;
+		font-size: 1rem;
 		outline: none;
 		box-sizing: border-box;
-		transition: border-color 0.2s, box-shadow 0.2s;
-		/* Remove browser-default search input styling */
+		transition: border-color 0.2s;
 		-webkit-appearance: none;
 		appearance: none;
 	}
 
 	.search-input:focus {
-		border-color: #ff4444;
-		box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.12);
+		border-color: #52525b;
 	}
 
 	.search-input::placeholder {
 		color: #52525b;
 	}
-
-	/* Remove the native × button on search inputs */
 	.search-input::-webkit-search-cancel-button {
 		display: none;
 	}
 
 	.clear-btn {
 		position: absolute;
-		right: 10px;
+		right: 12px;
 		background: transparent;
 		border: none;
 		color: #71717a;
 		cursor: pointer;
 		padding: 4px;
-		font-size: 0.85rem;
-		line-height: 1;
-		transition: color 0.15s;
+		font-size: 0.9rem;
 	}
 
-	.clear-btn:hover {
-		color: #ff4444;
-	}
-
-	/* Sort row */
-	.sort-group {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		flex-wrap: wrap;
-	}
-
-	.sort-label {
-		color: #71717a;
-		font-size: 0.8rem;
-		font-weight: 600;
-		white-space: nowrap;
-	}
-
-	.sort-btn {
-		display: flex;
-		align-items: center;
-		gap: 4px;
+	.filter-trigger-btn {
 		background: #111113;
-		border: 1px solid #232326;
-		border-radius: 8px;
+		border: 1px solid #343434;
+		border-radius: 12px;
 		color: #a1a1aa;
-		padding: 6px 12px;
-		font-size: 0.82rem;
-		font-weight: 600;
+		padding: 0 14px;
+		height: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		cursor: pointer;
-		transition: all 0.15s;
+		transition: all 0.2s;
 	}
 
-	.sort-btn:hover {
+	.filter-trigger-btn:hover {
+		background: #18181b;
 		border-color: #3f3f46;
-		color: #ffffff;
+		color: #fff;
 	}
 
-	.sort-btn.active {
-		background: rgba(255, 68, 68, 0.1);
-		border-color: #ff4444;
-		color: #ff4444;
+	.cards-list-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.role-item-wrapper {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.empty-state {
+		padding: 40px 20px;
+		text-align: center;
+		width: 100%;
+	}
+
+	.empty-state p {
+		color: #ffffff;
+		font-size: 20px;
+	}
+	.empty-state p strong {
+		color: #ff6b6b;
+		font-weight: bold;
+		font-size: 22px;
+	}
+
+	.modal-title {
+		font-size: 23px;
+		color: #fff;
+	}
+
+	.modal-content-blocks {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		margin-top: 16px;
+	}
+
+	.modal-section {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.section-label {
+		color: #dddddd;
+		font-size: 14px;
+	}
+
+	.filter-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.chip {
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 20px;
+		padding: 8px 16px;
+		color: #d4d4d8;
+		font-size: 0.9rem;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.chip.active {
+		background: #ffffff;
+		color: #000000;
+		border-color: #ffffff;
+		font-weight: 600;
+	}
+
+	.sort-list {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		background: rgba(255, 255, 255, 0.03);
+		border-radius: 14px;
+		padding: 8px;
+	}
+
+	.sort-row-btn {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		background: transparent;
+		border: none;
+		padding: 12px 14px;
+		color: #a1a1aa;
+		font-size: 0.95rem;
+		border-radius: 8px;
+		cursor: pointer;
+		text-align: left;
+		transition: background 0.2s, color 0.2s;
+	}
+
+	.sort-row-btn.active {
+		background: rgba(255, 255, 255, 0.08);
+		color: #ffffff;
+		font-weight: 500;
 	}
 
 	.sort-arrow {
 		opacity: 0;
-		font-size: 0.9rem;
-		transition: opacity 0.15s;
+		font-weight: bold;
 	}
 
 	.sort-arrow.visible {
 		opacity: 1;
 	}
 
-	/* ─── Cards list wrapper ───────────────────────────────── */
-	.cards-list-wrapper {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		gap: 10px;
-	}
-
-	/* ─── Group section ────────────────────────────────────── */
-	.role-group {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 10px;
-		padding: 16px;
-		border-radius: 14px;
-		border: 1px solid color-mix(in srgb, var(--group-color) 25%, transparent);
-		background: var(--group-bg);
-		box-sizing: border-box;
-	}
-
-	.group-header {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-		margin-bottom: 4px;
-	}
-
-	.group-dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--group-color);
-		flex-shrink: 0;
-		box-shadow: 0 0 6px var(--group-color);
-	}
-
-	.group-title {
-		font-size: 1rem;
-		font-weight: 700;
-		color: var(--group-color);
-		margin: 0;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.group-count {
-		margin-left: auto;
-		background: color-mix(in srgb, var(--group-color) 15%, transparent);
-		color: var(--group-color);
-		font-size: 0.75rem;
-		font-weight: 700;
-		padding: 2px 8px;
-		border-radius: 20px;
-		border: 1px solid color-mix(in srgb, var(--group-color) 30%, transparent);
-	}
-
-	/* ─── Empty state ──────────────────────────────────────── */
-	.empty-state {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 12px;
-		padding: 40px 20px;
-		color: #71717a;
-		text-align: center;
-	}
-
-	.empty-icon {
-		font-size: 2.5rem;
-	}
-
-	.empty-state p {
-		font-size: 0.95rem;
-		margin: 0;
-	}
-
-	/* ─── Responsive ───────────────────────────────────────── */
-	@media (min-width: 720px) {
-		:global(.cards-list-wrapper .link-style) {
-			width: 85vw;
-			max-width: none;
-			font-size: 25px;
+	@media (max-width: 720px) {
+		.controls-bar {
+			width: 100%;
+			margin-bottom: 16px;
 		}
 	}
 </style>

@@ -13,7 +13,7 @@
 		newRoleName: '',
 		newRoleDescription: '',
 		selectedIconName: 'User',
-		newRoleTeam: 'custom' // default team for new custom roles
+		newRoleTeam: 'custom'
 	};
 	export let selectedRoleName = '';
 	export let errors = {};
@@ -61,29 +61,6 @@
 		bind:selectedIconName={form.selectedIconName}
 		{errors}
 	/>
-	<!-- Team selector: only shown when creating a brand-new custom role -->
-	<div class="form-group team-selector-group">
-		<label class="label-text" for="new-role-team">Команда ролі</label>
-		<div class="team-btn-group">
-			{#each [
-				{ value: 'peaceful', label: 'Мирні' },
-				{ value: 'mafia', label: 'Мафія' },
-				{ value: 'neutral', label: 'Нейтрал' },
-				{ value: 'custom', label: 'Своя' }
-			] as opt}
-				<button
-					type="button"
-					id="new-role-team"
-					class="team-opt-btn"
-					class:active={form.newRoleTeam === opt.value}
-					data-team={opt.value}
-					on:click={() => (form.newRoleTeam = opt.value)}
-				>
-					{opt.label}
-				</button>
-			{/each}
-		</div>
-	</div>
 {/if}
 
 <div class="divider" />
@@ -136,47 +113,6 @@
 {/if}
 
 <style>
-	.team-selector-group {
-		margin-bottom: 4px;
-	}
-	.team-btn-group {
-		display: flex;
-		gap: 6px;
-		width: 100%;
-	}
-	.team-opt-btn {
-		flex: 1;
-		background: #161619;
-		border: 1px solid #232326;
-		color: #a1a1aa;
-		padding: 8px 4px;
-		border-radius: 6px;
-		cursor: pointer;
-		font-size: 0.78rem;
-		font-weight: 600;
-		transition: all 0.15s;
-	}
-	/* Team-specific active colors */
-	.team-opt-btn.active[data-team='peaceful'] {
-		background: rgba(74, 222, 128, 0.15);
-		border-color: #4ade80;
-		color: #4ade80;
-	}
-	.team-opt-btn.active[data-team='mafia'] {
-		background: rgba(239, 68, 68, 0.15);
-		border-color: #ef4444;
-		color: #ef4444;
-	}
-	.team-opt-btn.active[data-team='neutral'] {
-		background: rgba(251, 191, 36, 0.15);
-		border-color: #fbbf24;
-		color: #fbbf24;
-	}
-	.team-opt-btn.active[data-team='custom'] {
-		background: rgba(168, 85, 247, 0.15);
-		border-color: #a855f7;
-		color: #a855f7;
-	}
 	.text-white {
 		color: #ffffff !important;
 	}

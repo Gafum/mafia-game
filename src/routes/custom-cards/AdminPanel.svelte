@@ -2,12 +2,20 @@
 	import cardRulesConstData from '$lib/data/cardRulesConst.json';
 	import cardListData from '$lib/data/cardList.json';
 	import bigDescriptionListData from '$lib/data/bigDescriptionList.json';
-	import { Plus, Trash2, Upload, Save, CircleQuestionMark } from 'lucide-svelte';
+	import { Plus, Trash2, Upload, Save, CircleQuestionMark, Pencil } from 'lucide-svelte';
 	import * as LucideIcons from 'lucide-svelte';
 	import { Icons as CustomIcons } from '$lib/components/icons.js';
 	import { tick } from 'svelte';
 
 	const Icons = { ...LucideIcons, ...CustomIcons };
+
+	// Константа для команд ролей
+	const TEAMS = [
+		{ value: 'peaceful', label: 'Мирні' },
+		{ value: 'mafia', label: 'Мафія' },
+		{ value: 'neutral', label: 'Нейтральні' },
+		{ value: 'custom', label: 'Моя роль' }
+	];
 
 	let cardRulesConst = { ...cardRulesConstData };
 	let cardList = [...cardListData];
@@ -18,10 +26,61 @@
 	let errorStatus = '';
 
 	let newRoleKeyEnglish = '';
-	// Team selection for new roles created in the admin panel
 	let newRoleTeam = 'peaceful';
 	let filesToUploadMap = {};
 	let localPreviewsMap = {};
+
+	// Функція генерації префікса та імені для картки ролі
+	function generateImageName(roleKey, indexInRole) {
+		let prefix = '';
+		if (roleKey === 'mafias') {
+			prefix = 'Mafia';
+		} else if (roleKey === 'mans') {
+			prefix = 'Man';
+		} else {
+			prefix = roleKey.charAt(0).toUpperCase() + roleKey.slice(1);
+		}
+		return `${prefix}${indexInRole + 1}`;
+	}
+
+	function handleUpdateRoleKey(oldKey, event) {
+		let newKey = event.target.value
+			.trim()
+			.toLowerCase()
+			.replace(/[^a-zA-Z_]/g, '');
+		if (!newKey || newKey === oldKey) return;
+		if (bigDescriptionList[newKey]) {
+			alert('Цей системний ключ уже зайнятий!');
+			event.target.value = oldKey;
+			return;
+		}
+
+		bigDescriptionList[newKey] = { ...bigDescriptionList[oldKey] };
+		delete bigDescriptionList[oldKey];
+
+		if (oldKey in cardRulesConst) {
+			cardRulesConst[newKey] = cardRulesConst[oldKey];
+			delete cardRulesConst[oldKey];
+		}
+
+		// Змінюємо тег і синхронно перейменовуємо файли картинок для цієї ролі
+		let roleCardCounter = 0;
+		cardList = cardList.map((card) => {
+			if (card.tag === oldKey) {
+				const updatedCard = {
+					...card,
+					tag: newKey,
+					myImg: generateImageName(newKey, roleCardCounter)
+				};
+				roleCardCounter++;
+				return updatedCard;
+			}
+			return card;
+		});
+
+		bigDescriptionList = { ...bigDescriptionList };
+		cardRulesConst = { ...cardRulesConst };
+	}
 
 	async function handleCreateRole() {
 		const cleanKey = newRoleKeyEnglish.trim().toLowerCase();
@@ -40,11 +99,9 @@
 			name: cleanKey.toUpperCase(),
 			icon: 'User',
 			description: '',
-			// Persist the admin's chosen team for this role
 			team: newRoleTeam
 		};
 
-		// Fix: strictly default to boolean false instead of a number
 		cardRulesConst[cleanKey] = false;
 
 		bigDescriptionList = { ...bigDescriptionList };
@@ -59,7 +116,6 @@
 	}
 
 	function handleRemoveRole(roleKey) {
-		// Protection block for master gameplay dependencies
 		if (roleKey === 'mans' || roleKey === 'mafias') {
 			alert('Заборонено видаляти базові ролі міста (mans, mafias)!');
 			return;
@@ -77,22 +133,9 @@
 		}
 	}
 
-	/**
-	 * Safe index counter with special naming overrides for core factions
-	 */
 	function getNextImageName(roleKey) {
 		const currentCardsCount = cardList.filter((c) => c.tag === roleKey).length;
-
-		let prefix = '';
-		if (roleKey === 'mafias') {
-			prefix = 'Mafia';
-		} else if (roleKey === 'mans') {
-			prefix = 'Man';
-		} else {
-			prefix = roleKey.charAt(0).toUpperCase() + roleKey.slice(1);
-		}
-
-		return `${prefix}${currentCardsCount + 1}`;
+		return generateImageName(roleKey, currentCardsCount);
 	}
 
 	function handleAddCardToRole(roleKey) {
@@ -102,7 +145,7 @@
 				description: 'Нова фраза для картки',
 				myImg: getNextImageName(roleKey),
 				tag: roleKey,
-				isNew: true // State indicator for handling placeholder triggers
+				isNew: true
 			}
 		];
 	}
@@ -120,7 +163,6 @@
 		filesToUploadMap[cardIndex] = file;
 		localPreviewsMap[cardIndex] = URL.createObjectURL(file);
 
-		// Once image chosen, it's no longer considered functionally empty
 		if (cardList[cardIndex]) {
 			cardList[cardIndex].isNew = false;
 		}
@@ -164,7 +206,6 @@
 				saveStatus = 'Зміни успішно синхронізовано з диском!';
 				filesToUploadMap = {};
 				localPreviewsMap = {};
-
 				cardList = sortedCardList.map(({ isNew, ...rest }) => rest);
 			} else {
 				const errData = await res.json();
@@ -191,12 +232,29 @@
 	<div class="layout-grid">
 		<div class="cards-section">
 			<div class="roles-accumulator">
-				{#each Object.keys(bigDescriptionList) as roleKey}
+				{#each Object.keys(bigDescriptionList) as roleKey (roleKey)}
 					<div class="form-section role-card-wrapper" id="role-block-{roleKey}">
 						<div class="role-header-top">
-							<div class="role-key-badge">
-								<span class="badge-label">КЛЮЧ:</span>
-								<span class="badge-value">{roleKey}</span>
+							<div class="role-key-badge-container">
+								<div class="role-key-badge">
+									<span class="badge-label">КЛЮЧ:</span>
+									{#if roleKey === 'mans' || roleKey === 'mafias'}
+										<span class="badge-value disabled-input">{roleKey}</span>
+									{:else}
+										<div class="icon-input-wrapper">
+											<label for={'input-' + roleKey} title="Системний ключ (редагувати)**">
+												<Pencil size={14} color="#fff" strokeWidth={2.5} />
+											</label>
+											<input
+												id={'input-' + roleKey}
+												type="text"
+												value={roleKey}
+												class="badge-key-input"
+												on:change={(e) => handleUpdateRoleKey(roleKey, e)}
+											/>
+										</div>
+									{/if}
+								</div>
 							</div>
 
 							{#if roleKey !== 'mans' && roleKey !== 'mafias'}
@@ -250,22 +308,25 @@
 								rows="3"
 							/>
 						</div>
-
-						<!-- Team assignment for this role block -->
-						<div class="form-group" style="margin-bottom: 24px;">
-							<label for="team-{roleKey}">Команда ролі</label>
-							<select
-								id="team-{roleKey}"
-								class="team-select"
-								bind:value={bigDescriptionList[roleKey].team}
-								on:change={() => { bigDescriptionList[roleKey].team = bigDescriptionList[roleKey].team || 'peaceful'; bigDescriptionList = { ...bigDescriptionList }; }}
-							>
-								<option value="peaceful">Мирні</option>
-								<option value="mafia">Мафія</option>
-								<option value="neutral">Нейтрал</option>
-								<option value="custom">Своя</option>
-							</select>
-						</div>
+						{#if roleKey !== 'mans' && roleKey !== 'mafias'}
+							<div class="form-group" style="margin-bottom: 24px;">
+								<label for="team-{roleKey}">Команда ролі</label>
+								<select
+									id="team-{roleKey}"
+									class="team-select"
+									bind:value={bigDescriptionList[roleKey].team}
+									on:change={() => {
+										bigDescriptionList[roleKey].team =
+											bigDescriptionList[roleKey].team || 'peaceful';
+										bigDescriptionList = { ...bigDescriptionList };
+									}}
+								>
+									{#each TEAMS as team}
+										<option value={team.value}>{team.label}</option>
+									{/each}
+								</select>
+							</div>
+						{/if}
 
 						<div>
 							<h3 class="cards-section-title">Стандартні Картки цієї ролі:</h3>
@@ -300,12 +361,13 @@
 														/>
 													{:else}
 														<img
-															src="/assets/cards/{card.myImg}.png"
+															src={localPreviewsMap[index] || `/assets/cards/${card.myImg}.png`}
 															alt="Card Asset"
 															class="card-main-img"
 															on:error={(e) => {
 																e.target.style.display = 'none';
-																e.target.nextElementSibling.style.display = 'flex';
+																if (e.target.nextElementSibling)
+																	e.target.nextElementSibling.style.display = 'flex';
 															}}
 														/>
 													{/if}
@@ -383,16 +445,6 @@
 						<span class="error-text">{errorStatus}</span>
 					{/if}
 				</div>
-				<!-- Team selector for the admin role creation block -->
-				<div class="form-group">
-					<label for="admin-role-team">Команда ролі</label>
-					<select id="admin-role-team" class="team-select" bind:value={newRoleTeam}>
-						<option value="peaceful">Мирні</option>
-						<option value="mafia">Мафія</option>
-						<option value="neutral">Нейтрал</option>
-						<option value="custom">Своя</option>
-					</select>
-				</div>
 				<button class="create-role-btn" on:click={handleCreateRole}>
 					Створити <span class="inherit-text mobile-hidden-icon">Рольовий Блок</span>
 				</button>
@@ -439,6 +491,49 @@
 </div>
 
 <style>
+	.role-key-badge {
+		display: flex;
+		align-items: center;
+		background: #232326;
+		border-radius: 6px;
+		overflow: hidden;
+		border: 1px solid #3f3f46;
+	}
+
+	.icon-input-wrapper {
+		display: flex;
+		align-items: center;
+		padding-left: 16px;
+	}
+
+	.badge-key-input {
+		background: transparent !important;
+		border: none !important;
+		color: #ffffff !important;
+		font-size: 1.05rem !important;
+		font-weight: 800 !important;
+		padding: 4px 12px !important;
+		text-transform: lowercase !important;
+		font-family: monospace !important;
+		width: 140px !important;
+		outline: none !important;
+		transition: none !important;
+	}
+
+	.icon-input-wrapper:focus-within,
+	.badge-key-input:focus {
+		background: #1a1a1e !important;
+		border: none !important;
+	}
+
+	.disabled-input {
+		color: #a1a1aa;
+		font-size: 1.05rem;
+		font-weight: 800;
+		padding: 4px 12px;
+		font-family: monospace;
+	}
+
 	.layout-grid {
 		display: grid;
 		grid-template-columns: 1fr 360px;
@@ -497,7 +592,7 @@
 	}
 
 	.new-role-section {
-		flex-shrink: 1;
+		flex-shrink: 0;
 	}
 
 	.role-config-section {
@@ -588,22 +683,30 @@
 		box-sizing: border-box;
 		transition: all 0.2s;
 	}
+
 	.team-select {
 		cursor: pointer;
 		appearance: none;
 	}
+
 	.team-select:focus {
 		border-color: #ff4444;
 		background: #1a1a1e;
 	}
+
 	textarea {
 		min-height: 50px;
 		resize: vertical;
 	}
+
 	input[type='text']:focus,
 	textarea:focus {
 		border-color: #ff4444;
 		background: #1a1a1e;
+	}
+
+	option {
+		color: #ffffff;
 	}
 
 	/* HEADER & BADGES */
