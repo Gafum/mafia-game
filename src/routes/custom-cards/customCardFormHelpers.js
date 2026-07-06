@@ -4,6 +4,17 @@ const MAX_ROLE_DESC = 300;
 const MAX_CARD_TEXT = 50;
 const DEFAULT_TAG = 'mans';
 const DEFAULT_ICON = 'User';
+const DEFAULT_TEAM = 'custom';
+
+// Allowed team values for validation
+const VALID_TEAMS = new Set(['peaceful', 'mafia', 'neutral', 'custom']);
+
+/**
+ * Sanitizes and validates a team value, falling back to 'custom' for unknowns.
+ */
+export function sanitizeTeam(team) {
+	return VALID_TEAMS.has(team) ? team : DEFAULT_TEAM;
+}
 
 export function isCustomRoleTag(tag) {
 	return typeof tag === 'string' && tag.startsWith('custom_');
@@ -24,6 +35,7 @@ export function buildCardSubmission({
 	newRoleName,
 	newRoleDescription,
 	selectedIconName,
+	newRoleTeam,
 	editIndex
 }) {
 	const description = String(cardDescription || '')
@@ -49,7 +61,9 @@ export function buildCardSubmission({
 						description: String(newRoleDescription || '')
 							.substring(0, MAX_ROLE_DESC)
 							.trim(),
-						iconName: selectedIconName || DEFAULT_ICON
+						iconName: selectedIconName || DEFAULT_ICON,
+						// Always save the team; default to 'custom' if unspecified
+						team: sanitizeTeam(newRoleTeam)
 				  }
 				: null,
 		shouldAddRule: formMode === 'new' && (!isCustomRoleTag(selectedTag) || editIndex === null)
@@ -66,7 +80,9 @@ export function getFormStateFromCard(card, bigDescriptions) {
 		imageBase64: card.myImg?.startsWith('data:') ? card.myImg : '',
 		newRoleName: isCustom ? roleDescription.name || '' : '',
 		newRoleDescription: isCustom ? roleDescription.description || '' : '',
-		selectedIconName: isCustom ? roleDescription.iconName || DEFAULT_ICON : DEFAULT_ICON
+		selectedIconName: isCustom ? roleDescription.iconName || DEFAULT_ICON : DEFAULT_ICON,
+		// Restore saved team or fall back to 'custom' for legacy entries
+		newRoleTeam: isCustom ? sanitizeTeam(roleDescription.team) : DEFAULT_TEAM
 	};
 }
 

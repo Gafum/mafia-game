@@ -42,7 +42,9 @@ function mergeInitialData() {
 		const desc = customDescriptions[tag];
 		mappedCustomDescriptions[tag] = {
 			...desc,
-			icon: desc.iconName || 'User'
+			icon: desc.iconName || 'User',
+			// Ensure team is forwarded; fall back to 'custom' for legacy entries without a team field
+			team: desc.team || 'custom'
 		};
 	}
 

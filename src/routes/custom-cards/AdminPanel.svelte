@@ -18,6 +18,8 @@
 	let errorStatus = '';
 
 	let newRoleKeyEnglish = '';
+	// Team selection for new roles created in the admin panel
+	let newRoleTeam = 'peaceful';
 	let filesToUploadMap = {};
 	let localPreviewsMap = {};
 
@@ -37,7 +39,9 @@
 		bigDescriptionList[cleanKey] = {
 			name: cleanKey.toUpperCase(),
 			icon: 'User',
-			description: ''
+			description: '',
+			// Persist the admin's chosen team for this role
+			team: newRoleTeam
 		};
 
 		// Fix: strictly default to boolean false instead of a number
@@ -247,6 +251,22 @@
 							/>
 						</div>
 
+						<!-- Team assignment for this role block -->
+						<div class="form-group" style="margin-bottom: 24px;">
+							<label for="team-{roleKey}">Команда ролі</label>
+							<select
+								id="team-{roleKey}"
+								class="team-select"
+								bind:value={bigDescriptionList[roleKey].team}
+								on:change={() => { bigDescriptionList[roleKey].team = bigDescriptionList[roleKey].team || 'peaceful'; bigDescriptionList = { ...bigDescriptionList }; }}
+							>
+								<option value="peaceful">Мирні</option>
+								<option value="mafia">Мафія</option>
+								<option value="neutral">Нейтрал</option>
+								<option value="custom">Своя</option>
+							</select>
+						</div>
+
 						<div>
 							<h3 class="cards-section-title">Стандартні Картки цієї ролі:</h3>
 
@@ -362,6 +382,16 @@
 					{#if errorStatus}
 						<span class="error-text">{errorStatus}</span>
 					{/if}
+				</div>
+				<!-- Team selector for the admin role creation block -->
+				<div class="form-group">
+					<label for="admin-role-team">Команда ролі</label>
+					<select id="admin-role-team" class="team-select" bind:value={newRoleTeam}>
+						<option value="peaceful">Мирні</option>
+						<option value="mafia">Мафія</option>
+						<option value="neutral">Нейтрал</option>
+						<option value="custom">Своя</option>
+					</select>
 				</div>
 				<button class="create-role-btn" on:click={handleCreateRole}>
 					Створити <span class="inherit-text mobile-hidden-icon">Рольовий Блок</span>
@@ -545,7 +575,8 @@
 	}
 
 	input[type='text'],
-	textarea {
+	textarea,
+	.team-select {
 		background: #161619;
 		border: 1px solid #232326;
 		border-radius: 8px;
@@ -556,6 +587,14 @@
 		width: 100%;
 		box-sizing: border-box;
 		transition: all 0.2s;
+	}
+	.team-select {
+		cursor: pointer;
+		appearance: none;
+	}
+	.team-select:focus {
+		border-color: #ff4444;
+		background: #1a1a1e;
 	}
 	textarea {
 		min-height: 50px;

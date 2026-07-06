@@ -30,7 +30,8 @@
 		selectedTag: 'mans',
 		newRoleName: '',
 		newRoleDescription: '',
-		selectedIconName: 'User'
+		selectedIconName: 'User',
+		newRoleTeam: 'custom' // default team for new custom roles
 	};
 
 	let form = { ...initialForm };
