@@ -48,6 +48,7 @@
 		cursor: pointer;
 		box-shadow: 4px 4px 5px #0e0e0e30;
 		overflow: hidden;
+		position: relative;
 	}
 
 	@media (hover: hover) {

@@ -2,23 +2,26 @@
 	import cardRulesConstData from '$lib/data/cardRulesConst.json';
 	import cardListData from '$lib/data/cardList.json';
 	import bigDescriptionListData from '$lib/data/bigDescriptionList.json';
-	import { Plus, Trash2, Upload, Save, CircleQuestionMark, Pencil } from 'lucide-svelte';
+	import {
+		Plus,
+		Trash2,
+		Upload,
+		Save,
+		CircleQuestionMark,
+		Pencil,
+		ChevronDown
+	} from 'lucide-svelte';
 	import * as LucideIcons from 'lucide-svelte';
 	import { Icons as CustomIcons } from '$lib/components/icons.js';
 	import { tick } from 'svelte';
+	import { TEAMS } from '$lib/data/teams.js';
 
 	const Icons = { ...LucideIcons, ...CustomIcons };
 
-	// Константа для команд ролей
-	const TEAMS = [
-		{ value: 'peaceful', label: 'Мирні' },
-		{ value: 'mafia', label: 'Мафія' },
-		{ value: 'neutral', label: 'Нейтральні' },
-		{ value: 'custom', label: 'Моя роль' }
-	];
-
 	let cardRulesConst = { ...cardRulesConstData };
-	let cardList = [...cardListData];
+
+	let cardList = cardListData.map((c) => ({ ...c, diskImg: c.myImg }));
+
 	let bigDescriptionList = JSON.parse(JSON.stringify(bigDescriptionListData));
 
 	let isSaving = false;
@@ -26,11 +29,10 @@
 	let errorStatus = '';
 
 	let newRoleKeyEnglish = '';
-	let newRoleTeam = 'peaceful';
+	let newRoleTeam = TEAMS[0].value;
 	let filesToUploadMap = {};
 	let localPreviewsMap = {};
 
-	// Функція генерації префікса та імені для картки ролі
 	function generateImageName(roleKey, indexInRole) {
 		let prefix = '';
 		if (roleKey === 'mafias') {
@@ -41,6 +43,12 @@
 			prefix = roleKey.charAt(0).toUpperCase() + roleKey.slice(1);
 		}
 		return `${prefix}${indexInRole + 1}`;
+	}
+
+	function renameKeyKeepingOrder(obj, oldKey, newKey) {
+		const entries = Object.entries(obj);
+		const renamed = entries.map(([k, v]) => [k === oldKey ? newKey : k, v]);
+		return Object.fromEntries(renamed);
 	}
 
 	function handleUpdateRoleKey(oldKey, event) {
@@ -55,15 +63,12 @@
 			return;
 		}
 
-		bigDescriptionList[newKey] = { ...bigDescriptionList[oldKey] };
-		delete bigDescriptionList[oldKey];
+		bigDescriptionList = renameKeyKeepingOrder(bigDescriptionList, oldKey, newKey);
 
 		if (oldKey in cardRulesConst) {
-			cardRulesConst[newKey] = cardRulesConst[oldKey];
-			delete cardRulesConst[oldKey];
+			cardRulesConst = renameKeyKeepingOrder(cardRulesConst, oldKey, newKey);
 		}
 
-		// Змінюємо тег і синхронно перейменовуємо файли картинок для цієї ролі
 		let roleCardCounter = 0;
 		cardList = cardList.map((card) => {
 			if (card.tag === oldKey) {
@@ -77,9 +82,6 @@
 			}
 			return card;
 		});
-
-		bigDescriptionList = { ...bigDescriptionList };
-		cardRulesConst = { ...cardRulesConst };
 	}
 
 	async function handleCreateRole() {
@@ -168,11 +170,25 @@
 		}
 	}
 
+	function buildImageRenameOps(list, uploadsMap) {
+		const ops = [];
+		list.forEach((card, idx) => {
+			if (card.diskImg && card.diskImg !== card.myImg && !uploadsMap[idx]) {
+				ops.push({ from: card.diskImg, to: card.myImg });
+			}
+		});
+		return ops;
+	}
+
 	async function handleSaveData() {
 		isSaving = true;
 		saveStatus = 'Збереження конфігурації та синхронізація ...';
 
 		const roleOrder = Object.keys(cardRulesConst);
+
+		// Compute rename operations BEFORE sorting, since filesToUploadMap
+		// keys are indices into the current (unsorted) `cardList`.
+		const imageRenameOps = buildImageRenameOps(cardList, filesToUploadMap);
 
 		const sortedCardList = [...cardList].sort((a, b) => {
 			let indexA = roleOrder.indexOf(a.tag);
@@ -182,12 +198,14 @@
 			return indexA - indexB;
 		});
 
-		const cleanCardList = sortedCardList.map(({ isNew, ...rest }) => rest);
+		// Strip client-only fields before sending to the server
+		const cleanCardList = sortedCardList.map(({ isNew, diskImg, ...rest }) => rest);
 
 		const payload = new FormData();
 		payload.append('cardRulesConst', JSON.stringify(cardRulesConst));
 		payload.append('cardList', JSON.stringify(cleanCardList));
 		payload.append('bigDescriptionList', JSON.stringify(bigDescriptionList));
+		payload.append('imageRenameMap', JSON.stringify(imageRenameOps));
 
 		Object.keys(filesToUploadMap).forEach((idx) => {
 			const targetFilename = cardList[idx].myImg;
@@ -206,7 +224,11 @@
 				saveStatus = 'Зміни успішно синхронізовано з диском!';
 				filesToUploadMap = {};
 				localPreviewsMap = {};
-				cardList = sortedCardList.map(({ isNew, ...rest }) => rest);
+				// Re-baseline: after a successful save, `myImg` IS what's on disk now
+				cardList = sortedCardList.map(({ isNew, diskImg, ...rest }) => ({
+					...rest,
+					diskImg: rest.myImg
+				}));
 			} else {
 				const errData = await res.json();
 				saveStatus = `Помилка: ${errData.error || 'Провал збереження'}`;
@@ -243,7 +265,12 @@
 									{:else}
 										<div class="icon-input-wrapper">
 											<label for={'input-' + roleKey} title="Системний ключ (редагувати)**">
-												<Pencil size={14} color="#fff" strokeWidth={2.5} />
+												<Pencil
+													size={14}
+													color="#fff"
+													strokeWidth={2.5}
+													class="mobile-hidden-icon"
+												/>
 											</label>
 											<input
 												id={'input-' + roleKey}
@@ -311,20 +338,25 @@
 						{#if roleKey !== 'mans' && roleKey !== 'mafias'}
 							<div class="form-group" style="margin-bottom: 24px;">
 								<label for="team-{roleKey}">Команда ролі</label>
-								<select
-									id="team-{roleKey}"
-									class="team-select"
-									bind:value={bigDescriptionList[roleKey].team}
-									on:change={() => {
-										bigDescriptionList[roleKey].team =
-											bigDescriptionList[roleKey].team || 'peaceful';
-										bigDescriptionList = { ...bigDescriptionList };
-									}}
-								>
-									{#each TEAMS as team}
-										<option value={team.value}>{team.label}</option>
-									{/each}
-								</select>
+								<div class="select-wrapper">
+									<select
+										id="team-{roleKey}"
+										class="team-select"
+										bind:value={bigDescriptionList[roleKey].team}
+										on:change={() => {
+											bigDescriptionList[roleKey].team =
+												bigDescriptionList[roleKey].team || 'peaceful';
+											bigDescriptionList = { ...bigDescriptionList };
+										}}
+									>
+										{#each TEAMS as team}
+											<option value={team.value}>{team.label}</option>
+										{/each}
+									</select>
+									<span class="team-select-arrow-wrapper">
+										<ChevronDown size="17" style="stroke: #fff;" color="#fff" strokeWidth={2.5} />
+									</span>
+								</div>
 							</div>
 						{/if}
 
@@ -350,7 +382,7 @@
 													{#if card.isNew && !localPreviewsMap[index]}
 														<div class="card-graphic-fallback">
 															<span class="placeholder-text"
-																>краще використати<br />картинку 512x512</span
+																>Використовуйте<br />картинку 512x512</span
 															>
 														</div>
 													{:else if localPreviewsMap[index]}
@@ -361,7 +393,7 @@
 														/>
 													{:else}
 														<img
-															src={localPreviewsMap[index] || `/assets/cards/${card.myImg}.png`}
+															src={`/assets/cards/${card.diskImg || card.myImg}.png`}
 															alt="Card Asset"
 															class="card-main-img"
 															on:error={(e) => {
@@ -547,7 +579,7 @@
 		top: 24px;
 		max-height: 75vh;
 		max-height: 80svh;
-		max-height: calc(90svh - 80px);
+		max-height: calc(92svh - 80px);
 		overflow-y: auto;
 		display: flex;
 		flex-direction: column;
@@ -707,6 +739,24 @@
 
 	option {
 		color: #ffffff;
+	}
+
+	.select-wrapper {
+		position: relative;
+	}
+
+	.team-select-arrow-wrapper {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		right: 12px;
+		top: 50%;
+		transform: translateY(-50%);
+		transition: transform 0.2s;
+	}
+
+	.team-select:open ~ .team-select-arrow-wrapper {
+		transform: translateY(-50%) rotate(180deg);
 	}
 
 	/* HEADER & BADGES */
@@ -1098,11 +1148,25 @@
 		}
 	}
 
-	@media (max-width: 480px) {
+	@media (max-width: 500px) {
 		.role-inputs-grid {
 			grid-template-columns: 1fr;
 			gap: 0;
 			margin-bottom: 0;
+		}
+		.role-key-badge {
+			width: 55vw;
+		}
+
+		.icon-input-wrapper {
+			display: flex;
+			align-items: center;
+			padding-left: 0;
+		}
+
+		.badge-key-input {
+			width: 70% !important;
+			min-width: none;
 		}
 	}
 </style>

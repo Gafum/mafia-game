@@ -128,6 +128,7 @@
 	});
 </script>
 
+<span class="title">Гравці ({peopleList.length})</span>
 <div class="players" bind:this={listElement} autocomplete="off" data-lpignore="true">
 	{#each displayedPeople as person, index (person.myIndex)}
 		<div
@@ -139,7 +140,7 @@
 			<PlayerItem
 				{person}
 				{index}
-				onDelete={deletePlayer}
+				onDelete={displayedPeople.length > 1 ? deletePlayer : null}
 				onToggleAlive={toggleAlive}
 				onOpenRole={openRole}
 				onChangeRole={openRolePicker}
@@ -177,6 +178,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
+
+	.title {
+		font-size: 23px;
+		color: white;
+		position: absolute;
+		top: 14px;
 	}
 
 	.add-player-btn {

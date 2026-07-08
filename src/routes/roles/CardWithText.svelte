@@ -293,7 +293,7 @@
 
 	.my-img {
 		max-width: 100%;
-		max-height: 48vmax;
+		max-height: min(48vmax, 512px);
 		border-radius: 10px;
 		margin: auto;
 		object-fit: contain;

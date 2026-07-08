@@ -92,6 +92,38 @@ function updateIconRegistry(iconFilePath, bigDescriptionList) {
 	);
 }
 
+// Renames physical card image files on disk to match a role tag rename that
+// happened on the client (e.g. "Man3.png" -> "Lawyer3.png"). This MUST run
+// before the orphan-cleanup step below, otherwise the cleanup would treat the
+// old file as orphaned (since the client already renamed it in cardList) and
+// delete it before it ever gets a chance to become the new file.
+function applyImageRenames(assetsDir, renameOps) {
+	if (!Array.isArray(renameOps) || renameOps.length === 0) return;
+
+	for (const op of renameOps) {
+		if (!op || !op.from || !op.to || op.from === op.to) continue;
+
+		// Basic sanitation: only allow safe filename characters
+		const safeFrom = String(op.from).replace(/[^a-zA-Z0-9_-]/g, '');
+		const safeTo = String(op.to).replace(/[^a-zA-Z0-9_-]/g, '');
+		if (!safeFrom || !safeTo) continue;
+
+		const fromPath = path.join(assetsDir, `${safeFrom}.png`);
+		const toPath = path.join(assetsDir, `${safeTo}.png`);
+
+		try {
+			if (fs.existsSync(fromPath)) {
+				fs.renameSync(fromPath, toPath);
+				console.log(`[Admin Server] Renamed card image on disk: ${safeFrom}.png -> ${safeTo}.png`);
+			}
+		} catch (err) {
+			// Non-fatal: log and continue. Any leftover file will simply be
+			// picked up (and removed) by the orphan-cleanup step below.
+			console.error(`[Admin Server] Failed to rename image ${safeFrom} -> ${safeTo}:`, err);
+		}
+	}
+}
+
 export async function POST({ request, url }) {
 	const isDevelopment = process.env.NODE_ENV === 'development' || import.meta.env?.DEV;
 	const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
@@ -106,6 +138,7 @@ export async function POST({ request, url }) {
 		const cardRulesConstStr = formData.get('cardRulesConst');
 		const cardListStr = formData.get('cardList');
 		const bigDescriptionListStr = formData.get('bigDescriptionList');
+		const imageRenameMapStr = formData.get('imageRenameMap');
 
 		// Dynamic absolute paths calculated relative to the runtime project execution root
 		const dataDir = path.resolve(process.cwd(), 'src/lib/data');
@@ -117,7 +150,18 @@ export async function POST({ request, url }) {
 			fs.mkdirSync(assetsDir, { recursive: true });
 		}
 
-		// 1. Process and save freshly uploaded images
+		// 1. Apply pending image renames caused by role-tag renames on the client.
+		//    Must run BEFORE new uploads are written and BEFORE orphan cleanup.
+		if (imageRenameMapStr) {
+			try {
+				const renameOps = JSON.parse(imageRenameMapStr);
+				applyImageRenames(assetsDir, renameOps);
+			} catch (err) {
+				console.error('[Admin Server] Failed to parse/apply imageRenameMap:', err);
+			}
+		}
+
+		// 2. Process and save freshly uploaded images (may overwrite a just-renamed file, which is fine)
 		for (const [key, value] of formData.entries()) {
 			if (key.startsWith('file_') && value instanceof File) {
 				const filename = key.replace('file_', '');
@@ -127,7 +171,7 @@ export async function POST({ request, url }) {
 			}
 		}
 
-		// 2. Overwrite local master json configurations
+		// 3. Overwrite local master json configurations
 		if (cardRulesConstStr) {
 			fs.writeFileSync(
 				path.join(dataDir, 'cardRulesConst.json'),
@@ -142,7 +186,10 @@ export async function POST({ request, url }) {
 				JSON.stringify(parsedCardList, null, 2)
 			);
 
-			// 3. CLEANUP ENGINE: Delete physical files that are no longer referenced in cardList
+			// 4. CLEANUP ENGINE: Delete physical files that are no longer referenced in cardList.
+			//    By this point renames (step 1) and new uploads (step 2) have already
+			//    landed on disk under their final names, so this only removes truly
+			//    unused files instead of files that were just renamed.
 			const activeImageNames = new Set(parsedCardList.map((card) => `${card.myImg}.png`));
 
 			if (fs.existsSync(assetsDir)) {
@@ -163,13 +210,13 @@ export async function POST({ request, url }) {
 		if (bigDescriptionListStr) {
 			const parsedBigDescriptionList = JSON.parse(bigDescriptionListStr);
 
-			// 4. Save the JSON data
+			// 5. Save the JSON data
 			fs.writeFileSync(
 				path.join(dataDir, 'bigDescriptionList.json'),
 				JSON.stringify(parsedBigDescriptionList, null, 2)
 			);
 
-			// 5. Auto-update the icon registry to include all role icons
+			// 6. Auto-update the icon registry to include all role icons
 			try {
 				updateIconRegistry(iconFilePath, parsedBigDescriptionList);
 			} catch (iconErr) {

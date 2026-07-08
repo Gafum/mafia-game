@@ -6,7 +6,8 @@
 	import StandardLinks from '$lib/UI/StandardLinks.svelte';
 	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 	import BaseModal from '$lib/UI/Modals/BaseModal.svelte';
-	import { Search, SlidersVertical, X, ArrowDownAZ, ArrowUpAZ } from 'lucide-svelte';
+	import { Search, SlidersHorizontal, X, ArrowDownAZ, ArrowUpAZ } from 'lucide-svelte';
+	import { TEAMS } from '$lib/data/teams';
 
 	let mounted = false;
 	let searchQuery = '';
@@ -114,7 +115,7 @@
 				</div>
 
 				<button class="filter-trigger-btn" on:click={() => (isModalOpen = true)}>
-					<SlidersVertical class="filter-icon" />
+					<SlidersHorizontal class="filter-icon" />
 				</button>
 			</div>
 		</div>
@@ -160,31 +161,24 @@
 		<div class="modal-section">
 			<span class="section-label">Показати ролі:</span>
 			<div class="filter-chips">
-				<button class="chip" class:active={activeTab === 'all'} on:click={() => (activeTab = 'all')}
-					>Всі</button
-				>
 				<button
 					class="chip"
-					class:active={activeTab === 'peaceful'}
-					on:click={() => (activeTab = 'peaceful')}>Мирні</button
+					class:active={activeTab === 'all'}
+					on:click={() => (activeTab = 'all')}
+					style={(activeTab === 'all' ? 'color: #000;' : '') + ' --text-color: #fff;'}
 				>
-				<button
-					class="chip"
-					class:active={activeTab === 'mafia'}
-					on:click={() => (activeTab = 'mafia')}>Мафія</button
-				>
-				<button
-					class="chip"
-					class:active={activeTab === 'neutral'}
-					on:click={() => (activeTab = 'neutral')}>Нейтральні</button
-				>
-				{#if hasCustomRoles}
+					Всі
+				</button>
+				{#each TEAMS.filter((t) => (t.value === 'custom' ? hasCustomRoles : true)) as team}
 					<button
 						class="chip"
-						class:active={activeTab === 'custom'}
-						on:click={() => (activeTab = 'custom')}>Мої ролі</button
+						class:active={activeTab === team.value}
+						on:click={() => (activeTab = team.value)}
+						style="--text-color: {team.color};"
 					>
-				{/if}
+						{team.label}
+					</button>
+				{/each}
 			</div>
 		</div>
 
@@ -383,16 +377,16 @@
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 20px;
 		padding: 8px 16px;
-		color: #d4d4d8;
+		color: var(--text-color);
 		font-size: 0.9rem;
 		cursor: pointer;
 		transition: all 0.2s;
 	}
 
 	.chip.active {
-		background: #ffffff;
-		color: #000000;
-		border-color: #ffffff;
+		background: var(--text-color);
+		color: white;
+		border-color: #111;
 		font-weight: 600;
 	}
 

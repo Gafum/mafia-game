@@ -1,10 +1,10 @@
 import { slugify } from '$lib/utils/customCardsUtils';
+import { TEAMS } from '$lib/data/teams';
 const MAX_ROLE_NAME = 20;
 const MAX_ROLE_DESC = 300;
 const MAX_CARD_TEXT = 50;
-const DEFAULT_TAG = 'mans';
 const DEFAULT_ICON = 'User';
-const DEFAULT_TEAM = 'custom';
+const DEFAULT_TEAM = TEAMS[3].value;
 
 export function isCustomRoleTag(tag) {
 	return typeof tag === 'string' && tag.startsWith('custom_');
@@ -51,7 +51,7 @@ export function buildCardSubmission({
 						.substring(0, MAX_ROLE_DESC)
 						.trim(),
 					iconName: selectedIconName || DEFAULT_ICON,
-					team: 'custom'
+					team: DEFAULT_TEAM
 				}
 				: null,
 		shouldAddRule: formMode === 'new' && (!isCustomRoleTag(selectedTag) || editIndex === null)
@@ -69,7 +69,7 @@ export function getFormStateFromCard(card, bigDescriptions) {
 		newRoleName: isCustom ? roleDescription.name || '' : '',
 		newRoleDescription: isCustom ? roleDescription.description || '' : '',
 		selectedIconName: isCustom ? roleDescription.iconName || DEFAULT_ICON : DEFAULT_ICON,
-		team: 'custom'
+		team: DEFAULT_TEAM
 	};
 }
 

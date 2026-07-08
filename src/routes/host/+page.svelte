@@ -25,7 +25,7 @@
 	let hostPageBlocks = [
 		{ name: 'Правила гри', component: RulesBlock, isOpen: false },
 		{ name: 'Нотатки', component: NotesBlock, isOpen: true },
-		{ name: `Гравці (${peopleList.length})`, component: PlayersBlock, isOpen: false },
+		{ name: 'Гравці', component: PlayersBlock, isOpen: false },
 		{ name: 'Слова ведучого', component: HostScriptBlock, isOpen: false }
 	];
 

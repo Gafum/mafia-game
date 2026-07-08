@@ -1,5 +1,6 @@
 <script>
 	import { bigDescriptions } from '$lib/stores';
+	import { TEAMS } from '$lib/data/teams.js';
 
 	export let text = '';
 	let scrollTop = 0;
@@ -45,7 +46,10 @@
 			'сніжинка',
 			'напарник',
 			'напарнику',
-			'напарника'
+			'напарника',
+			...Object.values($bigDescriptions)
+				.filter((elemnent) => elemnent.team === TEAMS[0].value && elemnent.name)
+				.map(({ name }) => name.toString().toLowerCase())
 		],
 		red: [
 			'мафія',
@@ -67,7 +71,10 @@
 			'ніндзю',
 			'нишпорка',
 			'нишпорку',
-			'нишпоркою'
+			'нишпоркою',
+			...Object.values($bigDescriptions)
+				.filter((elemnent) => elemnent.team === TEAMS[1].value && elemnent.name)
+				.map(({ name }) => name.toString().toLowerCase())
 		],
 		green: [
 			'маньяк',
@@ -85,11 +92,14 @@
 			'пастора',
 			'крадій',
 			'крадію',
-			'крадія'
+			'крадія',
+			...Object.values($bigDescriptions)
+				.filter((elemnent) => elemnent.team === TEAMS[2].value && elemnent.name)
+				.map(({ name }) => name.toString().toLowerCase())
 		],
-		yellow: Object.entries($bigDescriptions)
-			.filter(([key]) => key.startsWith('custom_'))
-			.map(([_, role]) => role.name)
+		yellow: Object.values($bigDescriptions)
+			.filter((elemnent) => elemnent.team === TEAMS[3].value && elemnent.name)
+			.map(({ name }) => name.toString().toLowerCase())
 	};
 
 	const allKeywords = Object.values(keywords).reduce(
@@ -106,7 +116,9 @@
 	$: {
 		if (lastWord.length >= 2) {
 			const match = allKeywords.find(
-				(w) => w.startsWith(lastWord.toLowerCase()) && w !== lastWord.toLowerCase()
+				(w) =>
+					w.toLowerCase().startsWith(lastWord.toLowerCase()) &&
+					w.toLowerCase() !== lastWord.toLowerCase()
 			);
 			if (match) {
 				currentSuggestion = match;

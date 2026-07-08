@@ -8,6 +8,7 @@
 		addCustomRule,
 		bigDescriptions
 	} from '$lib/stores';
+	import { TEAMS } from '$lib/data/teams.js';
 
 	import { onMount } from 'svelte';
 	import { validateForm } from '$lib/utils/customCardsUtils';
@@ -31,7 +32,7 @@
 		newRoleName: '',
 		newRoleDescription: '',
 		selectedIconName: 'User',
-		newRoleTeam: 'custom' // default team for new custom roles
+		newRoleTeam: TEAMS[3].value
 	};
 
 	let form = { ...initialForm };

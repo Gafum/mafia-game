@@ -12,7 +12,7 @@
 </script>
 
 <div class="actions">
-	{#if $allowToManipulate}
+	{#if $allowToManipulate && onDelete != null}
 		<button class="delete-btn" on:click={() => onDelete(index)}>
 			<Trash2 size={20} style="stroke: #ff4a4a;" />
 		</button>

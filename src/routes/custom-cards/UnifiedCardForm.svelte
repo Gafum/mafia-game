@@ -3,6 +3,7 @@
 	import FormField from './FormField.svelte';
 	import ExistingRoleFields from './ExistingRoleFields.svelte';
 	import NewRoleFields from './NewRoleFields.svelte';
+	import { TEAMS } from '$lib/data/teams.js';
 
 	export let isEditing = false;
 	export let form = {
@@ -13,7 +14,7 @@
 		newRoleName: '',
 		newRoleDescription: '',
 		selectedIconName: 'User',
-		newRoleTeam: 'custom'
+		newRoleTeam: TEAMS[3].value
 	};
 	export let selectedRoleName = '';
 	export let errors = {};

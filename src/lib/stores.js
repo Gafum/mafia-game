@@ -1,4 +1,3 @@
-// src/lib/stores.js
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 import cardRulesConst from '$lib/data/cardRulesConst.json';
