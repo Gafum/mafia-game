@@ -275,8 +275,17 @@
 											<input
 												id={'input-' + roleKey}
 												type="text"
-												value={roleKey}
 												class="badge-key-input"
+												value={roleKey}
+												on:input={async (e) => {
+													const cleaned = e.target.value.toLowerCase().replace(/[^a-zA-Z_]/g, '');
+
+													roleKey = cleaned;
+
+													await tick();
+
+													e.target.value = cleaned;
+												}}
 												on:change={(e) => handleUpdateRoleKey(roleKey, e)}
 											/>
 										</div>

@@ -1,168 +1,185 @@
-<div class="home-conteiner main-conteiner">
+<div class="home-container main-container">
 	<a href="/about" class="info-floating-btn" aria-label="Про гру">
-		<span> i </span>
+		<span>i</span>
 	</a>
 
-	<h1>Mafia</h1>
-	<a href="/play" class="menu_btn play-btn">Грати</a>
-	<a href="/settings" class="menu_btn settings">Налаштування</a>
-	<a href="/rules" class="menu_btn rules-btn">Правила гри</a>
+	<div class="title-wrapper">
+		<h1 class="mafia-title">MAFIA</h1>
+	</div>
 
-	<a href="https://github.com/Gafum" target="_blank" class="madeBy">Dmytro Marchuk</a>
+	<div class="menu-box">
+		<a href="/play" class="menu_btn play-btn">Грати</a>
+		<a href="/settings" class="menu_btn secondary-btn">Налаштування</a>
+		<a href="/rules" class="menu_btn secondary-btn">Правила гри</a>
+	</div>
+
+	<footer class="credits">
+		<a href="https://github.com/Gafum" target="_blank" class="madeBy">Dmytro Marchuk</a>
+	</footer>
 </div>
 
 <style>
-	.info-floating-btn {
-		position: fixed;
-		top: 20px;
-		left: 20px;
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		border: #721f1f 2px solid;
-		z-index: 100;
-	}
-
-	.info-floating-btn span {
-		font-size: 20px;
-		text-align: center;
-		color: white;
-		transform: translateY(-1px);
-	}
-
-	.home-conteiner {
+	.home-container {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		align-content: center;
-		min-height: 100vh;
-		min-height: 100svh;
-		min-height: 100dvh;
 		height: 100%;
 		width: 100%;
-		gap: 20px;
-		background-color: #111;
+		gap: 42px;
+		position: relative;
+		overflow: hidden;
+		padding: 20px;
+		box-sizing: border-box;
 	}
 
-	.home-conteiner > h1 {
-		color: #912c2c;
-		font-size: 80px;
-		font-weight: bold;
-		transition: text-shadow 0.2s;
+	.info-floating-btn {
+		position: absolute;
+		top: 25px;
+		left: 25px;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(255, 68, 68, 0.3);
+		background: transparent;
+		z-index: 100;
+		transition: background-color 0.2s ease, border-color 0.2s ease;
 	}
 
-	.home-conteiner > a.menu_btn {
-		padding: 10px 20px;
-		border-radius: 10px;
-		color: rgb(235, 235, 235);
-		transition-property: filter, box-shadow, transform;
-		transition-duration: 0.2s;
+	.info-floating-btn span {
+		font-size: 16px;
+		color: #ff4444;
 	}
 
-	.home-conteiner > a.menu_btn.settings {
-		font-size: 30px;
-		background-color: #493066;
+	.title-wrapper {
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		cursor: default;
 	}
 
-	.home-conteiner > a.menu_btn.play-btn {
-		font-size: 70px;
-		padding: 13px 35px;
-		background-color: #2c9182;
+	.mafia-title {
+		color: #ff4444;
+		font-size: 64px;
+		font-weight: 700;
+		letter-spacing: 8px;
+		line-height: 1;
+		margin: 0;
+		text-transform: uppercase;
+		text-shadow: 0 0 20px rgba(255, 68, 68, 0.2);
+		transition: color 0.4s ease, text-shadow 0.4s ease;
 	}
 
-	.home-conteiner > a.menu_btn.rules-btn {
-		font-size: 25px;
-		background-color: #306740;
+	.menu-box {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		width: 100%;
+		max-width: 280px;
+	}
+
+	.home-container .menu_btn {
+		width: 100%;
+		text-align: center;
+		box-sizing: border-box;
+		text-decoration: none;
+		font-size: 18px;
+		padding: 16px;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: all 0.3s;
+	}
+
+	.home-container .play-btn {
+		background-color: #ff4444;
+		color: #fff;
+		border: 1px solid #ff4444;
+		font-size: 22px;
+		font-weight: 600;
+		box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+	}
+
+	.home-container .secondary-btn {
+		background-color: transparent;
+		color: rgba(255, 255, 255, 0.7);
+		border: 1px solid rgba(255, 68, 68, 0.4);
+	}
+
+	.home-container .menu_btn:active {
+		filter: brightness(0.8);
+		transform: scale(0.97);
+	}
+
+	.info-floating-btn:active {
+		background: rgba(255, 68, 68, 0.1);
+		transform: scale(0.97);
+	}
+
+	.credits {
+		position: absolute;
+		bottom: 25px;
+		left: 0;
+		width: 100%;
+		text-align: center;
 	}
 
 	.madeBy {
-		position: absolute;
-		right: 10px;
-		bottom: 10px;
-		color: white;
-		font-weight: 300;
-		font-size: 14px;
+		color: rgba(255, 255, 255, 0.3);
+		font-size: 13px;
+		letter-spacing: 1px;
+		text-decoration: none;
+		transition: color 0.3s ease;
 	}
 
 	@media (hover: hover) {
-		.info-floating-btn:hover {
-			background: #ff4444;
+		.home-container .play-btn:hover {
+			background-color: #ff5555;
+			border-color: #ff5555;
+			box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
+		}
+
+		.home-container .secondary-btn:hover {
+			background-color: rgba(255, 68, 68, 0.1);
+			color: #fff;
 			border-color: #ff4444;
-			box-shadow: 0 0 10px rgba(255, 68, 68, 0.6);
 		}
 
-		.home-conteiner > h1:hover {
-			text-shadow: 0 0 7px rgb(185, 57, 57);
-			filter: brightness(1.1);
-		}
-		a.settings:hover {
-			filter: brightness(1.2);
-			box-shadow: 0 0 10px #493066;
+		.info-floating-btn:hover {
+			border-color: #ff4444;
+			background: rgba(255, 68, 68, 0.05);
 		}
 
-		a.play-btn:hover {
-			box-shadow: 0 0 12px #2c9182;
+		.madeBy:hover {
+			color: #ff4444;
 		}
 
-		a.rules-btn:hover {
-			box-shadow: 0 0 8px #306740;
+		.title-wrapper:hover .mafia-title {
+			color: #111;
+			text-shadow: 0 0 30px #ff4444, 0 0 10px #ff4444;
+		}
+
+		.title-wrapper:hover ~ .credits .madeBy {
+			color: rgba(255, 68, 68, 0.7);
 		}
 	}
 
-	a:active {
-		filter: brightness(0.85);
-		transform: scale(0.96);
-	}
-
-	@media (hover: none) {
-		a.settings:active {
-			filter: brightness(1.2);
-			box-shadow: 0 0 10px #493066;
+	@media (max-width: 420px) {
+		.home-container {
+			gap: 30px;
 		}
 
-		a.play-btn:active {
-			box-shadow: 0 0 12px #2c9182;
+		.mafia-title {
+			font-size: 52px;
 		}
 
-		a.rules-btn:active {
-			box-shadow: 0 0 8px #306740;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.home-conteiner {
-			gap: 15px;
-		}
-		.home-conteiner > h1 {
-			font-size: 70px;
-		}
-		.home-conteiner > a.menu_btn.settings {
-			font-size: 20px;
-		}
-		.home-conteiner > a.menu_btn.play-btn {
-			font-size: 55px;
-			padding: 8px 20px;
-		}
-		.home-conteiner > a.menu_btn.rules-btn {
-			font-size: 20px;
-		}
-
-		.info-floating-btn {
-			position: fixed;
-			top: 15px;
-			left: 15px;
-			width: 32px;
-			height: 32px;
-		}
-
-		.info-floating-btn span {
-			font-size: 20px;
+		.home-container .menu_btn {
+			font-size: 17px;
+			padding: 14px 18px;
 		}
 	}
 </style>

@@ -161,15 +161,7 @@
 		<div class="modal-section">
 			<span class="section-label">Показати ролі:</span>
 			<div class="filter-chips">
-				<button
-					class="chip"
-					class:active={activeTab === 'all'}
-					on:click={() => (activeTab = 'all')}
-					style={(activeTab === 'all' ? 'color: #000;' : '') + ' --text-color: #fff;'}
-				>
-					Всі
-				</button>
-				{#each TEAMS.filter((t) => (t.value === 'custom' ? hasCustomRoles : true)) as team}
+				{#each [{ value: 'all', label: 'Всі', color: '#fff' }, ...TEAMS].filter( (t) => (t.value === 'custom' ? hasCustomRoles : true) ) as team}
 					<button
 						class="chip"
 						class:active={activeTab === team.value}
@@ -380,12 +372,12 @@
 		color: var(--text-color);
 		font-size: 0.9rem;
 		cursor: pointer;
-		transition: all 0.2s;
+		transition: all 0.3s;
 	}
 
 	.chip.active {
 		background: var(--text-color);
-		color: white;
+		color: #111;
 		border-color: #111;
 		font-weight: 600;
 	}

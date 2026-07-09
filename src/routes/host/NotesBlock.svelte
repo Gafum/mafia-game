@@ -9,7 +9,7 @@
 	let remainingPart = '';
 
 	const keywords = {
-		blue: [
+		peaceful: [
 			'мирний',
 			'мир',
 			'мирного',
@@ -51,7 +51,7 @@
 				.filter((elemnent) => elemnent.team === TEAMS[0].value && elemnent.name)
 				.map(({ name }) => name.toString().toLowerCase())
 		],
-		red: [
+		mafia: [
 			'мафія',
 			'маф',
 			'мафію',
@@ -76,7 +76,7 @@
 				.filter((elemnent) => elemnent.team === TEAMS[1].value && elemnent.name)
 				.map(({ name }) => name.toString().toLowerCase())
 		],
-		green: [
+		neutral: [
 			'маньяк',
 			'маніяк',
 			'маніяка',
@@ -97,7 +97,7 @@
 				.filter((elemnent) => elemnent.team === TEAMS[2].value && elemnent.name)
 				.map(({ name }) => name.toString().toLowerCase())
 		],
-		yellow: Object.values($bigDescriptions)
+		custom: Object.values($bigDescriptions)
 			.filter((elemnent) => elemnent.team === TEAMS[3].value && elemnent.name)
 			.map(({ name }) => name.toString().toLowerCase())
 	};
@@ -160,21 +160,34 @@
 				return word.replace(/\n/g, '<br>');
 			}
 
-			const cleanWord = word.toLowerCase().trim().replace(/[.,!]/g, '');
 			const isLast = index === arr.length - 1;
 
+			const match = word.match(/^([^a-zA-Zа-яА-ЯіІїЇєЄґҐ0-9]*)(.*?)([^a-zA-Zа-яА-ЯіІїЇєЄґҐ0-9]*)$/);
+
+			if (!match) return word;
+
+			const prefix = match[1];
+			const coreWord = match[2];
+			const suffix = match[3];
+
+			const cleanWord = coreWord.toLowerCase();
 			let color = '';
 
-			for (const teamName in keywords) {
-				if (!Object.hasOwn(keywords, teamName)) continue;
+			if (cleanWord) {
+				for (const teamName in keywords) {
+					if (!Object.hasOwn(keywords, teamName)) continue;
 
-				const oneTeamWords = keywords[teamName];
-				if (oneTeamWords.includes(cleanWord)) {
-					color = teamName;
+					const oneTeamWords = keywords[teamName];
+					if (oneTeamWords.includes(cleanWord)) {
+						color = teamName;
+					}
 				}
 			}
 
-			const baseSpan = color ? `<span class="${color}-notes-text">${word}</span>` : word;
+			const wrappedCore = color
+				? `<span class="${color}-color-notes-text">${coreWord}</span>`
+				: coreWord;
+			const baseSpan = `${prefix}${wrappedCore}${suffix}`;
 
 			if (isLast && remainingPart) {
 				return `${baseSpan}<span class="phantom-text">${remainingPart}</span>`;
@@ -308,19 +321,19 @@
 		color: #555;
 	}
 
-	:global(.red-notes-text) {
-		color: #ff4d4d;
-	}
-
-	:global(.blue-notes-text) {
+	:global(.peaceful-color-notes-text) {
 		color: #4d94ff;
 	}
 
-	:global(.green-notes-text) {
-		color: #2ecc71;
+	:global(.mafia-color-notes-text) {
+		color: #ff4d4d;
 	}
 
-	:global(.yellow-notes-text) {
-		color: #dabf2c;
+	:global(.neutral-color-notes-text) {
+		color: #b469ff;
+	}
+
+	:global(.custom-color-notes-text) {
+		color: #2ecc71;
 	}
 </style>

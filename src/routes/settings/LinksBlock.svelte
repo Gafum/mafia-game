@@ -16,7 +16,7 @@
 </script>
 
 <SimpleLink href="/custom-cards" type="green">
-	<FileUser size={18} color="#fff" class="mobile-hidden-icon" />Нові картки
+	<FileUser size={18} color="#fff" style="stroke: #fff;" class="mobile-hidden-icon" />Нові картки
 </SimpleLink>
 
 <SimpleLink href="/host" actionCallback={goToHost}>
