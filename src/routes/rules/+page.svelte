@@ -10,7 +10,9 @@
 
 	<NumberedList list={gameRules} textStyles="font-size: 18px;" indexStyles="padding-top: 5px;" />
 
-	<SimpleLink href="/roles" type="green">Персонажі</SimpleLink>
+	<SimpleLink href="/roles" type="blue" props={{ style: 'margin-top: 40px; margin-bottom: 36px;' }}>
+		Персонажі
+	</SimpleLink>
 	<StandardLinks />
 </div>
 

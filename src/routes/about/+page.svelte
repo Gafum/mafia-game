@@ -200,7 +200,7 @@
 			</SimpleLink>
 
 			<!-- 3. Email Link -->
-			<SimpleLink href="mailto:marcukdyma@gmail.com" type="green" props={{ target: '_blank' }}>
+			<SimpleLink href="mailto:marcukdyma@gmail.com" type="blue" props={{ target: '_blank' }}>
 				<Mail size={20} />
 				<span class="link-text-span link-text-span-max-width_mobile">Написати</span>
 			</SimpleLink>

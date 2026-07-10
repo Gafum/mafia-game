@@ -19,7 +19,7 @@
 	</div>
 
 	<span class="hint-text">
-		Переверни натиском <span class="mobile-hidden-icon hint-text">на картку</span>
+		Переверни натиском <span class="mobile-hidden-icon hint-text">картку</span>
 	</span>
 
 	<button class="close-hint-btn" on:click={closeHint} aria-label="Закрити підказку">

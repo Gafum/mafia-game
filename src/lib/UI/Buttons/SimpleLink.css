@@ -2,7 +2,7 @@
 	--main-bg-color: #ff4444;
 }
 
-.green {
+.blue {
 	--main-bg-color: #4d94ff;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .link-style.transparent {
-	border: 1px solid #232326;
+	border: 1px solid #222;
 }
 
 .link-text-span {

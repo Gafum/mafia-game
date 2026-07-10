@@ -3,7 +3,7 @@
 
 	export let props = {};
 
-	export let type = 'red'; // red - green - transparent
+	export let type = 'red'; // red - blue - transparent
 
 	export let href = '';
 

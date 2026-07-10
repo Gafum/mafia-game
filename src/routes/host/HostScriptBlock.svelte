@@ -2,6 +2,7 @@
 	import { bigDescriptions, cardRules } from '$lib/stores';
 	import { findSpecialKeys } from '$lib/functions/findSpecialKeys';
 	import NumberedList from '$lib/UI/NumberedList.svelte';
+	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
 
 	function findEnabledKeys() {
 		return findSpecialKeys().filter((tag) => Boolean($cardRules[tag]));
@@ -16,3 +17,6 @@
 </script>
 
 <NumberedList list={hostScript} />
+
+<SimpleLink href="/roles" type="blue">Персонажі</SimpleLink>
+<SimpleLink href="/settings">Налаштування</SimpleLink>

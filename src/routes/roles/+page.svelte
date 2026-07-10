@@ -251,8 +251,8 @@
 
 	.search-input {
 		width: 100%;
-		background: #111113;
-		border: 1px solid #343434;
+		background: #1a1a1a;
+		border: 1px solid #333;
 		border-radius: 12px;
 		padding: 12px 36px 12px 40px;
 		color: #ffffff;
@@ -265,7 +265,7 @@
 	}
 
 	.search-input:focus {
-		border-color: #52525b;
+		border-color: #ff4444;
 	}
 
 	.search-input::placeholder {
@@ -287,8 +287,8 @@
 	}
 
 	.filter-trigger-btn {
-		background: #111113;
-		border: 1px solid #343434;
+		background: #1a1a1a;
+		border: 1px solid #333;
 		border-radius: 12px;
 		color: #a1a1aa;
 		padding: 0 14px;
@@ -300,10 +300,9 @@
 		transition: all 0.2s;
 	}
 
-	.filter-trigger-btn:hover {
-		background: #18181b;
-		border-color: #3f3f46;
-		color: #fff;
+	.filter-trigger-btn:active {
+		transform: scale(0.97);
+		filter: brightness(0.85);
 	}
 
 	.cards-list-wrapper {
@@ -344,7 +343,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
-		margin-top: 16px;
+		margin-top: 20px;
 	}
 
 	.modal-section {
@@ -365,14 +364,14 @@
 	}
 
 	.chip {
-		background: rgba(255, 255, 255, 0.05);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		border-radius: 20px;
+		background: #161619;
+		border: 1px solid #232326;
+		border-radius: 8px;
 		padding: 8px 16px;
 		color: var(--text-color);
 		font-size: 0.9rem;
 		cursor: pointer;
-		transition: all 0.3s;
+		transition: all 0.2s;
 	}
 
 	.chip.active {
@@ -386,8 +385,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
-		background: rgba(255, 255, 255, 0.03);
-		border-radius: 14px;
+		background: #111113;
+		border: 1px solid #232326;
+		border-radius: 12px;
 		padding: 8px;
 	}
 
@@ -408,9 +408,9 @@
 	}
 
 	.sort-row-btn.active {
-		background: rgba(255, 255, 255, 0.08);
-		color: #ffffff;
-		font-weight: 500;
+		background: rgba(255, 68, 68, 0.1);
+		color: white;
+		font-weight: 700;
 	}
 
 	.sort-arrow {
@@ -420,6 +420,15 @@
 
 	.sort-arrow.visible {
 		opacity: 1;
+	}
+
+	@media (hover: hover) {
+		.chip:not(.active):hover {
+			border-color: var(--text-color);
+		}
+		.filter-trigger-btn:hover {
+			box-shadow: 0 0 5px 1px #ff444466;
+		}
 	}
 
 	@media (max-width: 720px) {

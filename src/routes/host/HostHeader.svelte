@@ -1,5 +1,6 @@
 <script>
 	import { Users, Moon, Plus } from 'lucide-svelte';
+	import '$lib/UI/Buttons/SimpleLink.css';
 
 	let night = 1;
 	function addNight() {
@@ -13,7 +14,11 @@
 		<h1>Панель ведучого</h1>
 	</div>
 
-	<button class="night-btn" on:click={addNight}>
+	<button
+		class="link-style red"
+		on:click|preventDefault={addNight}
+		style="font-size: 1.1rem; min-height: 33px; margin: 0; width: auto;"
+	>
 		<Moon size={17} />
 		Ніч {night}
 		<Plus size={15} />
@@ -27,9 +32,11 @@
 		align-items: center;
 		gap: 15px;
 
-		background: #161616;
+		background: #181818;
 		padding: 14px;
 		border-radius: 14px;
+		border: 1px solid #222;
+		border-top: 3px solid #ff4444;
 	}
 
 	.title {
@@ -43,34 +50,10 @@
 		color: white;
 	}
 
-	.night-btn {
-		background: #1f1f1f;
-		color: white;
-		border: none;
-		border-radius: 10px;
-		padding: 10px 14px;
-
-		display: flex;
-		align-items: center;
-		gap: 7px;
-
-		cursor: pointer;
-		transition: transform 0.2s;
-	}
-
-	.night-btn:active {
-		opacity: 0.9;
-		transform: scale(0.95);
-	}
-
 	@media (max-width: 500px) {
 		.header {
 			flex-direction: column;
 			align-items: stretch;
-		}
-
-		.night-btn {
-			justify-content: center;
 		}
 
 		h1 {

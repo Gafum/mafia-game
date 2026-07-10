@@ -15,7 +15,7 @@
 		});
 </script>
 
-<SimpleLink href="/custom-cards" type="green">
+<SimpleLink href="/custom-cards" type="blue">
 	<FileUser size={18} color="#fff" style="stroke: #fff;" class="mobile-hidden-icon" />Нові картки
 </SimpleLink>
 

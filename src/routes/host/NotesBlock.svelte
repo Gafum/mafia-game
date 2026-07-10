@@ -230,17 +230,24 @@
 <style>
 	.notes-container {
 		width: 100%;
-		background: #1b1b1b;
-		border-radius: 10px;
+		background: #111113;
+		border-radius: 12px;
 		overflow: hidden;
-		box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
+		border: 1px solid #232326;
+		box-sizing: border-box;
+		transition: border-color 0.2s;
+	}
+
+	.notes-container:focus-within {
+		border-color: #ff4444;
 	}
 
 	.editor-wrapper {
 		position: relative;
 		height: min-content;
-		padding: 12px;
+		padding: 10px;
 		overflow: hidden;
+		background: #161619;
 	}
 
 	textarea,
@@ -251,7 +258,7 @@
 		height: 100%;
 		min-height: 160px;
 		font-family: inherit;
-		font-size: 16px;
+		font-size: 0.85rem;
 		line-height: 1.5;
 		margin: 0;
 		padding: 0;
@@ -259,12 +266,13 @@
 		white-space: pre-wrap;
 		word-wrap: break-word;
 		background: transparent;
+		box-sizing: border-box;
 	}
 
 	textarea {
 		position: relative;
 		z-index: 2;
-		color: transparent;
+		color: transparent !important;
 		caret-color: white;
 		outline: none;
 		overflow-y: auto;
@@ -274,10 +282,11 @@
 
 	.backdrop {
 		position: absolute;
-		left: 12px;
-		width: calc(100% - 24px);
+		left: 10px;
+		top: 10px;
+		width: calc(100% - 20px);
 		z-index: 1;
-		color: #ccc;
+		color: #a1a1aa;
 		pointer-events: none;
 		height: auto;
 		min-height: 100%;
@@ -305,8 +314,9 @@
 
 	.mobile-tap-zone {
 		position: absolute;
-		left: 12px;
-		width: calc(100% - 24px);
+		left: 10px;
+		top: 10px;
+		width: calc(100% - 20px);
 		height: 100%;
 		min-height: 160px;
 		z-index: 3;
@@ -318,7 +328,7 @@
 	}
 
 	textarea::placeholder {
-		color: #555;
+		color: #52525b;
 	}
 
 	:global(.peaceful-color-notes-text) {

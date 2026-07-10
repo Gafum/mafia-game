@@ -257,8 +257,8 @@
 		left: 0;
 		top: 0;
 		backface-visibility: hidden;
-		border-radius: 10px;
-		border: 1px solid black;
+		border-radius: 12px;
+		border: 1px solid #232326;
 		box-sizing: border-box;
 		padding: 25px;
 	}

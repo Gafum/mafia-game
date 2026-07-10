@@ -102,12 +102,12 @@
 		align-items: center;
 		min-height: 100vh;
 		min-height: 100lvh;
-		padding: 20px;
+		padding: 20px 20px 50px;
 	}
 
 	.setup-card {
 		background: rgba(20, 20, 20, 0.95);
-		border: 1px solid #333;
+		border: 1px solid #222;
 		border-top: 3px solid #ff4444;
 		width: 100%;
 		max-width: 700px;

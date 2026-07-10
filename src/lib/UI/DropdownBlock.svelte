@@ -49,6 +49,7 @@
 		box-shadow: 4px 4px 5px #0e0e0e30;
 		overflow: hidden;
 		position: relative;
+		border: 1px solid #222;
 	}
 
 	@media (hover: hover) {
@@ -94,6 +95,7 @@
 	}
 
 	.content {
+		padding-top: 4px;
 		cursor: default;
 	}
 

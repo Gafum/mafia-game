@@ -1,19 +1,35 @@
-<div class="home-container main-container">
-	<a href="/about" class="info-floating-btn" aria-label="Про гру">
-		<span>i</span>
-	</a>
+<script>
+	import SimpleLink from '$lib/UI/Buttons/SimpleLink.svelte';
+	import { Settings, BookOpen } from 'lucide-svelte';
+</script>
 
+<div class="home-container main-container">
 	<div class="title-wrapper">
 		<h1 class="mafia-title">MAFIA</h1>
 	</div>
 
 	<div class="menu-box">
-		<a href="/play" class="menu_btn play-btn">Грати</a>
-		<a href="/settings" class="menu_btn secondary-btn">Налаштування</a>
-		<a href="/rules" class="menu_btn secondary-btn">Правила гри</a>
+		<SimpleLink
+			href="/play"
+			type="red"
+			props={{ style: 'margin: 0; font-size: 40px; margin-bottom: 5px;' }}
+		>
+			Грати
+		</SimpleLink>
+
+		<SimpleLink href="/settings" type="transparent" props={{ style: 'margin: 0;' }}>
+			<Settings size={18} color="#fff" style="stroke: #fff;" />
+			Налаштування
+		</SimpleLink>
+
+		<SimpleLink href="/rules" type="transparent" props={{ style: 'margin: 0;' }}>
+			<BookOpen size={18} color="#fff" style="stroke: #fff;" />
+			Правила гри
+		</SimpleLink>
 	</div>
 
 	<footer class="credits">
+		<a href="/about" class="info-link">Про проєкт</a>
 		<a href="https://github.com/Gafum" target="_blank" class="madeBy">Dmytro Marchuk</a>
 	</footer>
 </div>
@@ -31,27 +47,6 @@
 		overflow: hidden;
 		padding: 20px;
 		box-sizing: border-box;
-	}
-
-	.info-floating-btn {
-		position: absolute;
-		top: 25px;
-		left: 25px;
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 1px solid rgba(255, 68, 68, 0.3);
-		background: transparent;
-		z-index: 100;
-		transition: background-color 0.2s ease, border-color 0.2s ease;
-	}
-
-	.info-floating-btn span {
-		font-size: 16px;
-		color: #ff4444;
 	}
 
 	.title-wrapper {
@@ -78,46 +73,9 @@
 	.menu-box {
 		display: flex;
 		flex-direction: column;
-		gap: 14px;
+		gap: 20px;
 		width: 100%;
-		max-width: 280px;
-	}
-
-	.home-container .menu_btn {
-		width: 100%;
-		text-align: center;
-		box-sizing: border-box;
-		text-decoration: none;
-		font-size: 18px;
-		padding: 16px;
-		border-radius: 8px;
-		cursor: pointer;
-		transition: all 0.3s;
-	}
-
-	.home-container .play-btn {
-		background-color: #ff4444;
-		color: #fff;
-		border: 1px solid #ff4444;
-		font-size: 22px;
-		font-weight: 600;
-		box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
-	}
-
-	.home-container .secondary-btn {
-		background-color: transparent;
-		color: rgba(255, 255, 255, 0.7);
-		border: 1px solid rgba(255, 68, 68, 0.4);
-	}
-
-	.home-container .menu_btn:active {
-		filter: brightness(0.8);
-		transform: scale(0.97);
-	}
-
-	.info-floating-btn:active {
-		background: rgba(255, 68, 68, 0.1);
-		transform: scale(0.97);
+		max-width: 500px;
 	}
 
 	.credits {
@@ -125,7 +83,25 @@
 		bottom: 25px;
 		left: 0;
 		width: 100%;
-		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.info-link {
+		color: #ffffff66;
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		text-decoration: none;
+		border: 1px solid #ffffff66;
+		padding: 6px 16px;
+		border-radius: 6px;
+		background: rgba(22, 22, 25, 0.5);
+		transition: all 0.2s ease;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.madeBy {
@@ -136,22 +112,20 @@
 		transition: color 0.3s ease;
 	}
 
+	.info-link:active {
+		transform: translateX(-50%) scale(0.95);
+		background: #1a1a1e;
+		border-color: #ff4444;
+		color: #fff;
+		box-shadow: 0px 0px 8px rgba(255, 68, 68, 0.3);
+	}
+
 	@media (hover: hover) {
-		.home-container .play-btn:hover {
-			background-color: #ff5555;
-			border-color: #ff5555;
-			box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
-		}
-
-		.home-container .secondary-btn:hover {
-			background-color: rgba(255, 68, 68, 0.1);
-			color: #fff;
+		.info-link:hover {
+			color: #ffffff;
 			border-color: #ff4444;
-		}
-
-		.info-floating-btn:hover {
-			border-color: #ff4444;
-			background: rgba(255, 68, 68, 0.05);
+			background: #161619;
+			box-shadow: 0px 0px 10px rgba(255, 68, 68, 0.2);
 		}
 
 		.madeBy:hover {
@@ -166,6 +140,30 @@
 		.title-wrapper:hover ~ .credits .madeBy {
 			color: rgba(255, 68, 68, 0.7);
 		}
+
+		.title-wrapper:hover ~ .credits .info-link {
+			border-color: rgba(255, 68, 68, 0.3);
+			color: #ff4444;
+		}
+	}
+
+	@media (min-width: 780px) {
+		.info-link {
+			position: fixed;
+			top: 20px;
+			transform: translateX(-50%);
+			left: 50%;
+			margin: 0;
+		}
+
+		.title-wrapper:hover ~ .credits .info-link {
+			border-color: #ffffff66;
+			color: #ffffff66;
+		}
+
+		.home-container {
+			position: relative;
+		}
 	}
 
 	@media (max-width: 420px) {
@@ -174,12 +172,25 @@
 		}
 
 		.mafia-title {
-			font-size: 52px;
+			font-size: 48px;
+			letter-spacing: 4px;
 		}
 
-		.home-container .menu_btn {
-			font-size: 17px;
-			padding: 14px 18px;
+		.menu-box {
+			max-width: 100%;
+			padding: 0 10px;
+		}
+	}
+
+	@media (max-width: 290px) {
+		.mafia-title {
+			font-size: 36px;
+			letter-spacing: 2px;
+		}
+
+		.info-link {
+			font-size: 11px;
+			padding: 4px 12px;
 		}
 	}
 </style>

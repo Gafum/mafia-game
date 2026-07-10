@@ -2,7 +2,6 @@
 	import { handleNumericInput, normalize } from './inputHelpers';
 	import { Zap } from 'lucide-svelte';
 	import { getMaxPlayerAmount } from '$lib/functions/findSpecialKeys';
-	import { afterUpdate } from 'svelte';
 	import '$lib/UI/Buttons/SimpleLink.css';
 
 	export let handleRandom = () => {};

@@ -2,11 +2,12 @@
 	export let list = [];
 	export let textStyles = '';
 	export let indexStyles = '';
+	export let lineStyles = '';
 </script>
 
 <div class="custom-list">
 	{#each list as line, index}
-		<div class="line">
+		<div class="line" style={lineStyles}>
 			<span class="index" style={indexStyles}>{index + 1}</span>
 			<div class="content">
 				<p class="text" style={textStyles}>{line}</p>
@@ -19,7 +20,7 @@
 	.custom-list {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 14px;
 		width: 100%;
 	}
 
@@ -31,6 +32,7 @@
 		align-items: flex-start;
 		gap: 12px;
 		box-shadow: 4px 4px 5px #0e0e0e60;
+		border-left: 1px solid #ff4444;
 	}
 
 	.line:nth-child(even) {
