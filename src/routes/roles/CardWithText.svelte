@@ -49,7 +49,7 @@
 					observer.disconnect();
 				}
 			},
-			{ threshold: 0.15 }
+			{ rootMargin: '150px' }
 		);
 		observer.observe(node);
 

@@ -30,7 +30,7 @@
 		</div>
 	</div>
 
-	<div class="content-wrapper" class:hidden={!open} on:click|stopPropagation>
+	<div class="content-wrapper" class:hidden={!open}>
 		{#if open}
 			<div class="content">
 				<slot />

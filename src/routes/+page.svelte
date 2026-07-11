@@ -113,7 +113,7 @@
 	}
 
 	.info-link:active {
-		transform: translateX(-50%) scale(0.95);
+		scale: 0.95;
 		background: #1a1a1e;
 		border-color: #ff4444;
 		color: #fff;
