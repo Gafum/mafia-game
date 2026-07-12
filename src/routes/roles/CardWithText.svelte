@@ -25,7 +25,6 @@
 	let currentIndex = -1;
 	let additionData = null;
 	let flipped = false;
-	let isVisible = false;
 
 	let isHintOpen = true;
 
@@ -36,29 +35,6 @@
 	let componentMounted = false;
 	let animateIn = false;
 	let isInitialMount = true;
-
-	function intersect(node) {
-		if (typeof IntersectionObserver === 'undefined') {
-			isVisible = true;
-			return;
-		}
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting) {
-					isVisible = true;
-					observer.disconnect();
-				}
-			},
-			{ rootMargin: '150px' }
-		);
-		observer.observe(node);
-
-		return {
-			destroy() {
-				observer.disconnect();
-			}
-		};
-	}
 
 	function findNextData() {
 		const sameRoleList = tagMap[tag] || [];
@@ -133,11 +109,6 @@
 		flipped = !flipped;
 	}
 
-	function closeHint(e) {
-		e.stopPropagation();
-		isHintOpen = false;
-	}
-
 	onMount(() => {
 		additionData = findNextData();
 		if (additionData && loadedImagesCache.has(additionData.myImg)) {
@@ -145,7 +116,6 @@
 		}
 
 		componentMounted = true;
-
 		triggerAnimation();
 	});
 </script>
@@ -153,7 +123,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if Boolean(additionData)}
-	<div class="reveal-wrapper" use:intersect class:visible={isVisible}>
+	<div class="reveal-wrapper">
 		<div class={'card ' + tag} class:show={flipped} on:click={flip}>
 			<div class="back">
 				{#if isFirst && isHintOpen}
@@ -213,18 +183,9 @@
 
 <style>
 	.reveal-wrapper {
-		opacity: 0;
-		transform: translateY(60px);
-		transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
-			transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
 		width: 100%;
 		display: flex;
 		justify-content: center;
-	}
-
-	.reveal-wrapper.visible {
-		opacity: 1;
-		transform: translateY(0);
 	}
 
 	.card {

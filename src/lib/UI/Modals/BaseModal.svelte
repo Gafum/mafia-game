@@ -56,6 +56,8 @@
 <style>
 	.overlay {
 		position: fixed;
+		width: 100%;
+		height: 100%;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.7);
 		backdrop-filter: blur(12px);

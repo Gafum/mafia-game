@@ -230,7 +230,6 @@
 <style>
 	.notes-container {
 		width: 100%;
-		background: #111113;
 		border-radius: 12px;
 		overflow: hidden;
 		border: 1px solid #232326;
@@ -247,7 +246,7 @@
 		height: min-content;
 		padding: 10px;
 		overflow: hidden;
-		background: #161619;
+		background: #151515;
 	}
 
 	textarea,

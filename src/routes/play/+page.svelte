@@ -8,6 +8,7 @@
 	import cardList from '$lib/data/cardList.json';
 	import EndScreen from './EndScreen.svelte';
 	import Card from './Card.svelte';
+	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
 
 	let hostPeopleList = page.state?.peopleList ?? [];
 	let peopleList = [...cardList];
@@ -16,6 +17,16 @@
 
 	let showingElement = 0;
 	let maxVisibleCards = 2;
+
+	let roleModalData = {
+		isOpen: false,
+		tag: 'man'
+	};
+
+	function openRole(tag) {
+		roleModalData.tag = tag;
+		roleModalData.isOpen = true;
+	}
 
 	function changeData() {
 		try {
@@ -58,10 +69,18 @@
 	<div class="container-inner">
 		<EndScreen {peopleList} />
 		{#each visiblePeople as person (person.myIndex)}
-			<Card {...person} {changeData} {showingElement} />
+			<Card {...person} {changeData} {showingElement} onOpenRole={openRole} />
 		{/each}
 	</div>
 </div>
+
+<RoleDetailsModal
+	open={roleModalData.isOpen}
+	heroTag={roleModalData.tag}
+	on:close={() => {
+		roleModalData.isOpen = false;
+	}}
+/>
 
 <style>
 	.center {
@@ -77,7 +96,9 @@
 		background-position: center;
 		background-size: cover;
 		background-repeat: no-repeat;
+		background-color: #5f4e40;
 	}
+
 	.container-inner {
 		position: relative;
 	}

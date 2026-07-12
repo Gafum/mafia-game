@@ -1,10 +1,12 @@
 <script>
 	import { Icons } from '$lib/components/icons.js';
 	import { CircleQuestionMark } from 'lucide-svelte';
-	import RoleDetailsModal from '$lib/UI/Modals/RoleDetailsModal.svelte';
+
 	import { bigDescriptions } from '$lib/stores';
 	import { tagMap } from '$lib/functions/createListByTags';
 	import Randomizer from '$lib/Servises/Randomizer.servise';
+
+	export let onOpenRole = () => {};
 
 	export let tag = '',
 		myIndex = 0,
@@ -94,14 +96,12 @@
 		<button
 			class="info-button"
 			type="button"
-			on:click|stopPropagation={() => (showDetails = true)}
+			on:click|stopPropagation={() => onOpenRole(tag)}
 			aria-label="Show role details"
 		>
 			<CircleQuestionMark size="30" color="#f7f7f7" />
 		</button>
 	</div>
-
-	<RoleDetailsModal heroTag={tag} open={showDetails} on:close={() => (showDetails = false)} />
 </div>
 
 <style>

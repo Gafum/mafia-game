@@ -6,7 +6,7 @@
 	export let newRoleDescription = '';
 	export let selectedIconName = 'User';
 	export let errors = {};
-	let iconList = Object.keys(Icons);
+	let iconList = Object.keys(Icons).filter((iconName) => iconName !== 'CircleQuestionMark'); // without Default import in icons.js
 </script>
 
 <div class="animate-fade">
@@ -60,7 +60,7 @@
 	}
 	.icon-grid {
 		display: grid;
-		grid-template-columns: repeat(5, 1fr);
+		grid-template-columns: repeat(4, 1fr);
 		gap: 6px;
 	}
 	.icon-btn {
